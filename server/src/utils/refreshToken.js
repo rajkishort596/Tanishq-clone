@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
 
 const refreshUserAccessToken = asyncHandler(async (req, res) => {
   const incomingRefreshToken =
-    req.cookies.userRefreshToken || req.body.userRefreshToken;
+    req.cookies?.userRefreshToken || req.body?.userRefreshToken;
 
   if (!incomingRefreshToken) {
     throw new ApiError(401, "unauthorized request");

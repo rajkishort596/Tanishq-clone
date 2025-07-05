@@ -1,11 +1,11 @@
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiError } from "../utils/ApiError.js";
-import { User } from "../models/user.model.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
-import { generateAccessAndRefereshTokens } from "../utils/generateToken.js";
-import { sendEmail } from "../utils/sendEmail.js";
-import { generateOTP } from "../utils/generateOTP.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
+import { ApiError } from "../../utils/ApiError.js";
+import { User } from "../../models/user.model.js";
+import { ApiResponse } from "../../utils/ApiResponse.js";
+import { uploadOnCloudinary } from "../../utils/cloudinary.js";
+import { generateAccessAndRefereshTokens } from "../../utils/generateToken.js";
+import { sendEmail } from "../../utils/sendEmail.js";
+import { generateOTP } from "../../utils/generateOTP.js";
 import jwt from "jsonwebtoken";
 
 const OTP_EXPIRY_MINUTES = 10;
@@ -261,11 +261,9 @@ const completeUserRegistration = asyncHandler(async (req, res) => {
 
   await user.save();
 
-  const { accessToken, refreshToken } = generateAccessAndRefereshTokens(
+  const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(
     user._id
   );
-  user.refreshToken = refreshToken;
-  await user.save({ validateBeforeSave: false });
 
   const options = {
     httpOnly: true,
@@ -276,8 +274,8 @@ const completeUserRegistration = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .cookie("UserAccessToken", accessToken, options)
-    .cookie("UserRefreshToken", refreshToken, {
+    .cookie("userAccessToken", accessToken, options)
+    .cookie("userRefreshToken", refreshToken, {
       ...options,
       maxAge: 10 * 24 * 60 * 60 * 1000,
     })
@@ -301,4 +299,188 @@ const completeUserRegistration = asyncHandler(async (req, res) => {
     );
 });
 
-export { registerUser, verifyUserOTP, completeUserRegistration };
+const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    throw new ApiError(400, "Email and password are required");
+  }
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new ApiError(404, "User does not exist");
+  }
+
+  const isPasswordValid = await user.isPasswordCorrect(password);
+
+  if (!isPasswordValid) {
+    throw new ApiError(401, "Invalid user credentials");
+  }
+
+  const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(
+    user._id
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    maxAge: 24 * 60 * 60 * 1000,
+  };
+
+  return res
+    .status(200)
+    .cookie("userAccessToken", accessToken, options)
+    .cookie("userRefreshToken", refreshToken, {
+      ...options,
+      maxAge: 10 * 24 * 60 * 60 * 1000,
+    })
+    .json(
+      new ApiResponse(
+        200,
+        {
+          user: {
+            _id: user._id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            phone: user.phone,
+            avatar: user.avatar?.url,
+          },
+          accessToken,
+          refreshToken,
+        },
+        "User logged in successfully"
+      )
+    );
+});
+
+const logoutUser = asyncHandler(async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $set: {
+        refreshToken: undefined,
+      },
+    },
+    { new: true }
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+  };
+
+  return res
+    .status(200)
+    .clearCookie("userAccessToken", options)
+    .clearCookie("userRefreshToken", options)
+    .json(new ApiResponse(200, {}, "User logged out successfully"));
+});
+
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) throw new ApiError(400, "Email is required");
+
+  const user = await User.findOne({ email });
+  if (!user) throw new ApiError(404, "User with this email does not exist");
+
+  // Generate JWT reset token
+  const resetToken = user.generatePasswordResetToken();
+  const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173"; // fallback for dev
+
+  const resetUrl = `${FRONTEND_URL}/reset-password/${resetToken}`;
+
+  await sendEmail(
+    user.email,
+    "Password Reset",
+    `
+      <div style="font-family: Arial, sans-serif; color: #222;">
+        <h2>Password Reset Request</h2>
+        <p>Hello ${user.fullName || ""},</p>
+        <p>We received a request to reset your password. Click the button below to reset it:</p>
+        <a href="${resetUrl}" style="display:inline-block;padding:12px 24px;background:#1976d2;color:#fff;text-decoration:none;border-radius:4px;font-weight:bold;">Reset Password</a>
+        <p>If you did not request this, please ignore this email.</p>
+        <p style="margin-top:32px;font-size:12px;color:#888;">If the button doesn't work, copy and paste this link into your browser:<br>${resetUrl}</p>
+      </div>
+    `
+  );
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { resetUrl },
+        "Password reset link sent to your email"
+      )
+    );
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { token, password } = req.body;
+
+  if (!token || !password) {
+    throw new ApiError(400, "Token and new password are required");
+  }
+
+  let payload;
+  try {
+    payload = jwt.verify(token, process.env.RESET_PASSWORD_SECRET);
+  } catch (err) {
+    throw new ApiError(400, "Invalid or expired reset token");
+  }
+
+  const user = await User.findById(payload._id);
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  user.password = password;
+  await user.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password reset successful"));
+});
+
+const changePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    throw new ApiError(400, "Current and new password are required");
+  }
+
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const isPasswordValid = await user.isPasswordCorrect(currentPassword);
+
+  if (!isPasswordValid) {
+    throw new ApiError(401, "Current password is incorrect");
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password changed successfully"));
+});
+
+export {
+  registerUser,
+  verifyUserOTP,
+  completeUserRegistration,
+  loginUser,
+  logoutUser,
+  forgotPassword,
+  resetPassword,
+  changePassword,
+};
