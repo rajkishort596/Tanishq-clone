@@ -25,6 +25,20 @@ import {
   updateUserAvatar,
   updateUserProfile,
 } from "../controllers/user/profile.controller.js";
+import {
+  addAddress,
+  deleteAddress,
+  getAddressById,
+  getAddresses,
+  updateAddress,
+} from "../controllers/user/address.controller.js";
+import {
+  addToCart,
+  clearCart,
+  getCart,
+  removeCartItem,
+  updateCartItemQuantity,
+} from "../controllers/user/cart.controller.js";
 const router = Router();
 
 /**
@@ -63,5 +77,25 @@ router
   .route("/me/avatar")
   .put(verifyUserJWT, upload.single("avatar"), updateUserAvatar);
 router.route("/me").delete(verifyUserJWT, deleteUserProfile);
+
+/**
+ * @AddressRoutes
+ */
+
+router.route("/me/addresses").get(verifyUserJWT, getAddresses);
+router.route("/me/addresses").post(verifyUserJWT, addAddress);
+router.route("/me/addresses/:addressId").get(verifyUserJWT, getAddressById);
+router.route("/me/addresses/:addressId").put(verifyUserJWT, updateAddress);
+router.route("/me/addresses/:addressId").delete(verifyUserJWT, deleteAddress);
+
+/**
+ * @CartRoutes
+ */
+
+router.route("/me/cart").get(verifyUserJWT, getCart);
+router.route("/me/cart").post(verifyUserJWT, addToCart);
+router.route("/me/cart/:productId").put(verifyUserJWT, updateCartItemQuantity);
+router.route("/me/cart/:productId").delete(verifyUserJWT, removeCartItem);
+router.route("/me/cart").delete(verifyUserJWT, clearCart);
 
 export default router;
