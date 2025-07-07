@@ -15,11 +15,10 @@ const addAddress = asyncHandler(async (req, res) => {
     throw new ApiError(401, "User not authenticated.");
   }
 
-  const { fullName, phone, pincode, state, city, addressLine, landmark, type } =
-    req.body;
+  const { pincode, state, city, addressLine, landmark, type } = req.body;
 
   if (
-    [fullName, phone, pincode, state, city, addressLine, type].some(
+    [pincode, state, city, addressLine, type].some(
       (field) => field?.trim() === "" || field === undefined
     )
   ) {
@@ -33,8 +32,6 @@ const addAddress = asyncHandler(async (req, res) => {
 
   const newAddress = await Address.create({
     user: user._id,
-    fullName,
-    phone,
     pincode,
     state,
     city,
@@ -62,7 +59,10 @@ const getAddresses = asyncHandler(async (req, res) => {
     throw new ApiError(401, "User not authenticated.");
   }
 
-  const addresses = await Address.find({ user: req.user._id });
+  const addresses = await Address.find({ user: req.user._id }).populate(
+    "user",
+    "firstName lastName phone"
+  );
 
   if (!addresses || addresses.length === 0) {
     return res
@@ -88,7 +88,10 @@ const getAddressById = asyncHandler(async (req, res) => {
 
   const { addressId } = req.params;
 
-  const address = await Address.findOne({ _id: addressId, user: req.user._id });
+  const address = await Address.findOne({
+    _id: addressId,
+    user: req.user._id,
+  }).populate("user", "firstName lastName phone");
 
   if (!address) {
     throw new ApiError(
@@ -114,10 +117,12 @@ const updateAddress = asyncHandler(async (req, res) => {
   }
 
   const { addressId } = req.params;
-  const { fullName, phone, pincode, state, city, addressLine, landmark, type } =
-    req.body;
+  const { pincode, state, city, addressLine, landmark, type } = req.body;
 
-  const address = await Address.findOne({ _id: addressId, user: req.user._id });
+  const address = await Address.findOne({
+    _id: addressId,
+    user: req.user._id,
+  }).populate("user", "firstName lastName phone");
 
   if (!address) {
     throw new ApiError(
@@ -126,9 +131,6 @@ const updateAddress = asyncHandler(async (req, res) => {
     );
   }
 
-  if (fullName !== undefined && fullName.trim() !== "")
-    address.fullName = fullName.trim();
-  if (phone !== undefined && phone.trim() !== "") address.phone = phone.trim();
   if (pincode !== undefined && pincode.trim() !== "")
     address.pincode = pincode.trim();
   if (state !== undefined && state.trim() !== "") address.state = state.trim();

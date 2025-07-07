@@ -15,6 +15,7 @@ import {
   completeUserRegistrationValidation,
   registerUserValidation,
   updateUserProfileValidation,
+  userAddressValidation,
   verifyUserOTPValidation,
 } from "../middlewares/validationMiddleware.js";
 import { verifyUserJWT } from "../middlewares/auth.middleware.js";
@@ -83,9 +84,13 @@ router.route("/me").delete(verifyUserJWT, deleteUserProfile);
  */
 
 router.route("/me/addresses").get(verifyUserJWT, getAddresses);
-router.route("/me/addresses").post(verifyUserJWT, addAddress);
+router
+  .route("/me/addresses")
+  .post(verifyUserJWT, userAddressValidation, addAddress);
 router.route("/me/addresses/:addressId").get(verifyUserJWT, getAddressById);
-router.route("/me/addresses/:addressId").put(verifyUserJWT, updateAddress);
+router
+  .route("/me/addresses/:addressId")
+  .put(verifyUserJWT, userAddressValidation, updateAddress);
 router.route("/me/addresses/:addressId").delete(verifyUserJWT, deleteAddress);
 
 /**

@@ -80,8 +80,6 @@ const completeUserRegistrationValidation = [
     .withMessage(
       "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
     ),
-  // Avatar file validation would be handled by Multer's file filter or later in controller,
-  // but you could add a custom check for file existence if strictly required.
   validate,
 ];
 
@@ -112,6 +110,8 @@ const changeUserPasswordValidation = [
   validate,
 ];
 
+// --- Pofile Validations ---
+
 const updateUserProfileValidation = [
   body("firstName")
     .notEmpty()
@@ -137,6 +137,52 @@ const updateUserProfileValidation = [
   validate,
 ];
 
+// --- Address Validations ---
+const userAddressValidation = [
+  body("pincode")
+    .trim()
+    .notEmpty()
+    .withMessage("Pincode is required.")
+    .isLength({ min: 6, max: 6 })
+    .withMessage("Pincode must be 6 digits.")
+    .isNumeric()
+    .withMessage("Pincode must contain only numbers."),
+  body("state")
+    .trim()
+    .notEmpty()
+    .withMessage("State is required.")
+    .isLength({ min: 2, max: 50 })
+    .withMessage("State must be between 2 and 50 characters."),
+
+  body("city")
+    .trim()
+    .notEmpty()
+    .withMessage("City is required.")
+    .isLength({ min: 2, max: 50 })
+    .withMessage("City must be between 2 and 50 characters."),
+
+  body("addressLine")
+    .trim()
+    .notEmpty()
+    .withMessage("Address line is required.")
+    .isLength({ min: 5, max: 200 })
+    .withMessage("Address line must be between 5 and 200 characters."),
+
+  body("landmark")
+    .trim()
+    .optional({ checkFalsy: true })
+    .isLength({ max: 100 })
+    .withMessage("Landmark can be at most 100 characters."),
+
+  body("type")
+    .trim()
+    .notEmpty()
+    .withMessage("Address type is required.")
+    .isIn(["home", "work", "other"])
+    .withMessage("Invalid address type. Must be 'home', 'work', or 'other'."),
+  validate,
+];
+
 export {
   registerUserValidation,
   verifyUserOTPValidation,
@@ -144,4 +190,5 @@ export {
   loginUserValidation,
   changeUserPasswordValidation,
   updateUserProfileValidation,
+  userAddressValidation,
 };

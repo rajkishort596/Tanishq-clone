@@ -5,8 +5,6 @@ const addressSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  fullName: String,
-  phone: String,
   pincode: String,
   state: String,
   city: String,
