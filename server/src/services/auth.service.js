@@ -38,21 +38,21 @@ export const genericForgotPassword = async (Model, email) => {
   const resetUrl = `${FRONTEND_URL}/reset-password/${resetToken}`;
 
   try {
-    await sendEmail({
-      to: entity.email,
-      subject: "Password Reset Request",
-      html: `
-                <div style="font-family: Arial, sans-serif; color: #222; max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
-                    <h2 style="color: #333; text-align: center;">Password Reset Request</h2>
-                    <p>Hello ${entity.fullName || entity.firstName || "User"},</p>
-                    <p>We received a request to reset your password for your Tanishq account. Click the button below to reset it:</p>
-                    <a href="${resetUrl}" style="display:inline-block;padding:12px 24px;background:#a11e3b;color:#fff;text-decoration:none;border-radius:4px;font-weight:bold;text-align:center;">Reset Password</a>
-                    <p style="margin-top: 20px;">If you did not request this, please ignore this email. Your password will remain unchanged.</p>
-                    <p style="margin-top:32px;font-size:12px;color:#888;">If the button doesn't work, copy and paste this link into your browser:<br><a href="${resetUrl}" style="color:#a11e3b;word-break: break-all;">${resetUrl}</a></p>
-                    <p style="margin-top: 20px; font-size: 14px; color: #555;">Thank you,<br>The Tanishq Team</p>
-                </div>
-            `,
-    });
+    await sendEmail(
+      entity.email,
+      "Password Reset Request",
+      `
+      <div style="font-family: Arial, sans-serif; color: #222; max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+          <h2 style="color: #333; text-align: center;">Password Reset Request</h2>
+          <p>Hello ${entity.fullName || entity.firstName || "User"},</p>
+          <p>We received a request to reset your password for your Tanishq account. Click the button below to reset it:</p>
+          <a href="${resetUrl}" style="display:inline-block;padding:12px 24px;background:#a11e3b;color:#fff;text-decoration:none;border-radius:4px;font-weight:bold;text-align:center;">Reset Password</a>
+          <p style="margin-top: 20px;">If you did not request this, please ignore this email. Your password will remain unchanged.</p>
+          <p style="margin-top:32px;font-size:12px;color:#888;">If the button doesn't work, copy and paste this link into your browser:<br><a href="${resetUrl}" style="color:#a11e3b;word-break: break-all;">${resetUrl}</a></p>
+          <p style="margin-top: 20px; font-size: 14px; color: #555;">Thank you,<br>The Tanishq Team</p>
+      </div>
+      `
+    );
   } catch (error) {
     console.error("Error sending password reset email:", error);
     throw new ApiError(
