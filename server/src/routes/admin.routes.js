@@ -23,6 +23,14 @@ import {
   getCategoryByIdAdmin,
   updateCategory,
 } from "../controllers/admin/category.controller.js";
+import { upload } from "../middlewares/multer.middleware.js";
+import {
+  createCollection,
+  deleteCollection,
+  getAllCollectionsAdmin,
+  getCollectionByIdAdmin,
+  updateCollection,
+} from "../controllers/admin/collection.controller.js";
 const router = Router();
 
 /**
@@ -50,13 +58,50 @@ router.route("/categories").post(verifyAdminJWT, createCategory);
 router.route("/categories").delete(verifyAdminJWT, deleteCategory);
 
 /**
+ * @CollectionRoutes
+ */
+router.route("/collections").get(verifyAdminJWT, getAllCollectionsAdmin);
+router
+  .route("/collections/:categoryId")
+  .get(verifyAdminJWT, getCollectionByIdAdmin);
+router.route("/collections/:categoryId").put(
+  verifyAdminJWT,
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "bannerImage", maxCount: 1 },
+  ]),
+  updateCollection
+);
+router.route("/collections").post(
+  verifyAdminJWT,
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "bannerImage", maxCount: 1 },
+  ]),
+  createCollection
+);
+router.route("/collections").delete(verifyAdminJWT, deleteCollection);
+
+/**
  * @ProductRoutes
  */
 
 router.route("/products").get(verifyAdminJWT, getAllProductsAdmin);
 router.route("/products/:productId").get(verifyAdminJWT, getProductByIdAdmin);
-router.route("/products").post(verifyAdminJWT, createProduct);
-router.route("/products/:productId").put(verifyAdminJWT, updateProduct);
+router
+  .route("/products")
+  .post(
+    verifyAdminJWT,
+    upload.fields([{ name: "images", maxCount: 10 }]),
+    createProduct
+  );
+router
+  .route("/products/:productId")
+  .put(
+    verifyAdminJWT,
+    upload.fields([{ name: "images", maxCount: 10 }]),
+    updateProduct
+  );
 router.route("/products/:productId").delete(verifyAdminJWT, deleteProduct);
 
 export default router;

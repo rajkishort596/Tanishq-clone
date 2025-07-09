@@ -143,7 +143,7 @@ const createProduct = asyncHandler(async (req, res) => {
 });
 
 /**
- * @desc Get all products (for admin view, potentially with more details/filters).
+ * @desc Get all products with advanced filtering, sorting, and pagination for admin view.
  * @route GET /api/v1/admin/products
  * @access Private (Admin only)
  */
@@ -151,23 +151,27 @@ const getAllProductsAdmin = asyncHandler(async (req, res) => {
   if (!req.admin) {
     throw new ApiError(
       403,
-      "Forbidden: Only administrators can view all products."
+      "Forbidden: Only administrators can view all products with detailed filters."
     );
   }
 
-  // Implement advanced filtering, sorting, pagination for admin view
+  // Extract query parameters for filtering, sorting, and pagination
   const {
     page = 1,
     limit = 10,
     search,
     category,
+    subCategory,
     collection,
     isActive,
+    sortBy = "createdAt",
+    sortOrder = "desc",
   } = req.query;
 
-  const query = {};
+  // Build the initial match query
+  const matchQuery = {};
   if (search) {
-    query.$or = [
+    matchQuery.$or = [
       { name: { $regex: search, $options: "i" } },
       { description: { $regex: search, $options: "i" } },
       { metal: { $regex: search, $options: "i" } },
@@ -175,32 +179,135 @@ const getAllProductsAdmin = asyncHandler(async (req, res) => {
     ];
   }
   if (category) {
-    query.category = category;
+    matchQuery.category = category;
+  }
+  if (subCategory) {
+    matchQuery.subCategory = subCategory;
   }
   if (collection) {
-    query.collections = collection;
+    matchQuery.collections = collection;
   }
   if (isActive !== undefined) {
-    query.isActive = isActive === "true";
+    matchQuery.isActive = isActive === "true";
   }
 
+  // Define the sort stage
+  const sortStage = {};
+  sortStage[sortBy] = sortOrder === "desc" ? -1 : 1; // -1 for descending, 1 for ascending
+
+  // Build the aggregation pipeline
+  const aggregatePipeline = [
+    // Stage 1: Filter products based on query parameters
+    { $match: matchQuery },
+
+    // Stage 2: Join with Category collection for main category name
+    {
+      $lookup: {
+        from: Category.collection.name, // The actual collection name in MongoDB (e.g., 'categories')
+        localField: "category",
+        foreignField: "_id",
+        as: "categoryDetails",
+      },
+    },
+    // Unwind categoryDetails to deconstruct the array. Since 'category' is usually a single ref,
+    // it's an array of one element.
+    { $unwind: { path: "$categoryDetails", preserveNullAndEmptyArrays: true } }, // preserveNull... keeps products without a category
+
+    // Stage 3: Join with Category collection for sub-category name
+    {
+      $lookup: {
+        from: Category.collection.name,
+        localField: "subCategory",
+        foreignField: "_id",
+        as: "subCategoryDetails",
+      },
+    },
+    {
+      $unwind: {
+        path: "$subCategoryDetails",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    // Stage 4: Join with Collection collection for collection names
+    {
+      $lookup: {
+        from: Collection.collection.name,
+        localField: "collections",
+        foreignField: "_id",
+        as: "collectionDetails",
+      },
+    },
+    // No unwind for collections if you want them as an array of objects
+
+    // Stage 5: Sort the results
+    { $sort: sortStage },
+
+    // Stage 6: Project (shape) the output documents
+    {
+      $project: {
+        name: 1,
+        description: 1,
+        price: 1,
+        stock: 1,
+        weight: 1,
+        images: 1,
+        metal: 1,
+        purity: 1,
+        gender: 1,
+        isActive: 1,
+        ratings: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        // Include populated fields directly in the root document
+        "category.name": "$categoryDetails.name",
+        "category._id": "$categoryDetails._id",
+        "subCategory.name": "$subCategoryDetails.name",
+        "subCategory._id": "$subCategoryDetails._id",
+        // Map collectionDetails to an array of just names and IDs
+        collections: {
+          $map: {
+            input: "$collectionDetails",
+            as: "coll",
+            in: {
+              _id: "$$coll._id",
+              name: "$$coll.name",
+            },
+          },
+        },
+        // You can add or remove fields as needed for the admin view
+        // For example, if you want specific variant details or only one image:
+        // 'variants.variantId': 1,
+        // 'variants.size': 1,
+        // 'mainImage': { $arrayElemAt: ['$images.url', 0] }
+      },
+    },
+  ];
+
+  // Options for mongoose-aggregate-paginate-v2
   const options = {
     page: parseInt(page, 10),
     limit: parseInt(limit, 10),
-    sort: { createdAt: -1 }, // Default sort by newest
-    populate: [
-      { path: "category", select: "name" },
-      { path: "subCategory", select: "name" },
-    ],
+    customLabels: {
+      totalDocs: "totalProducts",
+      docs: "products",
+    },
+    // populate is NOT used here because we are doing explicit $lookup in the pipeline
+    // populate: [
+    //     { path: 'category', select: 'name' },
+    //     { path: 'subCategory', select: 'name' },
+    // ],
   };
 
+  // Execute the aggregation with pagination
   const products = await Product.aggregatePaginate(
-    Product.aggregate([
-      { $match: query },
-      // Add more aggregation stages if needed for complex filtering/joining
-    ]),
+    Product.aggregate(aggregatePipeline),
     options
   );
+
+  if (!products) {
+    throw new ApiError(500, "Failed to fetch products.");
+  }
 
   return res
     .status(200)
@@ -255,7 +362,23 @@ const updateProduct = asyncHandler(async (req, res) => {
   }
 
   const { productId } = req.params;
-  const updateFields = req.body;
+  const {
+    name,
+    description,
+    price,
+    variants,
+    collections,
+    occasion,
+    stock,
+    weight,
+    category,
+    subCategory,
+    metal,
+    purity,
+    gender,
+    clearImages,
+  } = req.body;
+
   const imageLocalPaths = req.files?.images?.map((file) => file.path);
 
   const product = await Product.findById(productId);
@@ -263,16 +386,19 @@ const updateProduct = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Product not found.");
   }
 
-  // Handle image updates
   if (imageLocalPaths && imageLocalPaths.length > 0) {
-    // Option 1: Replace all existing images with new ones (simpler)
-    // Delete all old images from Cloudinary
     for (const img of product.images) {
-      await deleteImageFromCloudinary(img.publicId);
+      try {
+        await deleteImageFromCloudinary(img.publicId);
+      } catch (error) {
+        console.warn(
+          `Failed to delete old product image ${img.publicId}:`,
+          error.message
+        );
+      }
     }
-    product.images = []; // Clear existing images
+    product.images = [];
 
-    // Upload new images
     const uploadedImages = [];
     for (const path of imageLocalPaths) {
       try {
@@ -283,11 +409,7 @@ const updateProduct = asyncHandler(async (req, res) => {
           throw new Error("Cloudinary upload failed for a file.");
         }
       } catch (error) {
-        console.error(
-          "Error uploading new product image during update:",
-          error
-        );
-        // Clean up newly uploaded images if one fails
+        console.error("Error uploading new product image:", error);
         for (const img of uploadedImages) {
           await deleteImageFromCloudinary(img.publicId);
         }
@@ -298,61 +420,111 @@ const updateProduct = asyncHandler(async (req, res) => {
       }
     }
     product.images = uploadedImages;
-  } else if (updateFields.images === null || updateFields.images === "") {
-    // Option 2: Allow clearing all images if explicitly requested (e.g., frontend sends images: null)
+  } else if (clearImages === "true") {
     for (const img of product.images) {
-      await deleteImageFromCloudinary(img.publicId);
+      try {
+        await deleteImageFromCloudinary(img.publicId);
+      } catch (error) {
+        console.warn(
+          `Failed to delete old product image during explicit clear ${img.publicId}:`,
+          error.message
+        );
+      }
     }
     product.images = [];
-    delete updateFields.images; // Remove from updateFields to avoid Mongoose error
-  }
-  // If no new images and no explicit clear, existing images remain unchanged.
-
-  // Update other fields
-  // Use Object.assign or iterate through updateFields to apply updates
-  Object.assign(product, updateFields);
-
-  // Specific validation for nested objects like 'price' or arrays like 'variants', 'collections', 'occasion'
-  if (updateFields.price) {
-    if (updateFields.price.base !== undefined)
-      product.price.base = updateFields.price.base;
-    if (updateFields.price.makingCharges !== undefined)
-      product.price.makingCharges = updateFields.price.makingCharges;
-    if (updateFields.price.gst !== undefined)
-      product.price.gst = updateFields.price.gst;
-    if (updateFields.price.final !== undefined)
-      product.price.final = updateFields.price.final;
-  }
-  if (updateFields.variants) {
-    // This is a complex update. You might need to merge, add, or remove variants.
-    // For simplicity, this example assumes full replacement if 'variants' array is sent.
-    // A more robust solution would handle individual variant updates based on variantId.
-    product.variants = updateFields.variants;
-  }
-  if (updateFields.collections) {
-    product.collections = updateFields.collections;
-  }
-  if (updateFields.occasion) {
-    product.occasion = updateFields.occasion;
   }
 
-  // Validate Category existence if updated
-  if (updateFields.category) {
-    const existingCategory = await Category.findById(updateFields.category);
+  if (name !== undefined) product.name = name;
+  if (description !== undefined) product.description = description;
+  if (stock !== undefined) product.stock = stock;
+  if (weight !== undefined) product.weight = weight;
+  if (metal !== undefined) product.metal = metal;
+  if (purity !== undefined) product.purity = purity;
+  if (gender !== undefined) product.gender = gender;
+  if (req.body.isActive !== undefined) product.isActive = req.body.isActive;
+
+  if (price) {
+    if (price.base !== undefined) product.price.base = price.base;
+    if (price.makingCharges !== undefined)
+      product.price.makingCharges = price.makingCharges;
+    if (price.gst !== undefined) product.price.gst = price.gst;
+    if (price.final !== undefined) product.price.final = price.final;
+  }
+
+  if (collections !== undefined) {
+    // Validate Collections existence if updated
+    if (collections && collections.length > 0) {
+      const existingCollections = await Collection.find({
+        _id: { $in: collections },
+      });
+      if (existingCollections.length !== collections.length) {
+        throw new ApiError(
+          400,
+          "One or more provided Collection IDs are invalid."
+        );
+      }
+    }
+    product.collections = collections;
+  }
+  if (occasion !== undefined) product.occasion = occasion;
+
+  if (variants !== undefined) {
+    // Assuming 'variants' in req.body is an array of variant objects.
+    // Each variant object should ideally have a 'variantId' for existing ones,
+    // or be a new variant without a 'variantId' (or with null/undefined 'variantId').
+
+    const updatedVariantsMap = new Map(
+      product.variants.map((v) => [v.variantId, v])
+    );
+    const newProductVariants = [];
+
+    for (const incomingVariant of variants) {
+      if (incomingVariant.variantId) {
+        // Attempt to find and update an existing variant
+        const existingVariant = updatedVariantsMap.get(
+          incomingVariant.variantId
+        );
+        if (existingVariant) {
+          // Update properties of the existing variant
+          if (incomingVariant.size !== undefined)
+            existingVariant.size = incomingVariant.size;
+          if (incomingVariant.metalColor !== undefined)
+            existingVariant.metalColor = incomingVariant.metalColor;
+          if (incomingVariant.priceAdjustment !== undefined)
+            existingVariant.priceAdjustment = incomingVariant.priceAdjustment;
+          if (incomingVariant.stock !== undefined)
+            existingVariant.stock = incomingVariant.stock;
+          newProductVariants.push(existingVariant); // Add updated variant to new list
+          updatedVariantsMap.delete(incomingVariant.variantId); // Mark as processed
+        } else {
+          console.warn(
+            `Incoming variant with variantId ${incomingVariant.variantId} not found. Adding as new.`
+          );
+          newProductVariants.push({ ...incomingVariant }); // Add as new
+        }
+      } else {
+        newProductVariants.push({ ...incomingVariant });
+      }
+    }
+    product.variants = variants || [];
+  }
+
+  if (category !== undefined) {
+    const existingCategory = await Category.findById(category);
     if (!existingCategory) {
       throw new ApiError(404, "Invalid Category ID provided for update.");
     }
+    product.category = category;
   }
-  if (updateFields.subCategory) {
-    const existingSubCategory = await Category.findById(
-      updateFields.subCategory
-    );
+  if (subCategory !== undefined) {
+    const existingSubCategory = await Category.findById(subCategory);
     if (!existingSubCategory) {
       throw new ApiError(404, "Invalid SubCategory ID provided for update.");
     }
+    product.subCategory = subCategory;
   }
 
-  await product.save(); // Save the updated product. Mongoose will validate.
+  await product.save();
 
   return res
     .status(200)
@@ -391,10 +563,8 @@ const deleteProduct = asyncHandler(async (req, res) => {
     }
   }
 
-  // Delete the product from the database
-  await product.deleteOne(); // Use deleteOne() on the document instance
+  await product.deleteOne();
 
-  // Delete related reviews
   await Review.deleteMany({ product: productId });
 
   return res
