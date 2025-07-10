@@ -334,7 +334,7 @@ const getProductByIdAdmin = asyncHandler(async (req, res) => {
   const product = await Product.findById(productId)
     .populate("category", "name")
     .populate("subCategory", "name")
-    .populate("collections", "name imageUrl")
+    .populate("collections", "name image")
     .populate("reviews");
 
   if (!product) {

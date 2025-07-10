@@ -53,18 +53,22 @@ router.route("/categories").get(verifyAdminJWT, getAllCategoriesAdmin);
 router
   .route("/categories/:categoryId")
   .get(verifyAdminJWT, getCategoryByIdAdmin);
-router.route("/categories/:categoryId").put(verifyAdminJWT, updateCategory);
-router.route("/categories").post(verifyAdminJWT, createCategory);
-router.route("/categories").delete(verifyAdminJWT, deleteCategory);
+router
+  .route("/categories/:categoryId")
+  .put(verifyAdminJWT, upload.single("icon"), updateCategory);
+router
+  .route("/categories")
+  .post(verifyAdminJWT, upload.single("icon"), createCategory);
+router.route("/categories/:categoryId").delete(verifyAdminJWT, deleteCategory);
 
 /**
  * @CollectionRoutes
  */
 router.route("/collections").get(verifyAdminJWT, getAllCollectionsAdmin);
 router
-  .route("/collections/:categoryId")
+  .route("/collections/:collectionId")
   .get(verifyAdminJWT, getCollectionByIdAdmin);
-router.route("/collections/:categoryId").put(
+router.route("/collections/:collectionId").put(
   verifyAdminJWT,
   upload.fields([
     { name: "image", maxCount: 1 },
@@ -80,7 +84,9 @@ router.route("/collections").post(
   ]),
   createCollection
 );
-router.route("/collections").delete(verifyAdminJWT, deleteCollection);
+router
+  .route("/collections/:collectionId")
+  .delete(verifyAdminJWT, deleteCollection);
 
 /**
  * @ProductRoutes
