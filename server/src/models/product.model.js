@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import aggregatePaginate from "mongoose-aggregate-paginate-v2";
+import { v4 as uuidv4 } from "uuid";
 const productSchema = new Schema(
   {
     name: {
@@ -18,7 +19,7 @@ const productSchema = new Schema(
     variants: [
       // For different sizes, metals, or stone variations
       {
-        variantId: { type: String, unique: true, sparse: true }, // SKU for variant
+        variantId: { type: String }, // SKU for variant
         size: { type: String },
         metalColor: { type: String }, // e.g., White Gold, Rose Gold
         priceAdjustment: { type: Number, default: 0 }, // Price difference from base
@@ -96,6 +97,16 @@ const productSchema = new Schema(
   },
   { timestamps: true }
 );
+
+productSchema.pre("save", function (next) {
+  this.variants = this.variants.map((variant) => {
+    if (!variant.variantId) {
+      variant.variantId = uuidv4();
+    }
+    return variant;
+  });
+  next();
+});
 
 // Plug in the plugin
 productSchema.plugin(aggregatePaginate);

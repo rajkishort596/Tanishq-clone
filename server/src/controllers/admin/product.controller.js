@@ -4,6 +4,7 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 import { Product } from "../../models/product.model.js";
 import { Category } from "../../models/category.model.js";
 import { Collection } from "../../models/collection.model.js";
+import { Review } from "../../models/review.model.js";
 import {
   uploadOnCloudinary,
   deleteImageFromCloudinary,
@@ -250,6 +251,7 @@ const getAllProductsAdmin = asyncHandler(async (req, res) => {
         description: 1,
         price: 1,
         stock: 1,
+        variants: 1,
         weight: 1,
         images: 1,
         metal: 1,
@@ -275,11 +277,7 @@ const getAllProductsAdmin = asyncHandler(async (req, res) => {
             },
           },
         },
-        // You can add or remove fields as needed for the admin view
-        // For example, if you want specific variant details or only one image:
-        // 'variants.variantId': 1,
-        // 'variants.size': 1,
-        // 'mainImage': { $arrayElemAt: ['$images.url', 0] }
+        mainImage: { $arrayElemAt: ["$images.url", 0] },
       },
     },
   ];
@@ -292,11 +290,6 @@ const getAllProductsAdmin = asyncHandler(async (req, res) => {
       totalDocs: "totalProducts",
       docs: "products",
     },
-    // populate is NOT used here because we are doing explicit $lookup in the pipeline
-    // populate: [
-    //     { path: 'category', select: 'name' },
-    //     { path: 'subCategory', select: 'name' },
-    // ],
   };
 
   // Execute the aggregation with pagination
@@ -334,8 +327,8 @@ const getProductByIdAdmin = asyncHandler(async (req, res) => {
   const product = await Product.findById(productId)
     .populate("category", "name")
     .populate("subCategory", "name")
-    .populate("collections", "name image")
-    .populate("reviews");
+    .populate("collections", "name image");
+  // .populate("reviews");
 
   if (!product) {
     throw new ApiError(404, "Product not found.");
@@ -506,7 +499,7 @@ const updateProduct = asyncHandler(async (req, res) => {
         newProductVariants.push({ ...incomingVariant });
       }
     }
-    product.variants = variants || [];
+    product.variants = newProductVariants;
   }
 
   if (category !== undefined) {
@@ -563,9 +556,10 @@ const deleteProduct = asyncHandler(async (req, res) => {
     }
   }
 
+  if (product.reviews) {
+    await Review.deleteMany({ product: productId });
+  }
   await product.deleteOne();
-
-  await Review.deleteMany({ product: productId });
 
   return res
     .status(200)

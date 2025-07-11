@@ -70,8 +70,10 @@ const addToCart = asyncHandler(async (req, res) => {
 
     if (isSameProduct && isSameVariant) {
       itemFound = true;
-      const newQuantity = item.quantity + quantity;
+      const newQuantity = item.quantity + parseInt(quantity, 10);
+      // console.log(typeof item.quantity, typeof quantity);
       if (newQuantity > availableStock) {
+        // console.log(newQuantity, availableStock);
         throw new ApiError(
           400,
           `Cannot add more. Max available stock is ${availableStock}.`
@@ -88,7 +90,7 @@ const addToCart = asyncHandler(async (req, res) => {
     user.cart.items.push({
       product: productId,
       variantId: variantId || undefined, // Store undefined if no variant
-      quantity: quantity,
+      quantity: parseInt(quantity, 10),
       addedAt: new Date(),
     });
   }
@@ -230,7 +232,7 @@ const updateCartItemQuantity = asyncHandler(async (req, res) => {
     );
   }
 
-  cartItem.quantity = quantity;
+  cartItem.quantity = parseInt(quantity, 10);
   user.cart.lastUpdated = new Date();
 
   // Recalculate totals
