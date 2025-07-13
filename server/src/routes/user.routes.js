@@ -13,6 +13,7 @@ import {
 import {
   changeUserPasswordValidation,
   completeUserRegistrationValidation,
+  createOrderValidation,
   registerUserValidation,
   updateUserProfileValidation,
   userAddressValidation,
@@ -40,6 +41,16 @@ import {
   removeCartItem,
   updateCartItemQuantity,
 } from "../controllers/user/cart.controller.js";
+import {
+  createOrder,
+  getUserOrderById,
+  getUserOrders,
+} from "../controllers/user/order.controller.js";
+import {
+  addProductToWishlist,
+  getUserWishlist,
+  removeProductFromWishlist,
+} from "../controllers/user/wishlist.controller.js";
 const router = Router();
 
 /**
@@ -102,5 +113,27 @@ router.route("/me/cart").post(verifyUserJWT, addToCart);
 router.route("/me/cart/:productId").put(verifyUserJWT, updateCartItemQuantity);
 router.route("/me/cart/:productId").delete(verifyUserJWT, removeCartItem);
 router.route("/me/cart").delete(verifyUserJWT, clearCart);
+
+/**
+ * @OrderRoutes
+ */
+
+router.route("/me/orders").get(verifyUserJWT, getUserOrders);
+router
+  .route("/me/orders")
+  .post(verifyUserJWT, createOrderValidation, createOrder);
+router.route("/me/orders/:orderId").get(verifyUserJWT, getUserOrderById);
+
+/**
+ * @WishlistRoutes
+ */
+
+router.route("/me/wishlist").get(verifyUserJWT, getUserWishlist);
+router
+  .route("/me/wishlist/:productId")
+  .post(verifyUserJWT, addProductToWishlist);
+router
+  .route("/me/wishlist/:productId")
+  .delete(verifyUserJWT, removeProductFromWishlist);
 
 export default router;

@@ -1,8 +1,8 @@
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
-import { User } from "../../models/user.model.js"; // Assuming your User model
-import { Product } from "../../models/product.model.js"; // Assuming your Product model
+import { User } from "../../models/user.model.js";
+import { Product } from "../../models/product.model.js";
 
 /**
  * @desc Add a product to the authenticated user's cart.
