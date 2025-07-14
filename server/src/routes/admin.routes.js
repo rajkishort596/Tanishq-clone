@@ -57,79 +57,80 @@ router.route("/refresh-token").post(refreshAdminAccessToken);
 /**
  * @CategoryRoutes
  */
-router.route("/categories").get(verifyAdminJWT, getAllCategoriesAdmin);
-router
-  .route("/categories/:categoryId")
-  .get(verifyAdminJWT, getCategoryByIdAdmin);
-router
-  .route("/categories/:categoryId")
-  .put(
-    verifyAdminJWT,
-    updateCategoryValidation,
-    upload.single("icon"),
-    updateCategory
-  );
 router
   .route("/categories")
+  .get(verifyAdminJWT, getAllCategoriesAdmin)
   .post(
     verifyAdminJWT,
     createCategoryValidation,
     upload.single("icon"),
     createCategory
   );
-router.route("/categories/:categoryId").delete(verifyAdminJWT, deleteCategory);
+
+router
+  .route("/categories/:categoryId")
+  .get(verifyAdminJWT, getCategoryByIdAdmin)
+  .put(
+    verifyAdminJWT,
+    updateCategoryValidation,
+    upload.single("icon"),
+    updateCategory
+  )
+  .delete(verifyAdminJWT, deleteCategory);
 
 /**
  * @CollectionRoutes
  */
-router.route("/collections").get(verifyAdminJWT, getAllCollectionsAdmin);
+router
+  .route("/collections")
+  .get(verifyAdminJWT, getAllCollectionsAdmin)
+  .post(
+    verifyAdminJWT,
+    createCollectionValidation,
+    upload.fields([
+      { name: "image", maxCount: 1 },
+      { name: "bannerImage", maxCount: 1 },
+    ]),
+    createCollection
+  );
+
 router
   .route("/collections/:collectionId")
-  .get(verifyAdminJWT, getCollectionByIdAdmin);
-router.route("/collections/:collectionId").put(
-  verifyAdminJWT,
-  updateCollectionValidation,
-  upload.fields([
-    { name: "image", maxCount: 1 },
-    { name: "bannerImage", maxCount: 1 },
-  ]),
-  updateCollection
-);
-router.route("/collections").post(
-  verifyAdminJWT,
-  createCollectionValidation,
-  upload.fields([
-    { name: "image", maxCount: 1 },
-    { name: "bannerImage", maxCount: 1 },
-  ]),
-  createCollection
-);
-router
-  .route("/collections/:collectionId")
+  .get(verifyAdminJWT, getCollectionByIdAdmin)
+  .put(
+    verifyAdminJWT,
+    updateCollectionValidation,
+    upload.fields([
+      { name: "image", maxCount: 1 },
+      { name: "bannerImage", maxCount: 1 },
+    ]),
+    updateCollection
+  )
   .delete(verifyAdminJWT, deleteCollection);
 
 /**
  * @ProductRoutes
  */
 
-router.route("/products").get(verifyAdminJWT, getAllProductsAdmin);
-router.route("/products/:productId").get(verifyAdminJWT, getProductByIdAdmin);
 router
   .route("/products")
+  .get(verifyAdminJWT, getAllProductsAdmin)
   .post(
     verifyAdminJWT,
     createProductValidation,
     upload.fields([{ name: "images", maxCount: 10 }]),
     createProduct
   );
+
 router
   .route("/products/:productId")
+  .get(verifyAdminJWT, getProductByIdAdmin)
   .put(
     verifyAdminJWT,
     updateProductValidation,
     upload.fields([{ name: "images", maxCount: 10 }]),
     updateProduct
-  );
-router.route("/products/:productId").delete(verifyAdminJWT, deleteProduct);
+  )
+  .delete(verifyAdminJWT, deleteProduct);
 
 export default router;

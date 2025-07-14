@@ -28,9 +28,11 @@ app.get(
 //routes import
 import userRouter from "./routes/user.routes.js";
 import adminRouter from "./routes/admin.routes.js";
+import publicRouter from "./routes/public.routes.js";
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/public", publicRouter);
 
 import { errorHandler } from "./middlewares/errorHandler.middleware.js";
 

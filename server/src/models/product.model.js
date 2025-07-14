@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import aggregatePaginate from "mongoose-aggregate-paginate-v2";
+import mongoosePaginate from "mongoose-paginate-v2";
 import { v4 as uuidv4 } from "uuid";
 const productSchema = new Schema(
   {
@@ -94,6 +95,10 @@ const productSchema = new Schema(
         ref: "Review",
       },
     ],
+    ratings: {
+      average: { type: Number, default: 0 },
+      count: { type: Number, default: 0 },
+    },
     isActive: {
       type: Boolean,
       default: true,
@@ -114,5 +119,6 @@ productSchema.pre("save", function (next) {
 
 // Plug in the plugin
 productSchema.plugin(aggregatePaginate);
+productSchema.plugin(mongoosePaginate);
 
 export const Product = mongoose.model("Product", productSchema);

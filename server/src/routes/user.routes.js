@@ -15,6 +15,7 @@ import {
   completeUserRegistrationValidation,
   createOrderValidation,
   registerUserValidation,
+  reviewValidation,
   updateUserProfileValidation,
   userAddressValidation,
   verifyUserOTPValidation,
@@ -51,6 +52,12 @@ import {
   getUserWishlist,
   removeProductFromWishlist,
 } from "../controllers/user/wishlist.controller.js";
+import {
+  deleteReview,
+  getProductReviews,
+  submitReview,
+  updateReview,
+} from "../controllers/user/review.controller.js";
 const router = Router();
 
 /**
@@ -81,46 +88,50 @@ router.route("/refresh-token").post(refreshUserAccessToken);
  * @ProfileRoutes
  */
 
-router.route("/me").get(verifyUserJWT, getUserProfile);
 router
   .route("/me")
-  .put(verifyUserJWT, updateUserProfileValidation, updateUserProfile);
+  .get(verifyUserJWT, getUserProfile)
+  .put(verifyUserJWT, updateUserProfileValidation, updateUserProfile)
+  .delete(verifyUserJWT, deleteUserProfile);
 router
   .route("/me/avatar")
   .put(verifyUserJWT, upload.single("avatar"), updateUserAvatar);
-router.route("/me").delete(verifyUserJWT, deleteUserProfile);
 
 /**
  * @AddressRoutes
  */
 
-router.route("/me/addresses").get(verifyUserJWT, getAddresses);
 router
   .route("/me/addresses")
+  .get(verifyUserJWT, getAddresses)
   .post(verifyUserJWT, userAddressValidation, addAddress);
-router.route("/me/addresses/:addressId").get(verifyUserJWT, getAddressById);
 router
   .route("/me/addresses/:addressId")
-  .put(verifyUserJWT, userAddressValidation, updateAddress);
-router.route("/me/addresses/:addressId").delete(verifyUserJWT, deleteAddress);
+  .get(verifyUserJWT, getAddressById)
+  .put(verifyUserJWT, userAddressValidation, updateAddress)
+  .delete(verifyUserJWT, deleteAddress);
 
 /**
  * @CartRoutes
  */
 
-router.route("/me/cart").get(verifyUserJWT, getCart);
-router.route("/me/cart").post(verifyUserJWT, addToCart);
-router.route("/me/cart/:productId").put(verifyUserJWT, updateCartItemQuantity);
-router.route("/me/cart/:productId").delete(verifyUserJWT, removeCartItem);
-router.route("/me/cart").delete(verifyUserJWT, clearCart);
+router
+  .route("/me/cart")
+  .get(verifyUserJWT, getCart)
+  .post(verifyUserJWT, addToCart)
+  .delete(verifyUserJWT, clearCart);
+router
+  .route("/me/cart/:productId")
+  .put(verifyUserJWT, updateCartItemQuantity)
+  .delete(verifyUserJWT, removeCartItem);
 
 /**
  * @OrderRoutes
  */
 
-router.route("/me/orders").get(verifyUserJWT, getUserOrders);
 router
   .route("/me/orders")
+  .get(verifyUserJWT, getUserOrders)
   .post(verifyUserJWT, createOrderValidation, createOrder);
 router.route("/me/orders/:orderId").get(verifyUserJWT, getUserOrderById);
 
@@ -131,9 +142,21 @@ router.route("/me/orders/:orderId").get(verifyUserJWT, getUserOrderById);
 router.route("/me/wishlist").get(verifyUserJWT, getUserWishlist);
 router
   .route("/me/wishlist/:productId")
-  .post(verifyUserJWT, addProductToWishlist);
-router
-  .route("/me/wishlist/:productId")
+  .post(verifyUserJWT, addProductToWishlist)
   .delete(verifyUserJWT, removeProductFromWishlist);
+
+/**
+ * @ReviewRoutes
+ */
+
+router
+  .route("/products/:productId/reviews")
+  .get(getProductReviews)
+  .post(verifyUserJWT, reviewValidation, submitReview);
+
+router
+  .route("/reviews/:reviewId")
+  .put(verifyUserJWT, reviewValidation, updateReview)
+  .delete(verifyUserJWT, deleteReview);
 
 export default router;
