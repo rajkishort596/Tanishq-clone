@@ -14,7 +14,8 @@ const productSchema = new Schema(
     price: {
       base: { type: Number, required: true }, // Base price
       makingCharges: { type: Number, default: 0 }, // Making charges
-      gst: { type: Number, default: 0 }, // GST/Taxes amount
+      gst: { type: Number, default: 3 }, // GST/Rate
+      gstAmount: { type: Number, default: 0 }, // GST/Taxes amount
       final: { type: Number, required: true }, // Final price for display (calculated)
     },
     variants: [
