@@ -39,6 +39,19 @@ import {
   getCollectionByIdAdmin,
   updateCollection,
 } from "../controllers/admin/collection.controller.js";
+import { get } from "mongoose";
+import {
+  deleteOrderAdmin,
+  getAllOrdersAdmin,
+  getOrderByIdAdmin,
+  updateOrderStatus,
+} from "../controllers/admin/order.controller.js";
+import {
+  deleteReviewAdmin,
+  getAllReviewsAdmin,
+  getReviewByIdAdmin,
+  updateReviewApprovalStatus,
+} from "../controllers/admin/review.controller.js";
 const router = Router();
 
 /**
@@ -132,5 +145,27 @@ router
     updateProduct
   )
   .delete(verifyAdminJWT, deleteProduct);
+
+/**
+ * @OrderRoutes
+ */
+router.route("/orders").get(verifyAdminJWT, getAllOrdersAdmin);
+router
+  .route("/orders/:orderId")
+  .get(verifyAdminJWT, getOrderByIdAdmin)
+  .delete(verifyAdminJWT, deleteOrderAdmin);
+router.route("/orders/:orderId/status").put(verifyAdminJWT, updateOrderStatus);
+
+/**
+ * @ReviewsRoutes
+ */
+router.route("/reviews").get(verifyAdminJWT, getAllReviewsAdmin);
+router
+  .route("/reviews/:reviewId")
+  .get(verifyAdminJWT, getReviewByIdAdmin)
+  .delete(verifyAdminJWT, deleteReviewAdmin);
+router
+  .route("/reviews/:reviewId/status")
+  .put(verifyAdminJWT, updateReviewApprovalStatus);
 
 export default router;
