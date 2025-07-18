@@ -52,6 +52,13 @@ import {
   getReviewByIdAdmin,
   updateReviewApprovalStatus,
 } from "../controllers/admin/review.controller.js";
+import {
+  createBanner,
+  deleteBanner,
+  getAllBannersAdmin,
+  getBannerByIdAdmin,
+  updateBanner,
+} from "../controllers/admin/banner.controller.js";
 const router = Router();
 
 /**
@@ -167,5 +174,18 @@ router
 router
   .route("/reviews/:reviewId/status")
   .put(verifyAdminJWT, updateReviewApprovalStatus);
+
+/**
+ * @BannerRoutes
+ */
+router
+  .route("/banners")
+  .get(verifyAdminJWT, getAllBannersAdmin)
+  .post(verifyAdminJWT, upload.single("image"), createBanner);
+router
+  .route("/banners/:bannerId")
+  .get(verifyAdminJWT, getBannerByIdAdmin)
+  .put(verifyAdminJWT, upload.single("image"), updateBanner)
+  .delete(verifyAdminJWT, deleteBanner);
 
 export default router;

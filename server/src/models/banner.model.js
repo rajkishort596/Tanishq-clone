@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
 const bannerSchema = new Schema({
   image: {
     url: {
@@ -18,4 +19,5 @@ const bannerSchema = new Schema({
     default: true,
   },
 });
+bannerSchema.plugin(mongoosePaginate);
 export const Banner = mongoose.model("Banner", bannerSchema);
