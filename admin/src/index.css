@@ -1,0 +1,54 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-white: #fff;
+  --color-black: #000;
+  --color-blue: #0070d2;
+  --color-green: #1fa042;
+  --color-primary: #832729;
+  --color-secondary: #300708;
+  --color-red: #c00;
+  --color-success: var(--color-green);
+  --color-danger: var(--color-red);
+  --color-light-blue: #7ed0ee;
+  --color-grey1: #f9f9f9;
+  --color-grey2: #eee;
+  --color-grey3: #ccc;
+  --color-grey4: #999;
+  --color-grey5: #666;
+  --color-grey6: #444;
+  --color-grey7: #222;
+  --color-grey8: #333;
+
+  --font-nunito: "Nunito Sans", sans-serif;
+  --font-fraunces: "Fraunces", serif;
+  --font-IBM-Plex: "IBM Plex Sans", sans-serif;
+}
+html,
+body,
+#root {
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+@layer components {
+  .btn-primary {
+    @apply px-4 cursor-pointer flex justify-center items-center py-2 rounded text-white font-bold font-nunito shadow-md bg-gradient-to-r from-[#832729] to-[#631517];
+  }
+
+  .card {
+    @apply text-white p-6 rounded-sm object-cover border-none shadow-md;
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+  }
+}
+body {
+  @apply text-[var(--color-grey7)] font-[var(--font-nunito)];
+}
