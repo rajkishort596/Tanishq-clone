@@ -4,14 +4,13 @@ import images from "../constants/images.js";
 import Spinner from "./Spinner.jsx";
 
 const Sidebar = () => {
-  const [loading, setLoading] = useState(false);
-
   const handleLogout = async () => {
     setLoading(true);
     console.log("Logout action triggered");
   };
+
   return (
-    <aside className="h-screen bg-bg text-gray-800 shadow-md p-4 flex flex-col gap-6 md:w-[250px]">
+    <aside className="h-screen bg-white font-fraunces text-grey8 shadow-md p-4 flex flex-col gap-6 md:w-[250px]">
       {/* Logo */}
       <div className="flex items-center">
         <img src={images.logo} alt="Logo" className="w-20 h-20" />
@@ -26,7 +25,10 @@ const Sidebar = () => {
         <NavItem
           to="/categories"
           label="Categories"
-          icon={{ active: images.houseIcon, inactive: images.blackHouseIcon }}
+          icon={{
+            active: images.categoryIcon,
+            inactive: images.blackCategoryIcon,
+          }}
         />
         <NavItem
           to="/collections"
@@ -66,17 +68,10 @@ const Sidebar = () => {
         onClick={() => {
           handleLogout();
         }}
-        className="mt-auto mb-10 text-left flex gap-3 px-3 py-2 rounded-md font-medium transition-colors items-center cursor-pointer hover:bg-primary/20"
+        className="mt-auto mb-10 text-left flex gap-3 px-3 py-2 rounded-md font-medium transition-all items-center cursor-pointer transform hover:translate-x-1 delay-150 hover:bg-primary/20"
       >
         <img src={images.logoutIcon} className="h-5 w-5" alt={`icon`} />
         logout
-        {loading ? (
-          <span className="ml-auto">
-            <Spinner />
-          </span>
-        ) : (
-          ""
-        )}
       </button>
     </aside>
   );
@@ -87,7 +82,7 @@ const NavItem = ({ to, label, icon }) => (
     to={to}
     end
     className={({ isActive }) =>
-      `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition-colors ${
+      `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition-all transform hover:translate-x-1 delay-150 ${
         isActive ? "bg-primary text-white" : "hover:bg-primary/20"
       }`
     }
