@@ -5,7 +5,8 @@ import {
   createRoutesFromChildren,
   RouterProvider,
 } from "react-router-dom";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 // Layout
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
@@ -37,7 +38,23 @@ function App() {
     )
   );
 
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+    </>
+  );
 }
 
 export default App;

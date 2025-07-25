@@ -1,5 +1,5 @@
 import React from "react";
-// import { formatDate, formatTime } from "../../utils/formatDateTime";
+import { formatDate } from "../../utils/formatters";
 
 const OrdersTable = ({
   orders,
@@ -7,15 +7,15 @@ const OrdersTable = ({
   onStatusChange,
   onDelete,
 }) => (
-  <div className="bg-white backdrop-blur-lg relative z-5 p-6 rounded-xl font-IBM-Plex shadow-lg border border-gray-200 overflow-x-auto">
+  <div className="bg-white/60 backdrop-blur-lg relative z-5 p-6 rounded-xl font-IBM-Plex shadow-lg border border-gray-200 overflow-x-auto">
     <table className="w-full table-auto text-sm text-left text-gray-800">
       <thead className="text-primary font-semibold border-b border-gray-300">
         <tr>
           <th className="py-2 px-4">Customer Name</th>
-          <th className="py-2 px-4">Placed At</th>
+          <th className="py-2 px-4">Placed On</th>
           <th className="py-2 px-4">Payment Mode</th>
-          <th className="py-2 px-4">Product</th>
-          <th className="py-2 px-4">Order No.</th>
+          <th className="py-2 px-4">Product Name</th>
+          <th className="py-2 px-4">Order Number</th>
           <th className="py-2 px-4">Payment Status</th>
           {showActions && <th className="py-2 px-4">Status</th>}
           {showActions && <th className="py-2 px-4">Actions</th>}
@@ -37,13 +37,14 @@ const OrdersTable = ({
               key={ord._id}
               className="border-b border-gray-200 hover:bg-white/70 transition"
             >
-              <td className="py-2 px-4">{ord.user?.fullName || "-"}</td>
-              <td className="py-2 px-4">{formatDate(ord.playcedAt)}</td>
-              <td className="py-2 px-4">{ord.paymentDetails?.method}</td>
-              <td className="py-2 px-4">{ord.Product?.name}</td>
               <td className="py-2 px-4">
-                {formatTime(ord.paymentDetails.status)}
+                {ord.user?.firstName + " " + ord.user?.lastName || "-"}
               </td>
+              <td className="py-2 px-4">{formatDate(ord.placedAt)}</td>
+              <td className="py-2 px-4">{ord.paymentDetails?.method}</td>
+              <td className="py-2 px-4">{ord.items[0]?.name}</td>
+              <td className="py-2 px-4">{ord.orderNumber}</td>
+              <td className="py-2 px-4">{ord.paymentDetails.status}</td>
 
               {showActions && (
                 <>

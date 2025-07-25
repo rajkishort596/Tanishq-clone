@@ -1,44 +1,34 @@
-import React, { useState, useEffect } from "react";
-import { DollarSign, ShoppingCart, Users, Star } from "lucide-react";
+// src/pages/Dashboard.jsx
+import React, { useEffect } from "react";
+import { DollarSign, ShoppingCart, Users, Star, Package } from "lucide-react";
 import Spinner from "../components/Spinner";
 import StatCard from "../components/Card/StatCard";
 import OrdersTable from "../components/Table/OrdersTable";
+import { useDashboardStats } from "../hooks/useDashboardStats";
+import { toast } from "react-toastify";
+import { formatCurrency, formatNumber } from "../utils/formatters";
 
 const Dashboard = () => {
-  const [loading, setLoading] = useState(true);
-  const [dashboardData, setDashboardData] = useState(null);
-  const [orders, setOrders] = useState([]);
-
+  const { data: dashboardData, isLoading, error } = useDashboardStats();
+  console.log(dashboardData);
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      setLoading(true);
-      try {
-        // Mock data for demonstration purposes
-        const mockData = {
-          totalSales: "₹ 1,25,00,000",
-          totalOrders: 1250,
-          newCustomers: 85,
-          pendingReviews: 15,
-          outOfStockProducts: 20,
-        };
+    if (error) {
+      toast.error(error?.message || "Failed to load dashboard data.");
+    }
+  }, [error]);
 
-        setTimeout(() => {
-          setDashboardData(mockData);
-          setLoading(false);
-        }, 1500);
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchDashboardData();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center absolute inset-0 bg-white/80 z-50">
         <Spinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-full min-h-[calc(100vh-120px)] text-red-600">
+        <p>Error: {error.message || "Could not load dashboard data."}</p>
       </div>
     );
   }
@@ -50,11 +40,10 @@ const Dashboard = () => {
       </h2>
 
       {dashboardData && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* Using the reusable StatCard component */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <StatCard
             title="Total Sales"
-            value={dashboardData.totalSales}
+            value={formatCurrency(dashboardData?.totalSales)}
             icon={DollarSign}
             iconBgColor="bg-rose-100"
             iconTextColor="text-rose-600"
@@ -62,7 +51,7 @@ const Dashboard = () => {
 
           <StatCard
             title="Total Orders"
-            value={dashboardData.totalOrders}
+            value={formatNumber(dashboardData?.totalOrders)}
             icon={ShoppingCart}
             iconBgColor="bg-blue-100"
             iconTextColor="text-blue-600"
@@ -70,7 +59,7 @@ const Dashboard = () => {
 
           <StatCard
             title="New Customers"
-            value={dashboardData.newCustomers}
+            value={formatNumber(dashboardData?.newCustomers)}
             icon={Users}
             iconBgColor="bg-green-100"
             iconTextColor="text-green-600"
@@ -78,10 +67,17 @@ const Dashboard = () => {
 
           <StatCard
             title="Pending Reviews"
-            value={dashboardData.pendingReviews}
+            value={formatNumber(dashboardData?.pendingReviews)}
             icon={Star}
             iconBgColor="bg-yellow-100"
             iconTextColor="text-yellow-600"
+          />
+          <StatCard
+            title="Out of Stock Products"
+            value={formatNumber(dashboardData?.outOfStockProducts)}
+            icon={Package}
+            iconBgColor="bg-red-100"
+            iconTextColor="text-red-600"
           />
         </div>
       )}
@@ -92,7 +88,8 @@ const Dashboard = () => {
           Recent Orders
         </h2>
         <div className="w-full overflow-x-auto">
-          <OrdersTable orders={orders} />
+          {/* Ensure dashboardData.recentOrders exists before passing */}
+          <OrdersTable orders={dashboardData?.recentOrders || []} />
         </div>
       </div>
     </div>

@@ -59,6 +59,7 @@ import {
   getBannerByIdAdmin,
   updateBanner,
 } from "../controllers/admin/banner.controller.js";
+import { getDashboardStats } from "../controllers/admin/dashboard.controller.js";
 const router = Router();
 
 /**
@@ -74,6 +75,10 @@ router
   .post(verifyAdminJWT, changeUserPasswordValidation, changePassword);
 router.route("/refresh-token").post(refreshAdminAccessToken);
 
+/**
+ * @StatRoute
+ */
+router.route("/stats").get(getDashboardStats);
 /**
  * @CategoryRoutes
  */
