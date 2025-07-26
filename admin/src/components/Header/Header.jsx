@@ -1,30 +1,16 @@
 import React from "react";
-// import { logoutAdmin } from "../../api/auth.Api";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { logout as logoutAction } from "../../features/authSlice.js";
-import images from "../../constants/images.js";
+import images from "../../constants/images";
 
-const Header = ({ isAuthenticated = false, user, image }) => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  //   const handleLogout = async () => {
-  //     const res = await logoutAdmin();
-  //     dispatch(logoutAction());
-  //     navigate("/admin/login");
-  //   };
-
+const Header = () => {
   return (
-    <div className="relative group cursor-pointer w-[200px] px-8 flex  ml-auto items-center">
-      {/* Profile image */}
+    <header className="w-full flex justify-between items-center bg-[var(--color-secondary)] px-6 py-4 shadow-sm rounded-md mb-6">
+      <img src={images.tanishq} alt="Tanishq Logo" className="h-10" />
       <img
         src={images.profile}
         alt="Profile"
-        className="h-10 w-10 rounded-full object-cover"
+        className="h-10 w-10 rounded-full object-cover border-2 border-gold glow-yellow"
       />
-      <img src={images.tanishq} alt="tanishq" />
-    </div>
+    </header>
   );
 };
 

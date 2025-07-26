@@ -11,12 +11,13 @@ import "react-toastify/dist/ReactToastify.css";
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
+import Login from "./pages/Login.jsx";
 
 function App() {
   const router = createBrowserRouter(
     createRoutesFromChildren(
       <>
-        <Route path="/login" element={<div>Login</div>} />
+        <Route path="/login" element={<Login />} />
         <Route
           path="/"
           element={
@@ -51,7 +52,7 @@ function App() {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="light"
+        theme="dark"
       />
     </>
   );

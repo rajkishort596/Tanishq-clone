@@ -45,7 +45,6 @@ const loginAdmin = asyncHandler(async (req, res) => {
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     maxAge: 24 * 60 * 60 * 1000,
   };
-
   return res
     .status(200)
     .cookie("adminAccessToken", accessToken, options)

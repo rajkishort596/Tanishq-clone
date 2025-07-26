@@ -1,5 +1,5 @@
 import React from "react";
-import TanishqIcon from "../assets/images/Spinner-Icon.png";
+import TanishqIcon from "../../public/favicon.webp";
 
 const Spinner = () => {
   return (
@@ -14,7 +14,7 @@ const Spinner = () => {
             x2="100%"
             y2="0%"
           >
-            <stop offset="0%" stopColor="#7b2323" />
+            <stop offset="0%" stopColor="#c9a86d" />
             <stop offset="100%" stopColor="#e6c6c6" />
           </linearGradient>
         </defs>

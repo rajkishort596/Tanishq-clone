@@ -1,103 +1,138 @@
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
-import images from "../constants/images.js";
-import Spinner from "./Spinner.jsx";
+import React from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import {
+  Home,
+  LayoutGrid,
+  Package,
+  Star,
+  ShoppingCart,
+  Layers,
+  Settings,
+  LogOut,
+  ImageIcon,
+} from "lucide-react";
 
-const Sidebar = () => {
+import images from "../constants/images";
+import { logout } from "../features/authSlice";
+import { useDispatch } from "react-redux";
+import { logoutAdmin } from "../api/auth.Api";
+
+const navLinks = [
+  {
+    to: "/",
+    label: "Dashboard",
+    icon: Home,
+    end: true,
+  },
+  {
+    to: "/categories",
+    label: "Categories",
+    icon: LayoutGrid,
+  },
+  {
+    to: "/collections",
+    label: "Collections",
+    icon: Layers,
+  },
+  {
+    to: "/products",
+    label: "Products",
+    icon: Package,
+  },
+  {
+    to: "/reviews",
+    label: "Reviews",
+    icon: Star,
+  },
+  {
+    to: "/orders",
+    label: "Orders",
+    icon: ShoppingCart,
+  },
+  {
+    to: "/banners",
+    label: "Banners",
+    icon: ImageIcon,
+  },
+  {
+    to: "/settings",
+    label: "Settings",
+    icon: Settings,
+  },
+];
+
+const Sidebar = ({ className = "" }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const handleLogout = async () => {
-    setLoading(true);
-    console.log("Logout action triggered");
+    await logoutAdmin();
+    console.log("Logout successful");
+    dispatch(logout());
+    navigate("/login");
   };
 
   return (
-    <aside className="h-screen bg-white font-fraunces text-grey8 shadow-md p-4 flex flex-col gap-6 md:w-[250px]">
-      {/* Logo */}
-      <div className="flex items-center">
-        <img src={images.logo} alt="Logo" className="w-20 h-20" />
+    <aside
+      className={`w-64 flex flex-col justify-between py-6 px-4 border-r border-grey8 ${className}`}
+    >
+      <div>
+        {/* Logo/Brand */}
+        <div className="flex items-center justify-center mb-10">
+          <img
+            src={images.logo}
+            alt="Tanishq Logo"
+            className="h-20 w-auto mb-4"
+          />
+        </div>
+
+        {/* Navigation Links */}
+        <nav>
+          <ul>
+            {navLinks.map(({ to, label, icon: Icon, end }, idx) => (
+              <li className="mb-2" key={to}>
+                <NavLink
+                  to={to}
+                  end={end}
+                  className={({ isActive }) =>
+                    `flex items-center p-3 rounded-lg transition-all duration-200 ${
+                      isActive
+                        ? "bg-primary text-gold font-medium shadow-md active-sidebar-link-glow"
+                        : "text-grey1 hover:bg-grey8 hover:text-gold"
+                    }`
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <Icon
+                        className={`h-5 w-5 mr-3 ${
+                          isActive ? "active-sidebar-icon-glow" : ""
+                        }`}
+                      />
+                      {label}
+                    </>
+                  )}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
-      {/* Navigation */}
-      <nav className="flex flex-col gap-4 text-base">
-        <NavItem
-          to="/"
-          label="Dashboard"
-          icon={{ active: images.houseIcon, inactive: images.blackHouseIcon }}
-        />
-        <NavItem
-          to="/categories"
-          label="Categories"
-          icon={{
-            active: images.categoryIcon,
-            inactive: images.blackCategoryIcon,
+
+      {/* Logout Button */}
+      <div className="mt-auto">
+        <button
+          onClick={() => {
+            handleLogout();
           }}
-        />
-        <NavItem
-          to="/collections"
-          label="Collections"
-          icon={{
-            active: images.collectionIcon,
-            inactive: images.blackCollectionIcon,
-          }}
-        />
-        <NavItem
-          to="/products"
-          label="Products"
-          icon={{ active: images.ringIcon, inactive: images.blackRingIcon }}
-        />
-        <NavItem
-          to="/reviews"
-          label="Reviews"
-          icon={{ active: images.starIcon, inactive: images.blackStarIcon }}
-        />
-        <NavItem
-          to="/orders"
-          label="Orders"
-          icon={{ active: images.orderIcon, inactive: images.blackOrderIcon }}
-        />
-        <NavItem
-          to="/banners"
-          label="Banners"
-          icon={{ active: images.bannerIcon, inactive: images.blackBannerIcon }}
-        />
-        <NavItem
-          to="/settings"
-          label="Settings"
-          icon={{ active: images.gearIcon, inactive: images.blackGearIcon }}
-        />
-      </nav>
-      <button
-        onClick={() => {
-          handleLogout();
-        }}
-        className="mt-auto mb-10 text-left flex gap-3 px-3 py-2 rounded-md font-medium transition-all items-center cursor-pointer transform hover:translate-x-1 delay-150 hover:bg-primary/20"
-      >
-        <img src={images.logoutIcon} className="h-5 w-5" alt={`icon`} />
-        logout
-      </button>
+          className="flex items-center cursor-pointer w-full p-3 rounded-lg text-grey3 hover:bg-primary hover:text-gold transition-colors duration-200"
+        >
+          <LogOut className="h-5 w-5 mr-3" />
+          Logout
+        </button>
+      </div>
     </aside>
   );
 };
-
-const NavItem = ({ to, label, icon }) => (
-  <NavLink
-    to={to}
-    end
-    className={({ isActive }) =>
-      `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition-all transform hover:translate-x-1 delay-150 ${
-        isActive ? "bg-primary text-white" : "hover:bg-primary/20"
-      }`
-    }
-  >
-    {({ isActive }) => (
-      <>
-        <img
-          src={isActive ? icon.active : icon.inactive}
-          className="h-5 w-5"
-          alt={`${label} icon`}
-        />
-        <span>{label}</span>
-      </>
-    )}
-  </NavLink>
-);
 
 export default Sidebar;

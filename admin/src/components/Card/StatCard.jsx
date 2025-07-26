@@ -4,17 +4,20 @@ const StatCard = ({
   title,
   value,
   icon: Icon,
-  iconBgColor = "bg-grey1",
-  iconTextColor = "text-grey6",
+  iconBgColor = "bg-gray-100",
+  iconTextColor = "text-gray-600",
+  glowClass = "",
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md p-5 relative z-10 flex items-center justify-between transition-transform transform hover:scale-105">
+    <div className="glass-card inset-glow-border flex items-center justify-between transition-transform transform hover:scale-105">
       <div>
-        <p className="text-sm text-grey5">{title}</p>
-        <h3 className="text-2xl font-bold text-grey8">{value}</h3>
+        <p className="text-sm text-[var(--color-grey3)]">{title}</p>
+        <h3 className="text-2xl font-bold text-[var(--color-gold)]">{value}</h3>
       </div>
       {Icon && (
-        <div className={`flex-shrink-0 p-3 rounded-full ${iconBgColor}`}>
+        <div
+          className={`flex-shrink-0 p-3 rounded-full ${iconBgColor} ${glowClass}`}
+        >
           <Icon className={`h-6 w-6 ${iconTextColor}`} />
         </div>
       )}

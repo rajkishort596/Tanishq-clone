@@ -1,4 +1,3 @@
-// src/pages/Dashboard.jsx
 import React, { useEffect } from "react";
 import { DollarSign, ShoppingCart, Users, Star, Package } from "lucide-react";
 import Spinner from "../components/Spinner";
@@ -10,7 +9,7 @@ import { formatCurrency, formatNumber } from "../utils/formatters";
 
 const Dashboard = () => {
   const { data: dashboardData, isLoading, error } = useDashboardStats();
-  console.log(dashboardData);
+
   useEffect(() => {
     if (error) {
       toast.error(error?.message || "Failed to load dashboard data.");
@@ -19,7 +18,7 @@ const Dashboard = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center absolute inset-0 bg-white/80 z-50">
+      <div className="flex justify-center items-center absolute inset-0 bg-black/10 z-50">
         <Spinner />
       </div>
     );
@@ -35,7 +34,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-content">
-      <h2 className="text-2xl text-primary font-semibold font-fraunces mb-6">
+      <h2 className="text-2xl text-gold-accent font-semibold font-fraunces mb-6">
         Overview Statistics
       </h2>
 
@@ -47,6 +46,7 @@ const Dashboard = () => {
             icon={DollarSign}
             iconBgColor="bg-rose-100"
             iconTextColor="text-rose-600"
+            glowClass="glow-rose"
           />
 
           <StatCard
@@ -55,6 +55,7 @@ const Dashboard = () => {
             icon={ShoppingCart}
             iconBgColor="bg-blue-100"
             iconTextColor="text-blue-600"
+            glowClass="glow-blue"
           />
 
           <StatCard
@@ -63,6 +64,7 @@ const Dashboard = () => {
             icon={Users}
             iconBgColor="bg-green-100"
             iconTextColor="text-green-600"
+            glowClass="glow-green"
           />
 
           <StatCard
@@ -71,6 +73,7 @@ const Dashboard = () => {
             icon={Star}
             iconBgColor="bg-yellow-100"
             iconTextColor="text-yellow-600"
+            glowClass="glow-yellow"
           />
           <StatCard
             title="Out of Stock Products"
@@ -78,17 +81,17 @@ const Dashboard = () => {
             icon={Package}
             iconBgColor="bg-red-100"
             iconTextColor="text-red-600"
+            glowClass="glow-red"
           />
         </div>
       )}
 
       {/* Recent Orders Table */}
       <div>
-        <h2 className="text-xl font-semibold text-primary font-fraunces mb-4">
+        <h2 className="text-xl font-semibold text-gold-accent font-fraunces mb-4">
           Recent Orders
         </h2>
-        <div className="w-full overflow-x-auto">
-          {/* Ensure dashboardData.recentOrders exists before passing */}
+        <div className="glass-card inset-glow-border">
           <OrdersTable orders={dashboardData?.recentOrders || []} />
         </div>
       </div>
