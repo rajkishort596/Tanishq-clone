@@ -1,40 +1,47 @@
-import React from "react";
+import React, { useId } from "react";
 
 const Input = ({
-  id,
-  type = "text",
-  icon: Icon,
-  placeholder,
-  error,
-  register,
   label,
-  ...rest
-}) => (
-  <div>
-    <label
-      htmlFor={id}
-      className="block text-sm font-medium text-[var(--color-grey3)] mb-2"
-    >
-      {label}
-    </label>
-    <div className="relative">
-      {Icon && (
-        <Icon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gold h-5 w-5" />
+  placeholder = "",
+  type,
+  className = "",
+  readonly = false,
+  error,
+  id,
+  ...props
+}) => {
+  return (
+    <div className="flex flex-col gap-1 w-full">
+      {label && (
+        <label htmlFor={id} className="font-IBM-Plex text-black text-sm mb-1">
+          {label}
+        </label>
       )}
+
       <input
-        id={id}
         type={type}
-        autoComplete="off"
+        id={id}
         placeholder={placeholder}
-        className={`w-full pl-10 pr-4 py-3 rounded-md bg-[#160c05] text-grey1 border ${
-          error ? "border-red-500" : "border-[#160c05]"
-        } focus:outline-none focus:ring-1 focus:ring-gold`}
-        {...register}
-        {...rest}
+        autoComplete="off"
+        readOnly={readonly}
+        className={`px-4 py-2 rounded-md border bg-white text-gray-800 transition-all duration-300 outline-none
+        ${
+          error
+            ? "border-red-500 focus:ring-red-300 text-red-600"
+            : "border-gray-300 focus:ring-primary"
+        }
+        ${
+          readonly
+            ? "bg-gray-100 cursor-not-allowed"
+            : "focus:ring-2 focus:border-transparent shadow-sm hover:shadow-md"
+        }
+        ${className}`}
+        {...props}
       />
+
+      {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
     </div>
-    {error && <p className="mt-1 text-sm text-red-500">{error.message}</p>}
-  </div>
-);
+  );
+};
 
 export default Input;

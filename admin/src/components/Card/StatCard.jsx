@@ -9,10 +9,10 @@ const StatCard = ({
   glowClass = "",
 }) => {
   return (
-    <div className="glass-card inset-glow-border flex items-center justify-between transition-transform transform hover:scale-105">
+    <div className="glass-card flex items-center justify-between transition-transform transform hover:scale-105">
       <div>
-        <p className="text-sm text-[var(--color-grey3)]">{title}</p>
-        <h3 className="text-2xl font-bold text-[var(--color-gold)]">{value}</h3>
+        <p className="text-sm text-black2">{title}</p>
+        <h3 className="text-2xl font-bold text-primary">{value}</h3>
       </div>
       {Icon && (
         <div

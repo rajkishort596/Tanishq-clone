@@ -6,9 +6,9 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import images from "../constants/images";
 import LoginHeroImg from "../assets/images/Login-HeroImg.png";
-import Input from "../components/Form/Input";
 import { loginAdmin } from "../api/auth.Api";
 import { setCredentials } from "../features/authSlice.js";
+import IconInput from "../components/Form/IconInput";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -67,7 +67,7 @@ const Login = () => {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
-              <Input
+              <IconInput
                 id="email"
                 type="email"
                 icon={Mail}
@@ -85,7 +85,7 @@ const Login = () => {
             </div>
 
             <div>
-              <Input
+              <IconInput
                 id="password"
                 type="password"
                 icon={Lock}

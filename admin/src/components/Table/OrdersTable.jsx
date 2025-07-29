@@ -7,12 +7,12 @@ const OrdersTable = ({
   onStatusChange,
   onDelete,
 }) => (
-  <table className="w-full table-auto text-sm text-left text-[var(--color-grey1)]">
+  <table className="w-full table-auto text-sm text-left text-gray-800">
     {/* Light text for table content */}
-    <thead className="text-gold-accent font-semibold border-b border-[var(--color-grey6)] uppercase text-[13px] tracking-wide">
+    <thead className="text-primary font-semibold border-b border-gray-300">
       {/* Gold header text, darker border */}
       <tr>
-        <th className="py-3 px-4">Customer</th>
+        <th className="py-3 px-4">Customer Name</th>
         <th className="py-3 px-4">Placed On</th>
         <th className="py-3 px-4">Payment Mode</th>
         <th className="py-3 px-4">Product</th>
@@ -36,7 +36,7 @@ const OrdersTable = ({
         orders.map((ord) => (
           <tr
             key={ord._id}
-            className="border-b border-grey7 hover:bg-grey8 transition"
+            className="border-b border-gray-200 hover:bg-white/70 transition"
           >
             <td className="py-3 px-4 whitespace-nowrap">
               {ord.user?.firstName + " " + ord.user?.lastName || "-"}

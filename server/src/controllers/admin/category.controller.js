@@ -102,13 +102,73 @@ const getAllCategoriesAdmin = asyncHandler(async (req, res) => {
     );
   }
 
-  const categories = await Category.find({})
-    .populate("parent", "name slug")
-    .sort({ name: 1 });
+  const {
+    page = 1,
+    limit = 10,
+    search = "",
+    parent,
+    sortBy = "name",
+    sortOrder = "asc",
+  } = req.query;
 
-  if (!categories || categories.length === 0) {
-    throw new ApiError(404, "Categories not found");
+  const query = {};
+
+  // Search filter
+  if (search) {
+    query.$or = [
+      { name: { $regex: search, $options: "i" } },
+      { slug: { $regex: search, $options: "i" } },
+    ];
   }
+
+  // Parent category filter
+  if (parent && parent !== "null" && parent !== "undefined") {
+    query.parent = parent;
+  } else if (parent === "null") {
+    query.parent = null;
+  }
+
+  // Sorting options
+  const sort = {};
+  sort[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+  // Pagination options
+  const options = {
+    page: parseInt(page, 10),
+    limit: parseInt(limit, 10),
+    sort,
+    populate: {
+      path: "parent",
+      select: "name slug",
+    },
+    customLabels: {
+      totalDocs: "totalCategories",
+      docs: "categories",
+    },
+  };
+
+  const categories = await Category.paginate(query, options);
+
+  if (!categories || categories.categories.length === 0) {
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          categories: [],
+          totalCategories: 0,
+          page: parseInt(page, 10),
+          limit: parseInt(limit, 10),
+          totalPages: 0,
+          hasNextPage: false,
+          hasPrevPage: false,
+          nextPage: null,
+          prevPage: null,
+        },
+        "No categories found."
+      )
+    );
+  }
+
   return res
     .status(200)
     .json(

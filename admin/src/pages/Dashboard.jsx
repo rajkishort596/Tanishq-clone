@@ -18,7 +18,7 @@ const Dashboard = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center absolute inset-0 bg-black/10 z-50">
+      <div className="flex justify-center items-center absolute inset-0 bg-white/80 z-50">
         <Spinner />
       </div>
     );
@@ -34,7 +34,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-content">
-      <h2 className="text-2xl text-gold-accent font-semibold font-fraunces mb-6">
+      <h2 className="text-2xl text-primary font-semibold font-fraunces mb-6">
         Overview Statistics
       </h2>
 
@@ -88,10 +88,10 @@ const Dashboard = () => {
 
       {/* Recent Orders Table */}
       <div>
-        <h2 className="text-xl font-semibold text-gold-accent font-fraunces mb-4">
+        <h2 className="text-xl font-semibold text-primary font-fraunces mb-4">
           Recent Orders
         </h2>
-        <div className="glass-card inset-glow-border">
+        <div className="glass-card">
           <OrdersTable orders={dashboardData?.recentOrders || []} />
         </div>
       </div>

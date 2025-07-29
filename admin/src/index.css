@@ -21,6 +21,7 @@
   --color-grey6: #5a4b45;
   --color-grey7: #3a2f2c;
   --color-grey8: #221d1c;
+  --color-black2: #160c05;
 
   --font-nunito: "Nunito Sans", sans-serif;
   --font-fraunces: "Fraunces", serif;
@@ -31,7 +32,6 @@ body,
 #root {
   overflow-x: hidden;
   box-sizing: border-box;
-  background-color: var(--color-secondary);
 }
 html {
   scroll-behavior: smooth;
@@ -43,7 +43,7 @@ html {
   }
 
   .glass-card {
-    background-color: rgba(46, 28, 27, 0.7);
+    background-color: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(201, 168, 109, 0.2);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -102,12 +102,6 @@ html {
   .active-sidebar-icon-glow {
     filter: drop-shadow(0 0 5px var(--color-gold));
   }
-
-  /* --- New Inset Glow Border Class --- */
-  .inset-glow-border {
-    box-shadow: inset 0 0 10px 2px rgba(201, 168, 109, 0.2),
-      inset 0 0 5px 1px rgba(201, 168, 109, 0.1);
-  }
 }
 
 @layer utilities {
@@ -123,12 +117,37 @@ html {
     color: var(--color-primary);
   }
 }
+
 body {
-  @apply text-[var(--color-grey1)] font-[var(--font-nunito)];
+  @apply font-[var(--font-nunito)];
 }
 .font-fraunces {
   font-family: var(--font-fraunces);
 }
 .font-IBM-Plex {
   font-family: var(--font-IBM-Plex);
+}
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 10px;
+  background: var(--color-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8b0808;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-secondary);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary) var(--color-white);
 }

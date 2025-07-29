@@ -12,6 +12,8 @@ import AdminLayout from "./layouts/AdminLayout.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import Login from "./pages/Login.jsx";
+import Category from "./pages/Category/Category.jsx";
+import CategoryForm from "./pages/Category/CategoryForm.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -27,7 +29,12 @@ function App() {
           }
         >
           <Route index element={<Dashboard />} />
-          <Route path="categories" element={<div>Category</div>} />
+          <Route path="categories" element={<Category />} />
+          <Route path="categories/new" element={<CategoryForm />} />
+          <Route
+            path="categories/edit/:categoryId"
+            element={<CategoryForm />}
+          />
           <Route path="collections" element={<div>Collections</div>} />
           <Route path="products" element={<div>Products</div>} />
           <Route path="orders" element={<div>Orders</div>} />
