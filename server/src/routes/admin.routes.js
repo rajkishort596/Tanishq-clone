@@ -87,18 +87,18 @@ router
   .get(verifyAdminJWT, getAllCategoriesAdmin)
   .post(
     verifyAdminJWT,
-    createCategoryValidation,
     upload.single("icon"),
+    createCategoryValidation,
     createCategory
   );
 
 router
   .route("/categories/:categoryId")
   .get(verifyAdminJWT, getCategoryByIdAdmin)
-  .put(
+  .patch(
     verifyAdminJWT,
-    updateCategoryValidation,
     upload.single("icon"),
+    updateCategoryValidation,
     updateCategory
   )
   .delete(verifyAdminJWT, deleteCategory);

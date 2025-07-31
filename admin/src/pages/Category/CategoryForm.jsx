@@ -11,7 +11,6 @@ const CategoryForm = () => {
   const { categoryId } = useParams();
   const isEditMode = !!categoryId;
   const navigate = useNavigate();
-
   const {
     categoryData,
     allCategories,
@@ -40,33 +39,27 @@ const CategoryForm = () => {
   });
 
   const watchIcon = watch("icon");
-  const watchClearIcon = watch("clearIcon");
-  const [previewIconUrl, setPreviewIconUrl] = useState(null);
+  const [previewIconUrl, setpreviewIconUrl] = useState(null);
 
   useEffect(() => {
     if (isEditMode && categoryData) {
       setValue("name", categoryData.name);
       setValue("description", categoryData.description);
       setValue("parent", categoryData.parent?._id || "");
-      setPreviewIconUrl(categoryData.icon?.url || null);
+      setpreviewIconUrl(categoryData.icon?.url || null);
     }
   }, [isEditMode, categoryData, setValue]);
 
   useEffect(() => {
-    if (watchIcon && watchIcon.length > 0 && watchIcon[0] instanceof File) {
-      setPreviewIconUrl(URL.createObjectURL(watchIcon[0]));
-      setValue("clearIcon", false);
-    } else if (watchClearIcon) {
-      setPreviewIconUrl(null);
-    } else if (!isEditMode && !watchIcon?.length && !watchClearIcon) {
-      setPreviewIconUrl(null);
-    }
-    return () => {
-      if (previewIconUrl && previewIconUrl.startsWith("blob:")) {
-        URL.revokeObjectURL(previewIconUrl);
+    if (watchIcon && watchIcon[0]) {
+      const file = watchIcon[0];
+      if (file instanceof File) {
+        const url = URL.createObjectURL(file);
+        setpreviewIconUrl(url);
+        return () => URL.revokeObjectURL(url);
       }
-    };
-  }, [watchIcon, watchClearIcon, isEditMode, previewIconUrl, setValue]);
+    }
+  }, [watchIcon]);
 
   useEffect(() => {
     if (formError) {
@@ -80,20 +73,25 @@ const CategoryForm = () => {
     formData.append("description", data.description);
     formData.append("parent", data.parent || "");
 
-    if (data.icon && data.icon.length > 0 && data.icon[0] instanceof File) {
-      formData.append("icon", data.icon[0]);
+    if (data.icon && data.icon[0] instanceof File) {
+      formData.append("icon", data.icon?.[0]);
     }
 
     if (isEditMode) {
-      updateCategory({ categoryId, formData });
+      await updateCategory({ categoryId, formData });
+      toast.success("Category updated successfully!");
     } else {
-      createCategory(formData);
+      await createCategory(formData);
+      toast.success("Category created successfully!");
     }
+    navigate("/categories");
   };
 
-  if (isLoadingForm) {
+  console.log("isCreatin:", isCreating, "isUpdating:", isUpdating);
+
+  if (isLoadingForm || isCreating || isUpdating) {
     return (
-      <div className="flex justify-center items-center h-full min-h-[calc(100vh-120px)]">
+      <div className="flex justify-center items-center absolute inset-0 bg-white/80 z-50">
         <Spinner />
       </div>
     );
@@ -137,7 +135,7 @@ const CategoryForm = () => {
               placeholder="Category Name"
               type="text"
               id="name"
-              error={errors.name}
+              error={errors.name?.message}
               {...register("name", {
                 required: "Category name is required.",
               })}
@@ -164,7 +162,7 @@ const CategoryForm = () => {
                     onClick={() =>
                       setValue("parent", isSelected ? "" : cat._id)
                     }
-                    className={`group items-center px-2 py-1 border text-xs cursor-pointer rounded-lg shadow-sm transition-all duration-200 ${
+                    className={`group items-center px-2 py-1 border text-xs cursor-pointer rounded-md shadow-sm transition-all duration-200 ${
                       isSelected
                         ? "bg-primary border-none text-white hover:bg-primary/90"
                         : "border-gray-300 hover:border-primary"
@@ -186,6 +184,7 @@ const CategoryForm = () => {
                   </button>
                 );
               })}
+              <input type="hidden" {...register("parent")} />
             </div>
 
             {errors.parent && (
@@ -234,8 +233,7 @@ const CategoryForm = () => {
               id="icon"
               {...register("icon", {
                 validate: (value) => {
-                  if (isEditMode && previewIconUrl && !watchClearIcon)
-                    return true;
+                  if (isEditMode && previewIconUrl) return true;
                   if (value && value.length > 0 && value[0] instanceof File)
                     return true;
                   return "Category icon is required.";
@@ -259,21 +257,6 @@ const CategoryForm = () => {
                   <span className="text-gray-400">Click to upload</span>
                 )}
               </label>
-
-              {isEditMode && previewIconUrl && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPreviewIconUrl(null);
-                    setValue("icon", null);
-                    setValue("clearIcon", true);
-                  }}
-                  className="text-red-600 cursor-pointer hover:text-red-800 transition p-1"
-                  title="Remove Icon"
-                >
-                  <XCircle className="w-6 h-6" />
-                </button>
-              )}
             </div>
             {errors.icon && (
               <p className="text-red-600 text-sm mt-1">{errors.icon.message}</p>

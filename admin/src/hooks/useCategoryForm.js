@@ -4,12 +4,8 @@ import {
   createCategory,
   updateCategory,
   fetchCategories,
-} from "../api/category.Api"; // Ensure fetchCategories is also imported
+} from "../api/category.Api";
 
-/**
- * Custom hook for managing category form data (fetch single, create, update).
- * @param {string | undefined} categoryId - The ID of the category if in edit mode, otherwise undefined.
- */
 export const useCategoryForm = (categoryId) => {
   const queryClient = useQueryClient();
   const isEditMode = !!categoryId;
@@ -22,7 +18,7 @@ export const useCategoryForm = (categoryId) => {
   } = useQuery({
     queryKey: ["category", categoryId],
     queryFn: () => fetchCategoryById(categoryId),
-    enabled: isEditMode, // Only run this query if categoryId is provided (edit mode)
+    enabled: isEditMode,
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
@@ -33,39 +29,35 @@ export const useCategoryForm = (categoryId) => {
     error: allCategoriesError,
   } = useQuery({
     queryKey: ["allCategories"],
-    queryFn: () => fetchCategories({ limit: 1000 }), // Fetch a large number to get all for dropdown
+    queryFn: () => fetchCategories({ limit: 1000 }),
     staleTime: 10 * 60 * 1000, // Cache for 10 minutes
   });
 
   // Mutation for creating a category
   const createMutation = useMutation({
-    mutationFn: createCategory,
+    mutationFn: (formData) => createCategory(formData),
     onSuccess: () => {
-      // Invalidate relevant caches on success
-      queryClient.invalidateQueries(["categories"]); // Invalidate the list of categories
-      queryClient.invalidateQueries(["allCategories"]); // Invalidate all categories for dropdowns
+      queryClient.invalidateQueries(["allCategories"]);
     },
-    // onError will be handled by the component using the mutation's error state
   });
 
   // Mutation for updating a category
   const updateMutation = useMutation({
-    mutationFn: updateCategory,
+    mutationFn: ({ categoryId, formData }) =>
+      updateCategory({ categoryId, formData }),
     onSuccess: () => {
-      // Invalidate relevant caches on success
-      queryClient.invalidateQueries(["category", categoryId]); // Invalidate the specific category
-      queryClient.invalidateQueries(["categories"]); // Invalidate the list of categories
-      queryClient.invalidateQueries(["allCategories"]); // Invalidate all categories for dropdowns
+      queryClient.invalidateQueries(["category", categoryId]);
+      queryClient.invalidateQueries(["allCategories"]);
     },
-    // onError will be handled by the component using the mutation's error state
   });
 
   // Combined loading and error states
   const isLoadingForm =
     isCategoryLoading ||
     isAllCategoriesLoading ||
-    createMutation.isLoading ||
-    updateMutation.isLoading;
+    createMutation.isPending ||
+    updateMutation.isPending;
+
   const formError =
     categoryError ||
     allCategoriesError ||
@@ -73,13 +65,13 @@ export const useCategoryForm = (categoryId) => {
     updateMutation.error;
 
   return {
-    categoryData, // Data for the specific category (if in edit mode)
-    allCategories: allCategoriesData?.categories || [], // All categories for the parent dropdown
+    categoryData,
+    allCategories: allCategoriesData?.categories || [],
     isLoadingForm,
     formError,
-    createCategory: createMutation.mutate,
-    updateCategory: updateMutation.mutate,
-    isCreating: createMutation.isLoading,
-    isUpdating: updateMutation.isLoading,
+    createCategory: createMutation.mutateAsync,
+    updateCategory: updateMutation.mutateAsync,
+    isCreating: createMutation.isPending,
+    isUpdating: updateMutation.isPending,
   };
 };

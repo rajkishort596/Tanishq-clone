@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchCategories, deleteCategory } from "../api/category.Api.js";
+import { toast } from "react-toastify";
 
 export const useCategories = (queryParams) => {
   const queryClient = useQueryClient();
@@ -17,24 +18,24 @@ export const useCategories = (queryParams) => {
   });
 
   const deleteCategoryMutation = useMutation({
-    mutationFn: deleteCategory,
+    mutationFn: (categoryId) => deleteCategory(categoryId),
     onSuccess: () => {
       queryClient.invalidateQueries(["categories"]); // Invalidate categories cache on successful deletion
-      // You might also want to show a toast notification here
+      toast.success("Category deleted successfully!");
     },
     onError: (error) => {
-      // Handle error, e.g., show a toast notification
+      toast.error(err?.message || "Failed to delete category.");
       console.error("Delete category error:", error);
     },
   });
 
   return {
-    categories: categoriesData?.categories || [], // The array of category documents
-    totalCategories: categoriesData?.totalCategories || 0, // Total count for pagination
+    categories: categoriesData?.categories || [],
+    totalCategories: categoriesData?.totalCategories || 0,
     isLoading,
     error,
     isFetching,
-    deleteCategory: deleteCategoryMutation.mutate, // Expose the delete function
-    isDeleting: deleteCategoryMutation.isLoading, // Expose loading state of deletion
+    deleteCategory: deleteCategoryMutation.mutateAsync,
+    isDeleting: deleteCategoryMutation.isPending,
   };
 };

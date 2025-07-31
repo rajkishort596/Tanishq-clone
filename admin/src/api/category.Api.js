@@ -32,12 +32,8 @@ export const fetchCategoryById = async (categoryId) => {
 
 export const createCategory = async (formData) => {
   try {
-    const response = await axios.post(`/admin/categories`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response.data;
+    const response = await axios.post("/admin/categories", formData);
+    return response.data.data;
   } catch (error) {
     console.error(
       "Error creating category:",
@@ -51,16 +47,11 @@ export const createCategory = async (formData) => {
 
 export const updateCategory = async ({ categoryId, formData }) => {
   try {
-    const response = await axios.put(
+    const response = await axios.patch(
       `/admin/categories/${categoryId}`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
+      formData
     );
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.error(
       `Error updating category ${categoryId}:`,
@@ -75,7 +66,7 @@ export const updateCategory = async ({ categoryId, formData }) => {
 export const deleteCategory = async (categoryId) => {
   try {
     const response = await axios.delete(`/admin/categories/${categoryId}`);
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.error(
       `Error deleting category ${categoryId}:`,

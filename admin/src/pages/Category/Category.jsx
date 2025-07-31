@@ -1,16 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { PlusCircle, Search, X, ChevronLeft, ChevronRight } from "lucide-react";
+import debounce from "lodash.debounce";
 import Spinner from "../../components/Spinner";
 import { toast } from "react-toastify";
 import { useCategories } from "../../hooks/useCategories";
 import { useNavigate } from "react-router-dom";
 import CategoriesTable from "../../components/Table/CategoriesTable";
+import ConfirmModal from "../../components/ConfirmModal";
 
 const Category = () => {
   const navigate = useNavigate();
+  const [rawSearch, setRawSearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(1);
+  const [itemsPerPage] = useState(7);
+  const [toDeleteId, setToDeleteId] = useState(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  // Debounced setter for searchQuery using lodash.debounce
+  const debouncedSetSearch = useMemo(
+    () =>
+      debounce((val) => {
+        setSearchQuery(val);
+        setCurrentPage(1);
+      }, 500),
+    []
+  );
+
+  useEffect(() => {
+    debouncedSetSearch(rawSearch);
+    return () => {
+      debouncedSetSearch.cancel();
+    };
+  }, [rawSearch, debouncedSetSearch]);
 
   const {
     categories,
@@ -25,6 +47,8 @@ const Category = () => {
     search: searchQuery,
   });
 
+  console.log("isDeleting", isDeleting, "isLoading", isLoading);
+
   useEffect(() => {
     if (error) {
       toast.error(error?.message || "Failed to load categories.");
@@ -32,33 +56,36 @@ const Category = () => {
   }, [error]);
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
+    setRawSearch(e.target.value);
   };
 
   const handleClearSearch = () => {
+    setRawSearch("");
     setSearchQuery("");
     setCurrentPage(1);
   };
 
   const handlePageChange = (page) => {
+    if (page < 1) return;
+    const maxPage = Math.ceil(totalCategories / itemsPerPage);
+    if (page > maxPage) return;
     setCurrentPage(page);
   };
 
-  const handleDelete = (categoryId) => {
-    if (
-      window.confirm(
-        "Are you sure you want to delete this category? This action cannot be undone."
-      )
-    ) {
-      deleteCategory(categoryId, {
-        onSuccess: () => {
-          toast.success("Category deleted successfully!");
-        },
-        onError: (err) => {
-          toast.error(err?.message || "Failed to delete category.");
-        },
-      });
+  const triggerDelete = (categoryId) => {
+    console.log(categoryId);
+    setToDeleteId(categoryId);
+    console.log(toDeleteId);
+    setShowConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!toDeleteId) return;
+    try {
+      await deleteCategory(toDeleteId);
+    } finally {
+      setShowConfirm(false);
+      setToDeleteId(null);
     }
   };
 
@@ -69,7 +96,8 @@ const Category = () => {
   const handleCreateNew = () => {
     navigate("/categories/new");
   };
-  if (isLoading) {
+
+  if (isLoading || isDeleting) {
     return (
       <div className="flex justify-center items-center absolute inset-0 bg-white/80 z-50">
         <Spinner />
@@ -99,26 +127,32 @@ const Category = () => {
         </button>
       </div>
 
-      {/* Search and Filter Section */}
-      <div className=" mb-6 flex items-center space-x-4">
+      {/* Search Section */}
+      <div className="mb-6 flex items-center space-x-4">
         <div className="relative flex-grow">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5" />
           <input
             type="text"
             placeholder="Search categories by name or slug..."
-            value={searchQuery}
+            value={rawSearch}
             onChange={handleSearchChange}
-            className="w-full pl-10 pr-4 py-2 rounded-md bg-white text-gray-800 transition-all duration-300 outline-none"
+            className="w-full pl-10 pr-10 py-2 rounded-md bg-white text-gray-800 transition-all duration-300 outline-none"
           />
-          {searchQuery && (
+          {rawSearch && (
             <button
               onClick={handleClearSearch}
-              className="cursor-pointer absolute right-3 top-1/2 transform -translate-y-1/2 text-grey5 hover:text-black2 focus:ring-2 focus:border-transparent shadow-sm hover:shadow-md border-gray-300 focus:ring-primary"
+              aria-label="Clear search"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-800"
             >
               <X className="h-5 w-5" />
             </button>
           )}
         </div>
+        {/* {searchQuery && (
+          <div className="text-sm text-gray-500">
+            Searching for "{searchQuery}"
+          </div>
+        )} */}
       </div>
 
       {/* Category List Table */}
@@ -127,15 +161,15 @@ const Category = () => {
           categories={categories}
           showActions={true}
           onEdit={handleEdit}
-          onDelete={handleDelete}
+          onDelete={triggerDelete}
           isDeleting={isDeleting}
         />
       </div>
 
-      {/* Pagination Controls */}
+      {/* Pagination */}
       {totalCategories > itemsPerPage && (
         <div className="flex justify-center absolute bottom-4 left-1/2 -translate-x-1/2 items-center mt-6 flex-wrap gap-2">
-          {/* Previous Button */}
+          {/* Previous Button*/}
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
@@ -143,7 +177,6 @@ const Category = () => {
           >
             <ChevronLeft size={18} />
           </button>
-
           {/* Page Numbers */}
           {Array.from(
             { length: Math.ceil(totalCategories / itemsPerPage) },
@@ -161,7 +194,6 @@ const Category = () => {
               {page}
             </button>
           ))}
-
           {/* Next Button */}
           <button
             onClick={() => handlePageChange(currentPage + 1)}
@@ -172,6 +204,19 @@ const Category = () => {
           </button>
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmModal
+        open={showConfirm}
+        title="Delete Category"
+        description="Are you sure you want to delete this category? This action cannot be undone."
+        onConfirm={confirmDelete}
+        onCancel={() => {
+          setShowConfirm(false);
+          setToDeleteId(null);
+        }}
+        loading={isDeleting}
+      />
     </div>
   );
 };

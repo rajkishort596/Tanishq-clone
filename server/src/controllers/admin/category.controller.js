@@ -24,6 +24,13 @@ const createCategory = asyncHandler(async (req, res) => {
 
   const { name, description, parent } = req.body;
 
+  console.log("Creating category with data:", {
+    name,
+    description,
+    parent,
+    icon: req.file,
+  });
+
   // Basic validation
   if (!name || !description) {
     throw new ApiError(400, "Category name and description are required.");
@@ -227,6 +234,8 @@ const updateCategory = asyncHandler(async (req, res) => {
   const { categoryId } = req.params;
   const { name, description, parent } = req.body;
   const iconLocalPath = req.file?.path; // New icon image if provided
+
+  console.log("🧪 req.body at validation:", req.body);
 
   const category = await Category.findById(categoryId);
   if (!category) {

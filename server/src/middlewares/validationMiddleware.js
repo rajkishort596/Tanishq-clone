@@ -385,59 +385,59 @@ const updateProductValidation = [
 
 const createCategoryValidation = [
   body("name")
-    .trim()
+    .customSanitizer((value) => value?.toString().trim())
     .notEmpty()
     .withMessage("Category name is required.")
-    .isString()
-    .withMessage("Category name must be a string.")
     .isLength({ min: 2, max: 100 })
     .withMessage("Category name must be between 2 and 100 characters."),
 
-  body("slug")
-    .trim()
-    .notEmpty()
-    .withMessage("Slug is required.")
-    .isString()
-    .withMessage("Slug must be a string.")
-    .isLowercase()
-    .withMessage("Slug must be lowercase.")
-    .matches(/^[a-z0-9-]+$/)
-    .withMessage(
-      "Slug can only contain lowercase letters, numbers, and hyphens."
-    ),
-
   body("description")
-    .trim()
+    .customSanitizer((value) => value?.toString().trim())
     .notEmpty()
     .withMessage("Description is required.")
-    .isString()
-    .withMessage("Description must be a string."),
+    .isLength({ min: 2 })
+    .withMessage("Description must be at least 2 characters long."),
 
   body("parent")
-    .optional()
-    .isMongoId()
+    .customSanitizer((value) => (value === "" ? null : value))
+    .custom((value) => {
+      if (value === null || value === undefined) return true;
+      return /^[a-fA-F0-9]{24}$/.test(value); // Check if it's a valid MongoDB ObjectId
+    })
     .withMessage("Invalid parent category ID."),
 
-  body("icon").optional().isString().withMessage("Icon URL must be a string."),
   validate,
 ];
 
 const updateCategoryValidation = [
-  param("id").isMongoId().withMessage("Invalid category ID in parameters."),
-  body("name")
-    .optional()
-    .isString()
-    .trim()
-    .withMessage("Category name must be a string."),
-  body("description")
-    .optional()
-    .isString()
-    .trim()
-    .withMessage("Description must be a string."),
-  body("parent")
-    .optional()
+  // console.log("🧪 req.body at validation:", req.body),
+
+  param("categoryId")
     .isMongoId()
+    .withMessage("Invalid category ID in parameters."),
+
+  body("name")
+    .customSanitizer((value) => value?.toString().trim())
+    .notEmpty()
+    .withMessage("Category name is required.")
+    .isLength({ min: 2, max: 100 })
+    .withMessage("Category name must be between 2 and 100 characters."),
+
+  body("description")
+    .customSanitizer((value) => value?.toString().trim())
+    .notEmpty()
+    .withMessage("Description is required.")
+    .isLength({ min: 2 })
+    .withMessage("Description must be at least 2 characters long."),
+
+  body("parent")
+    .customSanitizer((value) => (value === "" ? null : value))
+    .custom((value) => {
+      if (value === null || value === undefined) return true;
+      return /^[a-fA-F0-9]{24}$/.test(value); // Check if it's a valid MongoDB ObjectId
+    })
     .withMessage("Invalid parent category ID."),
+
   validate,
 ];
 

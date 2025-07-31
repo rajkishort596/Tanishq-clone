@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { formatCurrency, formatNumber } from "../utils/formatters";
 
 const Dashboard = () => {
-  const { data: dashboardData, isLoading, error } = useDashboardStats();
+  const { data: dashboardData, isPending, error } = useDashboardStats();
 
   useEffect(() => {
     if (error) {
@@ -16,7 +16,7 @@ const Dashboard = () => {
     }
   }, [error]);
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex justify-center items-center absolute inset-0 bg-white/80 z-50">
         <Spinner />
