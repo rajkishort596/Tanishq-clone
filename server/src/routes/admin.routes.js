@@ -111,24 +111,26 @@ router
   .get(verifyAdminJWT, getAllCollectionsAdmin)
   .post(
     verifyAdminJWT,
-    createCollectionValidation,
+
     upload.fields([
       { name: "image", maxCount: 1 },
       { name: "bannerImage", maxCount: 1 },
     ]),
+    createCollectionValidation,
     createCollection
   );
 
 router
   .route("/collections/:collectionId")
   .get(verifyAdminJWT, getCollectionByIdAdmin)
-  .put(
+  .patch(
     verifyAdminJWT,
-    updateCollectionValidation,
+
     upload.fields([
       { name: "image", maxCount: 1 },
       { name: "bannerImage", maxCount: 1 },
     ]),
+    updateCollectionValidation,
     updateCollection
   )
   .delete(verifyAdminJWT, deleteCollection);

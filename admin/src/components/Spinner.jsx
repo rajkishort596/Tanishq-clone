@@ -23,7 +23,7 @@ const Spinner = () => {
           cy="50"
           r="45"
           stroke="url(#spinnerGradient)"
-          strokeWidth="10"
+          strokeWidth="5"
           fill="none"
           strokeLinecap="round"
           strokeDasharray="240"

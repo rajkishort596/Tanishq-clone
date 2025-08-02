@@ -467,7 +467,9 @@ const createCollectionValidation = [
 ];
 
 const updateCollectionValidation = [
-  param("id").isMongoId().withMessage("Invalid collection ID in parameters."),
+  param("collectionId")
+    .isMongoId()
+    .withMessage("Invalid collection ID in parameters."),
   body("name")
     .optional()
     .isString()

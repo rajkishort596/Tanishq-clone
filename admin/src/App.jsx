@@ -14,6 +14,8 @@ import PrivateRoute from "./components/PrivateRoute.jsx";
 import Login from "./pages/Login.jsx";
 import Category from "./pages/Category/Category.jsx";
 import CategoryForm from "./pages/Category/CategoryForm.jsx";
+import Collection from "./pages/Collection/Collection.jsx";
+import CollectionForm from "./pages/Collection/CollectionForm.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -35,7 +37,12 @@ function App() {
             path="categories/edit/:categoryId"
             element={<CategoryForm />}
           />
-          <Route path="collections" element={<div>Collections</div>} />
+          <Route path="collections" element={<Collection />} />
+          <Route path="collections/new" element={<CollectionForm />} />
+          <Route
+            path="collections/edit/:collectionId"
+            element={<CollectionForm />}
+          />
           <Route path="products" element={<div>Products</div>} />
           <Route path="orders" element={<div>Orders</div>} />
           <Route path="banners" element={<div>Banners</div>} />

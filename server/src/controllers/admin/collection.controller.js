@@ -112,10 +112,11 @@ const getAllCollectionsAdmin = asyncHandler(async (req, res) => {
 
   const query = {};
   if (search) {
-    query.$or = [
-      { name: { $regex: search, $options: "i" } },
-      { description: { $regex: search, $options: "i" } },
-    ];
+    // query.$or = [
+    //   { name: { $regex: search, $options: "i" } },
+    //   { description: { $regex: search, $options: "i" } },
+    // ];
+    query.name = { $regex: search, $options: "i" };
   }
   if (isActive !== undefined) {
     query.isActive = isActive === "true";
