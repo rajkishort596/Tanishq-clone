@@ -8,7 +8,7 @@ const ConfirmModal = ({
   description,
   onConfirm,
   onCancel,
-  loading = "false",
+  loading = false,
   confirmLabel = "Delete",
   cancelLabel = "Cancel",
 }) => {

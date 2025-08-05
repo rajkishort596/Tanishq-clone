@@ -39,13 +39,15 @@ const createProduct = asyncHandler(async (req, res) => {
     gender,
   } = req.body;
 
+  console.log(req.body);
+
   // Basic validation
   if (
     [
       name,
       description,
       price?.base,
-      price?.final,
+      // price?.final,
       stock,
       weight,
       category,

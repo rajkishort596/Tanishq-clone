@@ -144,8 +144,8 @@ router
   .get(verifyAdminJWT, getAllProductsAdmin)
   .post(
     verifyAdminJWT,
-    createProductValidation,
     upload.fields([{ name: "images", maxCount: 10 }]),
+    createProductValidation,
     createProduct
   );
 
@@ -154,8 +154,8 @@ router
   .get(verifyAdminJWT, getProductByIdAdmin)
   .put(
     verifyAdminJWT,
-    updateProductValidation,
     upload.fields([{ name: "images", maxCount: 10 }]),
+    updateProductValidation,
     updateProduct
   )
   .delete(verifyAdminJWT, deleteProduct);

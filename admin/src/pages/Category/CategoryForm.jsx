@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "../../components/Spinner";
 import { XCircle } from "lucide-react";
 import { useCategoryForm } from "../../hooks/useCategoryForm.js";
-import Input from "../../components/Form/Input.jsx";
+import Input from "../../components/Form/Input/Input.jsx";
 
 const CategoryForm = () => {
   const { categoryId } = useParams();

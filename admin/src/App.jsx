@@ -16,6 +16,8 @@ import Category from "./pages/Category/Category.jsx";
 import CategoryForm from "./pages/Category/CategoryForm.jsx";
 import Collection from "./pages/Collection/Collection.jsx";
 import CollectionForm from "./pages/Collection/CollectionForm.jsx";
+import Product from "./pages/Product/Product.jsx";
+import ProductForm from "./pages/Product/ProductForm.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -43,7 +45,9 @@ function App() {
             path="collections/edit/:collectionId"
             element={<CollectionForm />}
           />
-          <Route path="products" element={<div>Products</div>} />
+          <Route path="products" element={<Product />} />
+          <Route path="products/new" element={<ProductForm />} />
+          <Route path="products/edit/:productId" element={<ProductForm />} />
           <Route path="orders" element={<div>Orders</div>} />
           <Route path="banners" element={<div>Banners</div>} />
           <Route path="reviews" element={<div>Reviews</div>} />

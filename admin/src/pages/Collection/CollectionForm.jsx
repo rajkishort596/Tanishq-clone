@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Spinner from "../../components/Spinner";
-import Input from "../../components/Form/Input";
+import Input from "../../components/Form/Input/Input";
 import { useCollectionForm } from "../../hooks/useCollectionForm";
 const CollectionForm = () => {
   const { collectionId } = useParams();

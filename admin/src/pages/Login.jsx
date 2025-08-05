@@ -8,7 +8,7 @@ import images from "../constants/images";
 import LoginHeroImg from "../assets/images/Login-HeroImg.png";
 import { loginAdmin } from "../api/auth.Api";
 import { setCredentials } from "../features/authSlice.js";
-import IconInput from "../components/Form/IconInput";
+import IconInput from "../components/Form/Input/IconInput";
 
 const Login = () => {
   const navigate = useNavigate();

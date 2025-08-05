@@ -16,7 +16,7 @@ const productSchema = new Schema(
       makingCharges: { type: Number, default: 0 }, // Making charges
       gst: { type: Number, default: 3 }, // GST/Rate
       gstAmount: { type: Number, default: 0 }, // GST/Taxes amount
-      final: { type: Number, required: true }, // Final price for display (calculated)
+      final: { type: Number }, // Final price for display (calculated)
     },
     variants: [
       // For different sizes, metals, or stone variations
@@ -115,6 +115,13 @@ productSchema.pre("save", function (next) {
     }
     return variant;
   });
+
+  // Calculate GST
+  const gstRate = this.price.gst / 100 || 0.03;
+  const taxableValue = this.price.base + (this.price.makingCharges || 0);
+  const gstAmount = taxableValue * gstRate;
+  // Calculate the final price
+  this.price.final = taxableValue + gstAmount;
   next();
 });
 

@@ -187,7 +187,28 @@ const userAddressValidation = [
 
 // --- Product Validations ---
 
+// Helper function to parse JSON strings from form-data
+const parseJsonBodyField = (field) =>
+  body(field).customSanitizer((value, { req }) => {
+    try {
+      // Check if the field exists and is a string before parsing
+      if (typeof value === "string") {
+        req.body[field] = JSON.parse(value); // Parse and assign back to req.body
+        return req.body[field];
+      }
+      return value; // Return original value if not a string (e.g., undefined)
+    } catch (e) {
+      throw new Error(`Invalid JSON format for ${field}.`);
+    }
+  });
+
 const createProductValidation = [
+  // First, parse the JSON string fields
+  parseJsonBodyField("price"),
+  parseJsonBodyField("variants"),
+  parseJsonBodyField("collections"),
+  parseJsonBodyField("occasion"),
+
   body("name")
     .trim()
     .notEmpty()
@@ -201,24 +222,30 @@ const createProductValidation = [
     .withMessage("Description must be a string.")
     .optional(),
 
+  // Now validate the parsed 'price' object
   body("price.base")
     .notEmpty()
     .withMessage("Base price is required.")
-    .isNumeric()
-    .withMessage("Base price must be a number."),
+    .isFloat({ min: 0 }) // Use isFloat for numbers with decimals
+    .withMessage("Base price must be a non-negative number."),
 
   body("price.makingCharges")
     .optional()
-    .isNumeric()
-    .withMessage("Making charges must be a number."),
+    .isFloat({ min: 0 })
+    .withMessage("Making charges must be a non-negative number."),
 
-  body("price.gst").optional().isNumeric().withMessage("GST must be a number."),
+  body("price.gst")
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage("GST must be a non-negative number."),
 
-  body("price.final")
-    .notEmpty()
-    .withMessage("Final price is required.")
-    .isNumeric()
-    .withMessage("Final price must be a number."),
+  // Note: price.final is calculated on backend or derived, so often not directly validated from input.
+  // If you send it from frontend, ensure it's calculated correctly.
+  // body("price.final")
+  //   .notEmpty()
+  //   .withMessage("Final price is required.")
+  //   .isFloat({ min: 0 })
+  //   .withMessage("Final price must be a non-negative number."),
 
   body("stock")
     .notEmpty()
@@ -229,8 +256,8 @@ const createProductValidation = [
   body("weight")
     .notEmpty()
     .withMessage("Weight is required.")
-    .isNumeric()
-    .withMessage("Weight must be a number."),
+    .isFloat({ min: 0 })
+    .withMessage("Weight must be a non-negative number."),
 
   body("metal")
     .trim()
@@ -248,9 +275,9 @@ const createProductValidation = [
 
   body("gender")
     .trim()
-    .optional()
-    .isString()
-    .withMessage("Gender must be a string."),
+    .notEmpty() // Made required based on product model
+    .isIn(["men", "women", "kids", "unisex"]) // Add enum validation
+    .withMessage("Gender must be one of 'men', 'women', 'kids', 'unisex'."),
 
   body("category")
     .notEmpty()
@@ -259,41 +286,152 @@ const createProductValidation = [
     .withMessage("Invalid category ID."),
 
   body("subCategory")
-    .optional()
+    .optional({ checkFalsy: true }) // Allow empty string or null
     .isMongoId()
     .withMessage("Invalid subCategory ID."),
 
+  // Now validate the parsed 'variants' array
   body("variants")
     .isArray()
     .withMessage("Variants must be an array.")
-    .optional(),
-  body("variants.*.variantId")
-    .isString()
-    .withMessage("Variant ID must be a string."),
-  body("variants.*.priceAdjustment")
-    .isNumeric()
-    .withMessage("Price adjustment must be a number."),
-  body("variants.*.stock")
-    .isInt({ min: 0 })
-    .withMessage("Variant stock must be a non-negative integer."),
+    .custom((value) => {
+      // Custom validation to ensure each variant object is valid
+      if (!Array.isArray(value)) return false;
+      for (const variant of value) {
+        if (typeof variant !== "object" || variant === null) {
+          throw new Error("Each variant must be an object.");
+        }
+        if (
+          !variant.size ||
+          typeof variant.size !== "string" ||
+          variant.size.trim() === ""
+        ) {
+          throw new Error("Variant size is required and must be a string.");
+        }
+        if (
+          !variant.metalColor ||
+          typeof variant.metalColor !== "string" ||
+          variant.metalColor.trim() === ""
+        ) {
+          throw new Error(
+            "Variant metal color is required and must be a string."
+          );
+        }
+        if (
+          typeof variant.priceAdjustment === "undefined" ||
+          typeof variant.priceAdjustment !== "number" ||
+          variant.priceAdjustment < 0
+        ) {
+          throw new Error(
+            "Variant price adjustment is required and must be a non-negative number."
+          );
+        }
+        if (
+          typeof variant.stock === "undefined" ||
+          typeof variant.stock !== "number" ||
+          variant.stock < 0 ||
+          !Number.isInteger(variant.stock)
+        ) {
+          throw new Error(
+            "Variant stock is required and must be a non-negative integer."
+          );
+        }
+      }
+      return true;
+    }),
 
+  // Now validate the parsed 'collections' array
   body("collections")
     .isArray()
     .withMessage("Collections must be an array.")
-    .optional(),
-  body("collections.*").isMongoId().withMessage("Invalid collection ID."),
+    .custom((value) => {
+      if (!Array.isArray(value)) return false;
+      for (const id of value) {
+        if (!/^[a-fA-F0-9]{24}$/.test(id)) {
+          throw new Error("Invalid collection ID in collections array.");
+        }
+      }
+      return true;
+    })
+    .optional(), // Collections are optional based on your schema
 
+  // Now validate the parsed 'occasion' array
   body("occasion")
     .isArray()
     .withMessage("Occasion must be an array.")
-    .optional(),
-  body("occasion.*").isString().withMessage("Occasion must be a string."),
+    .custom((value) => {
+      if (!Array.isArray(value)) return false;
+      for (const item of value) {
+        if (typeof item !== "string" || item.trim() === "") {
+          throw new Error("Each occasion must be a non-empty string.");
+        }
+      }
+      return true;
+    })
+    .optional(), // Occasion is optional based on your schema
 
   validate,
 ];
 
 const updateProductValidation = [
-  param("id").isMongoId().withMessage("Invalid product ID in parameters."),
+  param("productId")
+    .isMongoId()
+    .withMessage("Invalid product ID in parameters."),
+
+  // First, parse the JSON string fields if they exist
+  body("price")
+    .optional()
+    .customSanitizer((value, { req }) => {
+      if (typeof value === "string") {
+        try {
+          req.body.price = JSON.parse(value);
+          return req.body.price;
+        } catch (e) {
+          throw new Error("Invalid JSON format for price.");
+        }
+      }
+      return value;
+    }),
+  body("variants")
+    .optional()
+    .customSanitizer((value, { req }) => {
+      if (typeof value === "string") {
+        try {
+          req.body.variants = JSON.parse(value);
+          return req.body.variants;
+        } catch (e) {
+          throw new Error("Invalid JSON format for variants.");
+        }
+      }
+      return value;
+    }),
+  body("collections")
+    .optional()
+    .customSanitizer((value, { req }) => {
+      if (typeof value === "string") {
+        try {
+          req.body.collections = JSON.parse(value);
+          return req.body.collections;
+        } catch (e) {
+          throw new Error("Invalid JSON format for collections.");
+        }
+      }
+      return value;
+    }),
+  body("occasion")
+    .optional()
+    .customSanitizer((value, { req }) => {
+      if (typeof value === "string") {
+        try {
+          req.body.occasion = JSON.parse(value);
+          return req.body.occasion;
+        } catch (e) {
+          throw new Error("Invalid JSON format for occasion.");
+        }
+      }
+      return value;
+    }),
+
   body("name")
     .optional()
     .isString()
@@ -306,22 +444,25 @@ const updateProductValidation = [
     .withMessage("Description must be a string."),
   body("price.base")
     .optional()
-    .isNumeric()
-    .withMessage("Base price must be a number."),
+    .isFloat({ min: 0 })
+    .withMessage("Base price must be a non-negative number."),
   body("price.makingCharges")
     .optional()
-    .isNumeric()
-    .withMessage("Making charges must be a number."),
-  body("price.gst").optional().isNumeric().withMessage("GST must be a number."),
-  body("price.final")
+    .isFloat({ min: 0 })
+    .withMessage("Making charges must be a non-negative number."),
+  body("price.gst")
     .optional()
-    .isNumeric()
-    .withMessage("Final price must be a number."),
+    .isFloat({ min: 0 })
+    .withMessage("GST must be a non-negative number."),
+  // body("price.final").optional().isFloat({ min: 0 }).withMessage("Final price must be a non-negative number."),
   body("stock")
     .optional()
     .isInt({ min: 0 })
     .withMessage("Stock must be a non-negative integer."),
-  body("weight").optional().isNumeric().withMessage("Weight must be a number."),
+  body("weight")
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage("Weight must be a non-negative number."),
   body("metal")
     .optional()
     .isString()
@@ -336,47 +477,92 @@ const updateProductValidation = [
     .optional()
     .isString()
     .trim()
-    .withMessage("Gender must be a string."),
+    .isIn(["men", "women", "kids", "unisex"])
+    .withMessage("Gender must be one of 'men', 'women', 'kids', 'unisex'."),
   body("category").optional().isMongoId().withMessage("Invalid category ID."),
   body("subCategory")
-    .optional()
+    .optional({ checkFalsy: true })
     .isMongoId()
     .withMessage("Invalid subCategory ID."),
 
   body("variants")
     .optional()
     .isArray()
-    .withMessage("Variants must be an array."),
-  body("variants.*.variantId")
-    .optional()
-    .isString()
-    .withMessage("Variant ID must be a string."),
-  body("variants.*.priceAdjustment")
-    .optional()
-    .isNumeric()
-    .withMessage("Price adjustment must be a number."),
-  body("variants.*.stock")
-    .optional()
-    .isInt({ min: 0 })
-    .withMessage("Variant stock must be a non-negative integer."),
+    .withMessage("Variants must be an array.")
+    .custom((value) => {
+      if (!Array.isArray(value)) return false; // Already handled by isArray, but good for safety
+      for (const variant of value) {
+        if (typeof variant !== "object" || variant === null) {
+          throw new Error("Each variant must be an object.");
+        }
+        // For update, fields can be optional, but if present, they must be valid
+        if (
+          variant.size !== undefined &&
+          (typeof variant.size !== "string" || variant.size.trim() === "")
+        ) {
+          throw new Error(
+            "Variant size must be a non-empty string if provided."
+          );
+        }
+        if (
+          variant.metalColor !== undefined &&
+          (typeof variant.metalColor !== "string" ||
+            variant.metalColor.trim() === "")
+        ) {
+          throw new Error(
+            "Variant metal color must be a non-empty string if provided."
+          );
+        }
+        if (
+          variant.priceAdjustment !== undefined &&
+          (typeof variant.priceAdjustment !== "number" ||
+            variant.priceAdjustment < 0)
+        ) {
+          throw new Error(
+            "Variant price adjustment must be a non-negative number if provided."
+          );
+        }
+        if (
+          variant.stock !== undefined &&
+          (typeof variant.stock !== "number" ||
+            variant.stock < 0 ||
+            !Number.isInteger(variant.stock))
+        ) {
+          throw new Error(
+            "Variant stock must be a non-negative integer if provided."
+          );
+        }
+      }
+      return true;
+    }),
 
   body("collections")
     .optional()
     .isArray()
-    .withMessage("Collections must be an array."),
-  body("collections.*")
-    .optional()
-    .isMongoId()
-    .withMessage("Invalid collection ID."),
+    .withMessage("Collections must be an array.")
+    .custom((value) => {
+      if (!Array.isArray(value)) return false;
+      for (const id of value) {
+        if (!/^[a-fA-F0-9]{24}$/.test(id)) {
+          throw new Error("Invalid collection ID in collections array.");
+        }
+      }
+      return true;
+    }),
 
   body("occasion")
     .optional()
     .isArray()
-    .withMessage("Occasion must be an array."),
-  body("occasion.*")
-    .optional()
-    .isString()
-    .withMessage("Occasion must be a string."),
+    .withMessage("Occasion must be an array.")
+    .custom((value) => {
+      if (!Array.isArray(value)) return false;
+      for (const item of value) {
+        if (typeof item !== "string" || item.trim() === "") {
+          throw new Error("Each occasion must be a non-empty string.");
+        }
+      }
+      return true;
+    }),
 
   validate,
 ];
@@ -410,8 +596,6 @@ const createCategoryValidation = [
 ];
 
 const updateCategoryValidation = [
-  // console.log("🧪 req.body at validation:", req.body),
-
   param("categoryId")
     .isMongoId()
     .withMessage("Invalid category ID in parameters."),
