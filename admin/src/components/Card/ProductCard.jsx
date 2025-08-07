@@ -1,8 +1,7 @@
-// src/components/Card/ProductCard.jsx
 import React from "react";
 import { formatCurrency } from "../../utils/formatters";
 
-const ProductCard = ({ product, onEdit, onDelete }) => {
+const ProductCard = ({ product, onEdit, onDelete, onClick }) => {
   const productImageUrl =
     product?.mainImage ||
     "https://placehold.co/400x400/2e1c1b/c9a86d?text=No+Image";
@@ -10,7 +9,10 @@ const ProductCard = ({ product, onEdit, onDelete }) => {
   return (
     <div className="glass-card p-4 inset-glow-border flex flex-col rounded-md overflow-hidden shadow-lg transition-transform duration-300 hover:shadow-2xl">
       {/* Product Image */}
-      <div className="flex justify-center cursor-pointer items-center aspect-square h-30 overflow-hidden">
+      <div
+        onClick={() => onClick(product._id)}
+        className="flex justify-center cursor-pointer items-center aspect-square h-30 overflow-hidden"
+      >
         <img
           src={productImageUrl}
           alt={product.name}

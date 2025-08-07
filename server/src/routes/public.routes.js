@@ -13,7 +13,7 @@ import {
   getCollectionById,
 } from "../controllers/public/collection.public.controller.js";
 import { getActiveBanners } from "../controllers/public/banner.public.controller.js";
-import { getLatestIndianGoldRate } from "../controllers/public/goldRate.public.controller.js";
+import { getLatestMetalRate } from "../controllers/public/metalRate.public.controller.js";
 
 const router = Router();
 
@@ -51,6 +51,6 @@ router.route("/banners").get(getActiveBanners);
 /**
  * @GoldRateRoute
  */
-router.route("/gold-rate").get(getLatestIndianGoldRate);
+router.route("/metal-rate").get(getLatestMetalRate);
 
 export default router;

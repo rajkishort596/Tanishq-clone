@@ -37,7 +37,7 @@ export const createProduct = async (formData) => {
         "Content-Type": "multipart/form-data",
       },
     });
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.error(
       "Error creating product:",
@@ -56,7 +56,7 @@ export const updateProduct = async ({ productId, formData }) => {
         "Content-Type": "multipart/form-data",
       },
     });
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.error(
       `Error updating product ${productId}:`,
@@ -71,7 +71,7 @@ export const updateProduct = async ({ productId, formData }) => {
 export const deleteProduct = async (productId) => {
   try {
     const response = await axios.delete(`/admin/products/${productId}`);
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.error(
       `Error deleting product ${productId}:`,
@@ -79,6 +79,23 @@ export const deleteProduct = async (productId) => {
     );
     throw new Error(
       error.response?.data?.message || "Failed to delete product."
+    );
+  }
+};
+
+export const getMetalRate = async (metal = "Gold") => {
+  try {
+    const response = await axios.get("/public/metal-rate", {
+      params: { metal },
+    });
+    return response.data.data;
+  } catch (error) {
+    console.error(
+      `Error fetching ${metal} rate`,
+      error.response?.data || error.message
+    );
+    throw new Error(
+      error.response?.data?.message || `Failed to fetch ${metal} rate`
     );
   }
 };

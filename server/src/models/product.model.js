@@ -81,6 +81,10 @@ const productSchema = new Schema(
       type: String,
       required: true,
     }, // Gold, Diamond, etc.
+    metalColor: {
+      type: String,
+      required: true,
+    },
     purity: {
       type: String,
       required: true,
@@ -120,6 +124,7 @@ productSchema.pre("save", function (next) {
   const gstRate = this.price.gst / 100 || 0.03;
   const taxableValue = this.price.base + (this.price.makingCharges || 0);
   const gstAmount = taxableValue * gstRate;
+  this.price.gstAmount = gstAmount;
   // Calculate the final price
   this.price.final = taxableValue + gstAmount;
   next();

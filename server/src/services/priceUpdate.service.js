@@ -16,18 +16,20 @@ const updateAllProductPrices = async () => {
 
     const bulkOperations = [];
     for (const product of products) {
-      const { weight, purity, price } = product;
+      const { weight, purity, price, metal = "gold" } = product;
 
-      // Recalculate price only if necessary fields are present
       if (weight && purity && price?.makingCharges) {
         try {
           const calculatedPrice = await calculateFinalPrice({
             weight,
             purity,
-            price: { makingCharges: price.makingCharges, gst: price.gst },
+            metal,
+            price: {
+              makingCharges: price.makingCharges,
+              gst: price.gst,
+            },
           });
 
-          // Add an updateOne operation to the bulkOperations array
           bulkOperations.push({
             updateOne: {
               filter: { _id: product._id },

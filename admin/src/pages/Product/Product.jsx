@@ -90,6 +90,9 @@ const Product = () => {
   const handleEdit = (productId) => {
     navigate(`/products/edit/${productId}`);
   };
+  const handleDetails = (productId) => {
+    navigate(`/products/${productId}`);
+  };
 
   const handleCreateNew = () => {
     navigate("/products/new");
@@ -161,6 +164,7 @@ const Product = () => {
               onEdit={handleEdit}
               onDelete={triggerDelete}
               isDeleting={isDeleting}
+              onClick={handleDetails}
             />
           ))}
         </div>

@@ -1,5 +1,5 @@
-// ProductSpecifications.jsx
-import React, { useId } from "react";
+import React, { useMemo } from "react";
+import { useWatch } from "react-hook-form";
 import { ImagePlus } from "lucide-react";
 import Select from "./Select/Select";
 import Input from "./Input/Input";
@@ -7,12 +7,27 @@ import Input from "./Input/Input";
 const ProductSpecifications = ({
   register,
   errors,
+  control,
   previewImageUrls = [],
   isEditMode = false,
 }) => {
+  const metal = useWatch({ control, name: "metal" });
+
+  const purityOptions = useMemo(() => {
+    switch ((metal || "").toLowerCase()) {
+      case "gold":
+        return ["18K", "22K"];
+      case "platinum":
+        return ["PT999", "PT950", "PT900", "PT850"];
+      default:
+        return [];
+    }
+  }, [metal]);
+
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Metal Select */}
         <Select
           label="Metal"
           id="metal"
@@ -20,16 +35,11 @@ const ProductSpecifications = ({
           error={errors.metal?.message}
         >
           <option value="">-- Select Metal --</option>
-          <option key={useId()} value="Gold">
-            Gold
-          </option>
-          <option key={useId()} value="Diamond">
-            Diamond
-          </option>
-          <option key={useId()} value="Platinum">
-            Platinum
-          </option>
+          <option value="Gold">Gold</option>
+          <option value="Platinum">Platinum</option>
         </Select>
+
+        {/* Purity Select */}
         <Select
           label="Purity"
           id="purity"
@@ -37,36 +47,45 @@ const ProductSpecifications = ({
           error={errors.purity?.message}
         >
           <option value="">-- Select Purity --</option>
-          <option key={useId()} value="18K">
-            18K
-          </option>
-          <option key={useId()} value="22K">
-            22K
-          </option>
+          {purityOptions.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
         </Select>
       </div>
-      <Select
-        label="Gender"
-        id="gender"
-        {...register("gender", { required: "Gender is required." })}
-        error={errors.gender?.message}
-      >
-        <option value="">-- Select Gender --</option>
-        <option key={useId()} value="women">
-          Women
-        </option>
-        <option key={useId()} value="men">
-          Men
-        </option>
-        <option key={useId()} value="kids">
-          Kids
-        </option>
-        <option key={useId()} value="unisex">
-          Unisex
-        </option>
-      </Select>
 
-      {/* Image Uploadation and preview for up to 4 images */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Gender Select */}
+        <Select
+          label="Gender"
+          id="gender"
+          {...register("gender", { required: "Gender is required." })}
+          error={errors.gender?.message}
+        >
+          <option value="">-- Select Gender --</option>
+          <option value="women">Women</option>
+          <option value="men">Men</option>
+          <option value="kids">Kids</option>
+          <option value="unisex">Unisex</option>
+        </Select>
+
+        {/* MetalColor Select */}
+        <Select
+          label="Metal Colour"
+          id="metalColor"
+          {...register("metalColor", { required: "Metal Colour is required." })}
+          error={errors.metalColor?.message}
+        >
+          <option value="">-- Select Metal Colour --</option>
+          <option value="Yellow">Yellow</option>
+          <option value="White">White</option>
+          <option value="White Gold">White Gold</option>
+          <option value="Rose Gold">Rose Gold</option>
+          <option value="White and Rose">White and Rose</option>
+        </Select>
+      </div>
+      {/* Image Upload */}
       <div>
         <label
           htmlFor="images"
@@ -80,10 +99,8 @@ const ProductSpecifications = ({
           id="images"
           {...register("images", {
             validate: (value) => {
-              if (isEditMode && previewImageUrls && previewImageUrls.length > 0)
-                return true;
-              if (value && value.length > 0 && value[0] instanceof File)
-                return true;
+              if (isEditMode && previewImageUrls?.length > 0) return true;
+              if (value?.length > 0 && value[0] instanceof File) return true;
               return "At least one product image is required.";
             },
           })}
@@ -94,6 +111,7 @@ const ProductSpecifications = ({
             e.target.value = null;
           }}
         />
+
         <div className="flex gap-3">
           {[0, 1, 2, 3].map((idx) => (
             <label
@@ -121,8 +139,9 @@ const ProductSpecifications = ({
             </label>
           ))}
         </div>
+
         {errors.images && (
-          <p className="mt-1 text-sm text-red-600">{errors.images?.message}</p>
+          <p className="mt-1 text-sm text-red-600">{errors.images.message}</p>
         )}
         <p className="mt-1 text-xs text-gray-500">
           You can select multiple images at once; they will populate the slots
@@ -130,6 +149,7 @@ const ProductSpecifications = ({
         </p>
       </div>
 
+      {/* Is Active Checkbox */}
       <div className="flex items-center">
         <input
           type="checkbox"

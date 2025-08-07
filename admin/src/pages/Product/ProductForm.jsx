@@ -1,4 +1,3 @@
-// ProductForm.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -59,6 +58,7 @@ const ProductForm = () => {
       metal: "",
       purity: "",
       gender: "",
+      metalColor: "",
       images: null,
       isActive: true,
     },
@@ -67,7 +67,6 @@ const ProductForm = () => {
 
   const [previewImageUrls, setPreviewImageUrls] = useState([]);
   const watchImages = watch("images");
-
   useEffect(() => {
     if (isEditMode && productData) {
       setValue("name", productData.name);
@@ -85,6 +84,7 @@ const ProductForm = () => {
       setValue("metal", productData.metal || "");
       setValue("purity", productData.purity || "");
       setValue("gender", productData.gender || "");
+      setValue("metalColor", productData.metalColor || "");
       setValue("isActive", productData.isActive);
     }
   }, [isEditMode, productData, setValue]);
@@ -170,10 +170,6 @@ const ProductForm = () => {
       }
     });
 
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ": " + pair[1]);
-    }
-
     if (isEditMode) {
       await updateProduct({ productId, formData });
     } else {
@@ -215,6 +211,7 @@ const ProductForm = () => {
           <ProductSpecifications
             register={register}
             errors={formState.errors}
+            control={control}
             previewImageUrls={previewImageUrls}
             isEditMode={isEditMode}
           />
