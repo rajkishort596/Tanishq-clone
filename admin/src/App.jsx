@@ -19,6 +19,7 @@ import CollectionForm from "./pages/Collection/CollectionForm.jsx";
 import Product from "./pages/Product/Product.jsx";
 import ProductForm from "./pages/Product/ProductForm.jsx";
 import ProductDetails from "./pages/Product/ProductDetails.jsx";
+import Review from "./pages/Review/Review.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -52,7 +53,7 @@ function App() {
           <Route path="products/edit/:productId" element={<ProductForm />} />
           <Route path="orders" element={<div>Orders</div>} />
           <Route path="banners" element={<div>Banners</div>} />
-          <Route path="reviews" element={<div>Reviews</div>} />
+          <Route path="reviews" element={<Review />} />
           <Route path="settings" element={<div>Settings</div>} />
         </Route>
       </>

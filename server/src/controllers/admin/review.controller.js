@@ -33,9 +33,64 @@ const getAllReviewsAdmin = asyncHandler(async (req, res) => {
 
   const query = {};
 
-  // Search by comment
   if (search) {
-    query.comment = { $regex: search, $options: "i" };
+    // Aggregation pipeline to search on populated fields
+    const searchPipeline = [
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "product",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      {
+        $unwind: "$product",
+      },
+      {
+        $match: {
+          $or: [
+            { "user.firstName": { $regex: search, $options: "i" } },
+            { "user.lastName": { $regex: search, $options: "i" } },
+            { "product.name": { $regex: search, $options: "i" } },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+        },
+      },
+    ];
+
+    const matchedReviews = await Review.aggregate(searchPipeline);
+    const matchedReviewIds = matchedReviews.map((r) => r._id);
+
+    // If no reviews match the search, the result is an empty array.
+    if (matchedReviewIds.length === 0) {
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            { docs: [], totalDocs: 0, limit, page: parseInt(page, 10) },
+            "No reviews found matching the search criteria."
+          )
+        );
+    }
+    // Add the list of matching IDs to the main query
+    query._id = { $in: matchedReviewIds };
   }
 
   // Filter by product ID
@@ -54,8 +109,10 @@ const getAllReviewsAdmin = asyncHandler(async (req, res) => {
   }
 
   // Filter by approval status
-  if (isApproved !== undefined) {
-    query.isApproved = isApproved === "true"; // Convert string to boolean
+  if (isApproved?.toLowerCase() === "true") {
+    query.isApproved = true;
+  } else if (isApproved?.toLowerCase() === "false") {
+    query.isApproved = false;
   }
 
   // Sorting options
