@@ -20,6 +20,7 @@ import Product from "./pages/Product/Product.jsx";
 import ProductForm from "./pages/Product/ProductForm.jsx";
 import ProductDetails from "./pages/Product/ProductDetails.jsx";
 import Review from "./pages/Review/Review.jsx";
+import Order from "./pages/Order/Order.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -51,7 +52,7 @@ function App() {
           <Route path="products/new" element={<ProductForm />} />
           <Route path="products/:productId" element={<ProductDetails />} />
           <Route path="products/edit/:productId" element={<ProductForm />} />
-          <Route path="orders" element={<div>Orders</div>} />
+          <Route path="orders" element={<Order />} />
           <Route path="banners" element={<div>Banners</div>} />
           <Route path="reviews" element={<Review />} />
           <Route path="settings" element={<div>Settings</div>} />

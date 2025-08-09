@@ -91,7 +91,7 @@ const Dashboard = () => {
         <h2 className="text-xl font-semibold text-primary font-fraunces mb-4">
           Recent Orders
         </h2>
-        <div className="glass-card">
+        <div className="h-auto max-h-[400px] overflow-auto">
           <OrdersTable orders={dashboardData?.recentOrders || []} />
         </div>
       </div>

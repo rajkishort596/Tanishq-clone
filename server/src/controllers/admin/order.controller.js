@@ -10,7 +10,6 @@ import { User } from "../../models/user.model.js";
  * @access Private (Admin only)
  */
 const getAllOrdersAdmin = asyncHandler(async (req, res) => {
-  // 1. Authorization Check
   if (!req.admin) {
     throw new ApiError(
       403,
@@ -25,64 +24,82 @@ const getAllOrdersAdmin = asyncHandler(async (req, res) => {
     status,
     paymentStatus,
     userId,
+    startDate,
     endDate,
     sortBy = "placedAt",
     sortOrder = "desc",
   } = req.query;
 
-  const query = {};
+  const matchStage = {};
 
-  // Search by orderNumber
-  if (search) {
-    query.orderNumber = { $regex: search, $options: "i" };
-  }
-
-  // Filter by specific user
+  // Filters
   if (userId) {
-    query.user = userId;
+    matchStage.user = new mongoose.Types.ObjectId(userId);
   }
-
-  // Filter by status
   if (status) {
-    query.status = status;
+    matchStage.status = status;
   }
-
-  // Filter by payment status
   if (paymentStatus) {
-    query["paymentDetails.status"] = paymentStatus;
+    matchStage["paymentDetails.status"] = paymentStatus;
   }
-
-  // Filter by date range
   if (startDate || endDate) {
-    query.placedAt = {};
-    if (startDate) {
-      query.placedAt.$gte = new Date(startDate);
-    }
-    if (endDate) {
-      query.placedAt.$lte = new Date(endDate);
-    }
+    matchStage.placedAt = {};
+    if (startDate) matchStage.placedAt.$gte = new Date(startDate);
+    if (endDate) matchStage.placedAt.$lte = new Date(endDate);
   }
 
-  // Sorting options
-  const sort = {};
-  sort[sortBy] = sortOrder === "desc" ? -1 : 1;
+  // Build pipeline
+  const pipeline = [
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    { $unwind: "$user" },
+  ];
 
-  // Pagination options
+  // Search conditions
+  if (search) {
+    pipeline.push({
+      $match: {
+        $or: [
+          { orderNumber: { $regex: search, $options: "i" } },
+          { "user.firstName": { $regex: search, $options: "i" } },
+          { "user.lastName": { $regex: search, $options: "i" } },
+          { "items.name": { $regex: search, $options: "i" } },
+          { "paymentDetails.method": { $regex: search, $options: "i" } },
+          { "paymentDetails.status": { $regex: search, $options: "i" } },
+          { status: { $regex: search, $options: "i" } },
+        ],
+      },
+    });
+  }
+
+  // Apply other filters
+  if (Object.keys(matchStage).length > 0) {
+    pipeline.push({ $match: matchStage });
+  }
+
+  // Sorting
+  pipeline.push({
+    $sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
+  });
+
+  // Pagination options for aggregatePaginate
   const options = {
     page: parseInt(page, 10),
     limit: parseInt(limit, 10),
-    sort,
-    populate: [
-      { path: "user", select: "firstName lastName email phone" },
-      { path: "items.product", select: "name images" },
-    ],
     customLabels: {
       totalDocs: "totalOrders",
       docs: "orders",
     },
   };
 
-  const orders = await Order.paginate(query, options);
+  const aggregate = Order.aggregate(pipeline);
+  const orders = await Order.aggregatePaginate(aggregate, options);
 
   if (!orders || orders.orders.length === 0) {
     return res
@@ -90,7 +107,7 @@ const getAllOrdersAdmin = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(
           200,
-          { docs: [], totalDocs: 0, limit, page: parseInt(page, 10) },
+          { orders: [], totalOrders: 0, limit, page: parseInt(page, 10) },
           "No orders found."
         )
       );
@@ -150,7 +167,7 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
   const { status, paymentStatus } = req.body; // Can update either or both
 
   if (!status && !paymentStatus) {
-    throw new ApiError(400, "Status or paymentStatus is required for update.");
+    throw new ApiError(400, "Status and paymentStatus is required for update.");
   }
 
   const order = await Order.findById(orderId);

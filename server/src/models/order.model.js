@@ -1,7 +1,6 @@
-// src/models/order.model.js
-
 import mongoose, { Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const orderItemSchema = new Schema(
   {
@@ -103,6 +102,7 @@ const orderSchema = new Schema(
   { timestamps: true }
 );
 
-orderSchema.plugin(mongoosePaginate); // Add the pagination plugin
+orderSchema.plugin(mongoosePaginate);
+orderSchema.plugin(mongooseAggregatePaginate);
 
 export const Order = mongoose.model("Order", orderSchema);
