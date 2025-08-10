@@ -9,6 +9,7 @@ import {
   uploadOnCloudinary,
   deleteImageFromCloudinary,
 } from "../../utils/cloudinary.js";
+import mongoose from "mongoose";
 
 /**
  * @desc Create a new product.
@@ -160,7 +161,7 @@ const getAllProductsAdmin = asyncHandler(async (req, res) => {
     );
   }
 
-  // Extract query parameters for filtering, sorting, and pagination
+  // Extract query params
   const {
     page = 1,
     limit = 10,
@@ -173,52 +174,52 @@ const getAllProductsAdmin = asyncHandler(async (req, res) => {
     sortOrder = "desc",
   } = req.query;
 
-  // Build the initial match query
+  // Build base match query for pre-lookup filtering
   const matchQuery = {};
-  if (search) {
-    matchQuery.$or = [
-      { name: { $regex: search, $options: "i" } },
-      { description: { $regex: search, $options: "i" } },
-      { metal: { $regex: search, $options: "i" } },
-      { purity: { $regex: search, $options: "i" } },
-    ];
-  }
-  if (category) {
-    matchQuery.category = category;
-  }
-  if (subCategory) {
-    matchQuery.subCategory = subCategory;
-  }
-  if (collection) {
-    matchQuery.collections = collection;
-  }
+
+  // Boolean filter
   if (isActive !== undefined) {
     matchQuery.isActive = isActive === "true";
   }
 
-  // Define the sort stage
-  const sortStage = {};
-  sortStage[sortBy] = sortOrder === "desc" ? -1 : 1; // -1 for descending, 1 for ascending
+  // Category filter (by ID)
+  if (mongoose.isValidObjectId(category)) {
+    matchQuery.category = mongoose.Types.ObjectId.createFromHexString(category);
+  }
 
-  // Build the aggregation pipeline
+  // SubCategory filter (by ID)
+  if (mongoose.isValidObjectId(subCategory)) {
+    matchQuery.subCategory =
+      mongoose.Types.ObjectId.createFromHexString(subCategory);
+  }
+
+  // Collection filter (by ID)
+  if (mongoose.isValidObjectId(collection)) {
+    matchQuery.collections = {
+      $in: [mongoose.Types.ObjectId.createFromHexString(collection)],
+    };
+  }
+
+  // Sort stage
+  const sortStage = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
+
+  // Aggregation pipeline
   const aggregatePipeline = [
-    // Stage 1: Filter products based on query parameters
+    // Pre-lookup filtering
     { $match: matchQuery },
 
-    // Stage 2: Join with Category collection for main category name
+    // Lookup category
     {
       $lookup: {
-        from: Category.collection.name, // The actual collection name in MongoDB (e.g., 'categories')
+        from: Category.collection.name,
         localField: "category",
         foreignField: "_id",
         as: "categoryDetails",
       },
     },
-    // Unwind categoryDetails to deconstruct the array. Since 'category' is usually a single ref,
-    // it's an array of one element.
-    { $unwind: { path: "$categoryDetails", preserveNullAndEmptyArrays: true } }, // preserveNull... keeps products without a category
+    { $unwind: { path: "$categoryDetails", preserveNullAndEmptyArrays: true } },
 
-    // Stage 3: Join with Category collection for sub-category name
+    // Lookup subCategory
     {
       $lookup: {
         from: Category.collection.name,
@@ -234,7 +235,7 @@ const getAllProductsAdmin = asyncHandler(async (req, res) => {
       },
     },
 
-    // Stage 4: Join with Collection collection for collection names
+    // Lookup collections
     {
       $lookup: {
         from: Collection.collection.name,
@@ -243,12 +244,30 @@ const getAllProductsAdmin = asyncHandler(async (req, res) => {
         as: "collectionDetails",
       },
     },
-    // No unwind for collections if you want them as an array of objects
 
-    // Stage 5: Sort the results
+    // Post-lookup search matching
+    ...(search
+      ? [
+          {
+            $match: {
+              $or: [
+                { name: { $regex: search, $options: "i" } },
+                { metal: { $regex: search, $options: "i" } },
+                { purity: { $regex: search, $options: "i" } },
+                { "categoryDetails.name": { $regex: search, $options: "i" } },
+                {
+                  "subCategoryDetails.name": { $regex: search, $options: "i" },
+                },
+              ],
+            },
+          },
+        ]
+      : []),
+
+    // Sorting
     { $sort: sortStage },
 
-    // Stage 6: Project (shape) the output documents
+    // Projection
     {
       $project: {
         name: 1,
@@ -265,20 +284,15 @@ const getAllProductsAdmin = asyncHandler(async (req, res) => {
         ratings: 1,
         createdAt: 1,
         updatedAt: 1,
-        // Include populated fields directly in the root document
         "category.name": "$categoryDetails.name",
         "category._id": "$categoryDetails._id",
         "subCategory.name": "$subCategoryDetails.name",
         "subCategory._id": "$subCategoryDetails._id",
-        // Map collectionDetails to an array of just names and IDs
         collections: {
           $map: {
             input: "$collectionDetails",
             as: "coll",
-            in: {
-              _id: "$$coll._id",
-              name: "$$coll.name",
-            },
+            in: { _id: "$$coll._id", name: "$$coll.name" },
           },
         },
         mainImage: { $arrayElemAt: ["$images.url", 0] },
@@ -286,7 +300,7 @@ const getAllProductsAdmin = asyncHandler(async (req, res) => {
     },
   ];
 
-  // Options for mongoose-aggregate-paginate-v2
+  // Pagination options
   const options = {
     page: parseInt(page, 10),
     limit: parseInt(limit, 10),
@@ -296,7 +310,7 @@ const getAllProductsAdmin = asyncHandler(async (req, res) => {
     },
   };
 
-  // Execute the aggregation with pagination
+  // Execute aggregation with pagination
   const products = await Product.aggregatePaginate(
     Product.aggregate(aggregatePipeline),
     options

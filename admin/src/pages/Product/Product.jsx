@@ -7,10 +7,12 @@ import { useNavigate } from "react-router-dom";
 import ProductCard from "../../components/Card/ProductCard";
 import ConfirmModal from "../../components/ConfirmModal";
 import { useProducts } from "../../hooks/useProducts";
+import { useCollections } from "../../hooks/useCollections";
 const Product = () => {
   const navigate = useNavigate();
   const [rawSearch, setRawSearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [collectionQuery, setCollectionQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [toDeleteId, setToDeleteId] = useState(null);
@@ -45,7 +47,10 @@ const Product = () => {
     page: currentPage,
     limit: itemsPerPage,
     search: searchQuery,
+    collection: collectionQuery,
   });
+
+  const { collections } = useCollections({});
 
   useEffect(() => {
     if (error) {
@@ -134,7 +139,7 @@ const Product = () => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5" />
           <input
             type="text"
-            placeholder="Search product by name, metal or purity"
+            placeholder="Search Product by Name, Metal, category Sub-Category or Purity..."
             value={rawSearch}
             onChange={handleSearchChange}
             className="w-full pl-10 pr-10 py-2 rounded-md bg-white text-gray-800 transition-all duration-300 outline-none"
@@ -149,6 +154,20 @@ const Product = () => {
             </button>
           )}
         </div>
+        <select
+          className="px-4 py-2 rounded-md border bg-white text-gray-800 transition-all duration-300 outline-none
+        border-gray-300 shadow-sm hover:shadow-md w-full md:w-1/3"
+          value={collectionQuery}
+          onChange={(e) => {
+            setCollectionQuery(e.target.value);
+            setCurrentPage(1);
+          }}
+        >
+          <option value="">All Collections</option>
+          {collections.map((collection) => (
+            <option value={collection._id}>{collection.name}</option>
+          ))}
+        </select>
       </div>
 
       {products.length === 0 ? (
