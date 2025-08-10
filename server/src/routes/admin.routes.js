@@ -192,7 +192,7 @@ router
 router
   .route("/banners/:bannerId")
   .get(verifyAdminJWT, getBannerByIdAdmin)
-  .put(verifyAdminJWT, upload.single("image"), updateBanner)
+  .patch(verifyAdminJWT, upload.single("image"), updateBanner)
   .delete(verifyAdminJWT, deleteBanner);
 
 export default router;

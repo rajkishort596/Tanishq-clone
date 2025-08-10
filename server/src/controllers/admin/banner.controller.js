@@ -21,7 +21,7 @@ const createBanner = asyncHandler(async (req, res) => {
     );
   }
 
-  const { title, description, linkUrl, isActive } = req.body;
+  const { title, linkUrl, isActive } = req.body;
 
   // 2. Basic Validation
   if (!title) {
@@ -51,10 +51,9 @@ const createBanner = asyncHandler(async (req, res) => {
   // 4. Create the Banner
   const banner = await Banner.create({
     title: title.trim(),
-    description: description ? description.trim() : "",
     image: uploadedImage,
     link: linkUrl ? linkUrl.trim() : "#", // Default link to homepage or '#'
-    isActive: isActive !== undefined ? isActive : true, // Default to active
+    active: isActive !== undefined ? isActive : true, // Default to active
   });
 
   if (!banner) {
@@ -168,7 +167,7 @@ const updateBanner = asyncHandler(async (req, res) => {
   }
 
   const { bannerId } = req.params;
-  const { title, description, linkUrl, order, isActive } = req.body;
+  const { title, linkUrl, isActive } = req.body;
   const imageLocalPath = req.file?.path;
 
   const banner = await Banner.findById(bannerId);
@@ -178,10 +177,8 @@ const updateBanner = asyncHandler(async (req, res) => {
 
   // 2. Update fields
   if (title !== undefined) banner.title = title.trim();
-  if (description !== undefined) banner.description = description.trim();
   if (linkUrl !== undefined) banner.link = linkUrl.trim();
-  if (order !== undefined) banner.order = parseInt(order, 10);
-  if (isActive !== undefined) banner.isActive = isActive;
+  if (isActive !== undefined) banner.active = isActive;
 
   // 3. Handle Image Update
   if (imageLocalPath) {

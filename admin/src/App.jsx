@@ -21,6 +21,8 @@ import ProductForm from "./pages/Product/ProductForm.jsx";
 import ProductDetails from "./pages/Product/ProductDetails.jsx";
 import Review from "./pages/Review/Review.jsx";
 import Order from "./pages/Order/Order.jsx";
+import Banner from "./pages/Banner/Banner.jsx";
+import BannerForm from "./pages/Banner/BannerForm.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -53,7 +55,9 @@ function App() {
           <Route path="products/:productId" element={<ProductDetails />} />
           <Route path="products/edit/:productId" element={<ProductForm />} />
           <Route path="orders" element={<Order />} />
-          <Route path="banners" element={<div>Banners</div>} />
+          <Route path="banners" element={<Banner />} />
+          <Route path="banners/new" element={<BannerForm />} />
+          <Route path="banners/edit/:bannerId" element={<BannerForm />} />
           <Route path="reviews" element={<Review />} />
           <Route path="settings" element={<div>Settings</div>} />
         </Route>
