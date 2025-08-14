@@ -18,3 +18,13 @@ export const logoutAdmin = async () => {
     throw error;
   }
 };
+export const fetchAdminProfile = async () => {
+  try {
+    const response = await axios.get("/admin/me");
+    // console.log("Admin Profile Data:", response.data.data);
+    return response.data.data;
+  } catch (error) {
+    console.error("Failed to Fetch Admin Profile:", error);
+    throw error;
+  }
+};

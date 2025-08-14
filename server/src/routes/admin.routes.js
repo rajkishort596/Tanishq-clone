@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   changePassword,
   forgotPassword,
+  getMeAdmin,
   loginAdmin,
   logoutAdmin,
   resetPassword,
@@ -79,7 +80,7 @@ router
   .route("/change-password")
   .post(verifyAdminJWT, changeUserPasswordValidation, changePassword);
 router.route("/refresh-token").post(refreshAdminAccessToken);
-
+router.route("/me").get(verifyAdminJWT, getMeAdmin);
 /**
  * @StatRoute
  */

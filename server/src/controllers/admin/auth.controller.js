@@ -65,6 +65,15 @@ const loginAdmin = asyncHandler(async (req, res) => {
     );
 });
 
+const getMeAdmin = asyncHandler(async (req, res) => {
+  // req.admin is attached by verifyAdminJWT
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, req.admin, "Admin details fetched successfully")
+    );
+});
+
 const logoutAdmin = asyncHandler(async (req, res) => {
   await Admin.findByIdAndUpdate(req.admin._id, {
     $unset: { refreshToken: 1 },
@@ -110,6 +119,7 @@ const changePassword = asyncHandler(async (req, res) => {
 
 export {
   loginAdmin,
+  getMeAdmin,
   logoutAdmin,
   forgotPassword,
   resetPassword,
