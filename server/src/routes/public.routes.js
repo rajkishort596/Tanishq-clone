@@ -14,6 +14,7 @@ import {
 } from "../controllers/public/collection.public.controller.js";
 import { getActiveBanners } from "../controllers/public/banner.public.controller.js";
 import { getLatestMetalRate } from "../controllers/public/metalRate.public.controller.js";
+import { getPublicSettings } from "../controllers/public/setting.public.controller.js";
 
 const router = Router();
 
@@ -52,5 +53,10 @@ router.route("/banners").get(getActiveBanners);
  * @GoldRateRoute
  */
 router.route("/metal-rate").get(getLatestMetalRate);
+
+/**
+ * @SettingsRoutes
+ */
+router.route("/settings").get(getPublicSettings);
 
 export default router;

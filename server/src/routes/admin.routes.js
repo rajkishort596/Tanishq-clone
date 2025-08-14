@@ -16,6 +16,7 @@ import {
   updateCategoryValidation,
   updateCollectionValidation,
   updateProductValidation,
+  updateSettingsValidation,
 } from "../middlewares/validationMiddleware.js";
 import {
   createProduct,
@@ -60,6 +61,10 @@ import {
   updateBanner,
 } from "../controllers/admin/banner.controller.js";
 import { getDashboardStats } from "../controllers/admin/dashboard.controller.js";
+import {
+  getAdminSettings,
+  updateAdminSettings,
+} from "../controllers/admin/setting.admin.controller.js";
 const router = Router();
 
 /**
@@ -195,4 +200,16 @@ router
   .patch(verifyAdminJWT, upload.single("image"), updateBanner)
   .delete(verifyAdminJWT, deleteBanner);
 
+/**
+ * @SettingsRoutes
+ */
+router
+  .route("/settings")
+  .get(verifyAdminJWT, getAdminSettings)
+  .patch(
+    verifyAdminJWT,
+    upload.single("logo"),
+    updateSettingsValidation,
+    updateAdminSettings
+  );
 export default router;

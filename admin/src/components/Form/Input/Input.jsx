@@ -1,13 +1,14 @@
-import React, { useId } from "react";
+import React from "react";
 
 const Input = ({
   label,
   placeholder = "",
-  type,
+  type = "text",
   className = "",
   readonly = false,
   error,
   id,
+  icon, // new icon prop
   ...props
 }) => {
   return (
@@ -18,26 +19,34 @@ const Input = ({
         </label>
       )}
 
-      <input
-        type={type}
-        id={id}
-        placeholder={placeholder}
-        autoComplete="off"
-        readOnly={readonly}
-        className={`px-4 py-2 rounded-md border bg-white text-gray-800 transition-all duration-300 outline-none
+      <div
+        className={`flex items-center rounded-md border transition-all duration-300 
         ${
           error
-            ? "border-red-500 focus:ring-red-300 text-red-600"
-            : "border-gray-300 focus:ring-primary"
+            ? "border-red-500 focus-within:ring-red-300"
+            : "border-gray-300 focus-within:ring-primary"
         }
         ${
           readonly
             ? "bg-gray-100 cursor-not-allowed"
-            : "focus:ring-2 focus:border-transparent shadow-sm hover:shadow-md"
+            : "focus-within:ring-2 focus-within:border-transparent shadow-sm hover:shadow-md"
         }
-        ${className}`}
-        {...props}
-      />
+        bg-white`}
+      >
+        {icon && (
+          <span className="pl-3 text-gray-500 flex items-center">{icon}</span>
+        )}
+
+        <input
+          type={type}
+          id={id}
+          placeholder={placeholder}
+          autoComplete="off"
+          readOnly={readonly}
+          className={`flex-1 px-4 py-2 rounded-md outline-none bg-transparent text-gray-800 ${className}`}
+          {...props}
+        />
+      </div>
 
       {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
     </div>

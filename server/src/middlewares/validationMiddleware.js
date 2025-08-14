@@ -191,12 +191,21 @@ const userAddressValidation = [
 const parseJsonBodyField = (field) =>
   body(field).customSanitizer((value, { req }) => {
     try {
-      // Check if the field exists and is a string before parsing
-      if (typeof value === "string") {
-        req.body[field] = JSON.parse(value); // Parse and assign back to req.body
-        return req.body[field];
+      // If value is empty or null, treat as null
+      if (value === "" || value === undefined || value === null) {
+        req.body[field] = null;
+        return null;
       }
-      return value; // Return original value if not a string (e.g., undefined)
+
+      // If it's a string, parse it
+      if (typeof value === "string") {
+        const parsed = JSON.parse(value);
+        req.body[field] = parsed;
+        return parsed;
+      }
+
+      // Already object/array
+      return value;
     } catch (e) {
       throw new Error(`Invalid JSON format for ${field}.`);
     }
@@ -713,6 +722,106 @@ const reviewValidation = [
   validate,
 ];
 
+// --- Settings Validations ---
+const updateSettingsValidation = [
+  // Parse and validate storeInfo
+  parseJsonBodyField("storeInfo"),
+  body("storeInfo.name")
+    .notEmpty()
+    .withMessage("Store name is required.")
+    .bail()
+    .isString()
+    .withMessage("Store name must be a string."),
+  body("storeInfo.description")
+    .optional({ nullable: true, checkFalsy: true })
+    .isString()
+    .withMessage("Description must be a string."),
+
+  // Parse and validate contactInfo
+  parseJsonBodyField("contactInfo"),
+  body("contactInfo.emails")
+    .notEmpty()
+    .withMessage("At least one email is required.")
+    .bail()
+    .isArray()
+    .withMessage("Emails must be an array.")
+    .bail()
+    .custom((emails) =>
+      emails.every((email) => typeof email === "string" && email.trim() !== "")
+    )
+    .withMessage("Emails cannot be empty strings.")
+    .bail()
+    .custom((emails) => emails.every((email) => /\S+@\S+\.\S+/.test(email)))
+    .withMessage("All emails must be valid email addresses."),
+
+  body("contactInfo.phones")
+    .notEmpty()
+    .withMessage("At least one phone number is required.")
+    .bail()
+    .isArray()
+    .withMessage("Phones must be an array.")
+    .bail()
+    .custom((phones) =>
+      phones.every((phone) => typeof phone === "string" && phone.trim() !== "")
+    )
+    .withMessage("Phone numbers cannot be empty strings.")
+    .bail()
+    .custom(
+      (phones) => phones.every((phone) => /^[0-9]{10}$/.test(phone)) // 10-digit numeric
+    )
+    .withMessage("All phone numbers must be valid 10-digit numbers."),
+
+  body("contactInfo.whatsapp")
+    .optional({ nullable: true, checkFalsy: true })
+    .matches(/^[0-9]{10}$/)
+    .withMessage("WhatsApp must be a valid 10-digit number."),
+  body("contactInfo.address")
+    .optional({ nullable: true, checkFalsy: true })
+    .isString()
+    .withMessage("Address must be a string."),
+
+  // Parse and validate socialLinks
+  parseJsonBodyField("socialLinks"),
+  body("socialLinks.facebook")
+    .optional({ nullable: true, checkFalsy: true })
+    .isURL()
+    .withMessage("Facebook must be a valid URL."),
+  body("socialLinks.instagram")
+    .optional({ nullable: true, checkFalsy: true })
+    .isURL()
+    .withMessage("Instagram must be a valid URL."),
+  body("socialLinks.twitter")
+    .optional({ nullable: true, checkFalsy: true })
+    .isURL()
+    .withMessage("Twitter must be a valid URL."),
+  body("socialLinks.youtube")
+    .optional({ nullable: true, checkFalsy: true })
+    .isURL()
+    .withMessage("YouTube must be a valid URL."),
+
+  // Parse and validate paymentSettings
+  parseJsonBodyField("paymentSettings"),
+  body("paymentSettings.currency")
+    .notEmpty()
+    .withMessage("Currency is required.")
+    .bail()
+    .isIn(["INR", "USD", "EUR"])
+    .withMessage("Invalid currency."),
+  body("paymentSettings.codEnabled")
+    .not()
+    .isEmpty()
+    .withMessage("codEnabled is required.")
+    .bail()
+    .isBoolean()
+    .withMessage("codEnabled must be a boolean."),
+  body("paymentSettings.methods")
+    .optional({ nullable: true, checkFalsy: true })
+    .isArray()
+    .withMessage("Methods must be an array."),
+
+  validate,
+];
+
 export {
   registerUserValidation,
   verifyUserOTPValidation,
@@ -729,4 +838,5 @@ export {
   updateCollectionValidation,
   createOrderValidation,
   reviewValidation,
+  updateSettingsValidation,
 };
