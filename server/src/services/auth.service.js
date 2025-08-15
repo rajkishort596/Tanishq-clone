@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { sendEmail } from "../utils/sendEmail.js"; // Ensure this utility is correctly implemented
+import bcrypt from "bcrypt";
 
 /**
  * Generic function to handle forgot password requests.
@@ -21,16 +22,11 @@ export const genericForgotPassword = async (Model, email) => {
   const entity = await Model.findOne({ email });
 
   if (!entity) {
-    console.log(`Password reset attempt for non-existent email: ${email}`);
-    return new ApiResponse(
-      200,
-      {},
-      "If an account with that email exists, a password reset link has been sent to your email."
-    );
+    throw new ApiError(404, "Account with this email does not exist.");
   }
 
   // Generate JWT reset token using the model's method
-  const resetToken = entity.generatePasswordResetToken();
+  const resetToken = await entity.generatePasswordResetToken();
 
   // The frontend URL where the user will reset their password
   const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
@@ -100,11 +96,18 @@ export const genericResetPassword = async (Model, token, newPassword) => {
   }
 
   const entity = await Model.findById(payload._id);
-  if (!entity) {
-    throw new ApiError(404, "User not found for this reset token.");
+  if (!entity || !entity.resetPasswordTokenHash) {
+    throw new ApiError(400, "Token already used or invalid");
   }
 
+  // Compare bcrypt hash
+  const isMatch = await bcrypt.compare(token, entity.resetPasswordTokenHash);
+  if (!isMatch) {
+    throw new ApiError(400, "Token already used or invalid");
+  }
+  // Update password and clear reset token hash
   entity.password = newPassword;
+  entity.resetPasswordTokenHash = undefined;
   await entity.save();
   return new ApiResponse(200, {}, "Password has been reset successfully.");
 };

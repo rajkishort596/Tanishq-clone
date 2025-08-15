@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Mail, Lock } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import images from "../constants/images";
 import LoginHeroImg from "../assets/images/Login-HeroImg.png";
@@ -99,12 +99,12 @@ const Login = () => {
             </div>
 
             <div className="text-right">
-              <a
-                href="/forgot-password"
+              <Link
+                to="/forgot-password"
                 className="text-[var(--color-gold)] hover:underline text-sm"
               >
                 Forgot password?
-              </a>
+              </Link>
             </div>
 
             <button

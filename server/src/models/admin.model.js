@@ -41,6 +41,9 @@ const adminSchema = new Schema(
     refreshToken: {
       type: String,
     },
+    resetPasswordTokenHash: {
+      type: String,
+    },
     otp: {
       type: String,
     },
@@ -97,15 +100,21 @@ adminSchema.methods.generateRefreshToken = function () {
   );
 };
 
-adminSchema.methods.generatePasswordResetToken = function () {
+adminSchema.methods.generatePasswordResetToken = async function () {
   const payload = {
     _id: this._id,
     email: this.email,
   };
+
   // Expires in 1 hour
-  return jwt.sign(payload, process.env.RESET_PASSWORD_SECRET, {
+  const token = jwt.sign(payload, process.env.RESET_PASSWORD_SECRET, {
     expiresIn: "1h",
   });
+
+  // Hash the token for storage
+  this.resetPasswordTokenHash = await bcrypt.hash(token, 10);
+  await this.save({ validateBeforeSave: false });
+  return token;
 };
 
 export const Admin = mongoose.model("Admin", adminSchema);

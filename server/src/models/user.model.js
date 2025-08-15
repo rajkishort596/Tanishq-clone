@@ -38,6 +38,9 @@ const userSchema = new mongoose.Schema(
     refreshToken: {
       type: String,
     },
+    resetPasswordTokenHash: {
+      type: String,
+    },
     addresses: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -123,15 +126,20 @@ userSchema.methods.generateRefreshToken = function () {
   );
 };
 
-userSchema.methods.generatePasswordResetToken = function () {
+userSchema.methods.generatePasswordResetToken = async function () {
   const payload = {
     _id: this._id,
     email: this.email,
   };
   // Expires in 1 hour
-  return jwt.sign(payload, process.env.RESET_PASSWORD_SECRET, {
+  const token = jwt.sign(payload, process.env.RESET_PASSWORD_SECRET, {
     expiresIn: "1h",
   });
+
+  // Hash the token for storage
+  this.resetPasswordTokenHash = bcrypt.hashSync(token, 10);
+  await this.save({ validateBeforeSave: false });
+  return token;
 };
 
 export const User = mongoose.model("User", userSchema);

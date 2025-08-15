@@ -24,6 +24,9 @@ import Order from "./pages/Order/Order.jsx";
 import Banner from "./pages/Banner/Banner.jsx";
 import BannerForm from "./pages/Banner/BannerForm.jsx";
 import Setting from "./pages/Setting/Setting.jsx";
+import NotFound from "./pages/NotFound.jsx";
+import ForgotPassword from "./pages/Forgotpassword.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -62,6 +65,9 @@ function App() {
           <Route path="reviews" element={<Review />} />
           <Route path="settings" element={<Setting />} />
         </Route>
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="*" element={<NotFound />} />
       </>
     )
   );
