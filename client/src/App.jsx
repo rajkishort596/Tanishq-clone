@@ -1,7 +1,35 @@
 import React from "react";
+import {
+  createBrowserRouter,
+  createRoutesFromChildren,
+  Route,
+  RouterProvider,
+} from "react-router-dom";
+import ClientLayout from "./layouts/ClientLayout";
 
 const App = () => {
-  return <div>App</div>;
+  const router = createBrowserRouter(
+    createRoutesFromChildren(
+      <>
+        <Route path="/" element={<ClientLayout />}>
+          <Route index element={<div>Home Page</div>} />
+          <Route path="cart" element={<div>Cart</div>} />
+          <Route path="wishlists" element={<div>Wishlists</div>} />
+          <Route path="shop/jewellery" element={<div>All Jewellery</div>} />
+          <Route path="shop/gold" element={<div>Gold Jewellery</div>} />
+          <Route path="shop/diamond" element={<div>Diamond Jewellery</div>} />
+          <Route path="shop/rings" element={<div>Rings</div>} />
+          <Route path="shop/earrings" element={<div>Earrings</div>} />
+          <Route path="shop/necklaces" element={<div>Necklaces</div>} />
+          <Route
+            path="shop/bracelets-and-bangles"
+            element={<div>Bracelets & Bangles</div>}
+          />
+        </Route>
+      </>
+    )
+  );
+  return <RouterProvider router={router} />;
 };
 
 export default App;
