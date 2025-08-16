@@ -1,0 +1,153 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-blue: #0070d2;
+  --color-green: #1fa042;
+  --color-primary: #8e2c2f;
+  --color-secondary: #2e1c1b;
+  --color-gold: #ffd700;
+  --color-red: #c00;
+  --color-success: var(--color-green);
+  --color-danger: var(--color-red);
+  --color-light-blue: #7ed0ee;
+  --color-grey1: #f7f4f1;
+  --color-grey2: #e6dcd1;
+  --color-grey3: #c3b5a7;
+  --color-grey4: #9c8f86;
+  --color-grey5: #7a6a63;
+  --color-grey6: #5a4b45;
+  --color-grey7: #3a2f2c;
+  --color-grey8: #221d1c;
+  --color-black2: #160c05;
+
+  --font-nunito: "Nunito Sans", sans-serif;
+  --font-fraunces: "Fraunces", serif;
+  --font-IBM-Plex: "IBM Plex Sans", sans-serif;
+}
+html,
+body,
+#root {
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 cursor-pointer flex justify-center items-center py-2 rounded text-white font-bold font-nunito shadow-md bg-gradient-to-r from-[#832729] to-[#631517];
+  }
+
+  .glass-card {
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(201, 168, 109, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    @apply rounded-xl p-6;
+  }
+
+  /* Custom class for the sidebar/header background gradient */
+  .bg-tanishq-gradient {
+    background: linear-gradient(
+      180deg,
+      var(--color-primary) 0%,
+      var(--color-secondary) 100%
+    );
+  }
+
+  /* Custom class for the icon circle gradient */
+  .icon-circle-gradient {
+    background: linear-gradient(
+      145deg,
+      var(--color-gold) 0%,
+      var(--color-grey3) 100%
+    );
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  /* --- Specific Glows for StatCard Icons --- */
+  .glow-rose {
+    box-shadow: 0 0 15px 5px rgba(220, 38, 38, 0.5),
+      /* Rose-600 */ 0 0 8px 2px rgba(220, 38, 38, 0.3);
+  }
+  .glow-blue {
+    box-shadow: 0 0 15px 5px rgba(37, 99, 235, 0.5),
+      /* Blue-600 */ 0 0 8px 2px rgba(37, 99, 235, 0.3);
+  }
+  .glow-green {
+    box-shadow: 0 0 15px 5px rgba(34, 197, 94, 0.5),
+      /* Green-600 */ 0 0 8px 2px rgba(34, 197, 94, 0.3);
+  }
+  .glow-yellow {
+    box-shadow: 0 0 15px 5px rgba(234, 179, 8, 0.5),
+      /* Yellow-600 */ 0 0 8px 2px rgba(234, 179, 8, 0.3);
+  }
+  .glow-red {
+    /* For Out of Stock */
+    box-shadow: 0 0 15px 5px rgba(239, 68, 68, 0.5),
+      /* Red-600 */ 0 0 8px 2px rgba(239, 68, 68, 0.3);
+  }
+
+  /* General subtle gold glow for elements like sidebar */
+  .subtle-gold-glow {
+    box-shadow: 0 0 10px 2px rgba(201, 168, 109, 0.2),
+      /* Softer gold glow */ 0 0 5px 1px rgba(201, 168, 109, 0.1); /* Even softer inner glow */
+  }
+
+  /* Glow for active sidebar link icon */
+  .active-sidebar-icon-glow {
+    filter: drop-shadow(0 0 5px var(--color-gold));
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+  }
+  /* Custom text color for gold accents */
+  .text-gold-accent {
+    color: var(--color-gold);
+  }
+  /* Custom text color for primary (maroon) */
+  .text-tanishq-primary {
+    color: var(--color-primary);
+  }
+}
+
+body {
+  @apply font-[var(--font-nunito)];
+}
+.font-fraunces {
+  font-family: var(--font-fraunces);
+}
+.font-IBM-Plex {
+  font-family: var(--font-IBM-Plex);
+}
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 10px;
+  background: var(--color-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8b0808;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-secondary);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary) var(--color-white);
+}
