@@ -12,10 +12,10 @@ const App = () => {
     createRoutesFromChildren(
       <>
         <Route path="/" element={<ClientLayout />}>
-          <Route index element={<div>Home Page</div>} />
+          <Route index element={<div></div>} />
           <Route path="cart" element={<div>Cart</div>} />
           <Route path="wishlists" element={<div>Wishlists</div>} />
-          <Route path="shop/jewellery" element={<div>All Jewellery</div>} />
+          <Route path="shop/all-jewellery" element={<div>All Jewellery</div>} />
           <Route path="shop/gold" element={<div>Gold Jewellery</div>} />
           <Route path="shop/diamond" element={<div>Diamond Jewellery</div>} />
           <Route path="shop/rings" element={<div>Rings</div>} />
@@ -25,6 +25,7 @@ const App = () => {
             path="shop/bracelets-and-bangles"
             element={<div>Bracelets & Bangles</div>}
           />
+          <Route path="shop/collections" element={<div>Collections</div>} />
         </Route>
       </>
     )
