@@ -103,7 +103,7 @@ const SubMenu = ({
           {/* Filters */}
           <FilterSection
             title="Price"
-            options={filters.price}
+            options={filters.price(selectedCategory?.name)}
             onSelect={(val) => handleFilterSelect("price", val)}
           />
           <FilterSection
@@ -113,7 +113,7 @@ const SubMenu = ({
           />
           <FilterSection
             title="Gender"
-            options={filters.gender}
+            options={filters.gender(selectedCategory?.name)}
             onSelect={(val) => handleFilterSelect("gender", val)}
           />
           <FilterSection

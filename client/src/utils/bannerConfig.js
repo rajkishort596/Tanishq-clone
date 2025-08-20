@@ -25,7 +25,7 @@ export const bannerConfig = {
   "Bracelets & Bangles": {
     path: "/shop/bracelets-and-bangles",
     img: {
-      mobile: images.kundanStoriesBannerMobile,
+      mobile: images.kundanStoriesMobileBanner,
       desktop: images.kundanStoriesDesktopBanner,
     },
   },

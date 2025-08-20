@@ -66,7 +66,7 @@ const Header = () => {
       <div className="px-4 sm:px-2 lg:px-4 w-full relative">
         {/* Middle - Nav (desktop only) */}
         <nav className="hidden w-full lg:flex space-x-8 justify-between items-center">
-          <NavCategories categories={categories} />
+          <NavCategories categories={categories} collctions={collections} />
         </nav>
       </div>
 
