@@ -72,8 +72,8 @@ const getSubCategoriesOfParent = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Parent category not found.");
   }
 
-  // Find all categories where their 'parent' field matches the given categoryId
-  const subcategories = await Category.find({ parent: categoryId })
+  // Find all categories where their 'parent' field contains the given categoryId
+  const subcategories = await Category.find({ parent: { $in: [categoryId] } })
     .sort({ name: 1 })
     .select("name slug description icon");
 

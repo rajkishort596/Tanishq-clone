@@ -16,12 +16,12 @@ const categorySchema = new Schema(
       type: String,
       required: true,
     },
-    parent: {
-      // For nested categories (e.g., Jewelry -> Rings -> Diamond Rings)
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-      default: null,
-    },
+    parent: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
+      },
+    ],
     icon: {
       url: {
         type: String,

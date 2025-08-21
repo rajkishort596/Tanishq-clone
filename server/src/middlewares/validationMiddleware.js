@@ -1,7 +1,7 @@
 import { body, validationResult, param } from "express-validator";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-
+import mongoose from "mongoose";
 // Middleware to check validation results
 const validate = asyncHandler(async (req, res, next) => {
   const errors = validationResult(req);
@@ -576,6 +576,23 @@ const updateProductValidation = [
   validate,
 ];
 
+// Custom validator to handle either a single string or an array of ObjectIds
+const validateParentIds = (value, { req }) => {
+  let parentIds = Array.isArray(value) ? value : [value];
+
+  // The custom validation now iterates over the normalized array
+  for (const id of parentIds) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new Error(`Invalid parent category ID: ${id}`);
+    }
+  }
+
+  // Update the request body to always have an array for consistency
+  req.body.parent = parentIds;
+
+  return true;
+};
+
 // --- Category Validations ---
 
 const createCategoryValidation = [
@@ -593,13 +610,7 @@ const createCategoryValidation = [
     .isLength({ min: 2 })
     .withMessage("Description must be at least 2 characters long."),
 
-  body("parent")
-    .customSanitizer((value) => (value === "" ? null : value))
-    .custom((value) => {
-      if (value === null || value === undefined) return true;
-      return /^[a-fA-F0-9]{24}$/.test(value); // Check if it's a valid MongoDB ObjectId
-    })
-    .withMessage("Invalid parent category ID."),
+  body("parent").optional().custom(validateParentIds),
 
   validate,
 ];
@@ -623,13 +634,7 @@ const updateCategoryValidation = [
     .isLength({ min: 2 })
     .withMessage("Description must be at least 2 characters long."),
 
-  body("parent")
-    .customSanitizer((value) => (value === "" ? null : value))
-    .custom((value) => {
-      if (value === null || value === undefined) return true;
-      return /^[a-fA-F0-9]{24}$/.test(value); // Check if it's a valid MongoDB ObjectId
-    })
-    .withMessage("Invalid parent category ID."),
+  body("parent").optional().custom(validateParentIds),
 
   validate,
 ];

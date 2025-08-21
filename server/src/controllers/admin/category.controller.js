@@ -8,6 +8,7 @@ import {
   deleteImageFromCloudinary,
 } from "../../utils/cloudinary.js";
 import slugify from "slugify";
+import mongoose from "mongoose";
 
 /**
  * @desc Create a new category.
@@ -47,12 +48,17 @@ const createCategory = asyncHandler(async (req, res) => {
     throw new ApiError(409, "Category with this name or slug already exists.");
   }
 
-  // Handle parent category (if provided)
-  let parentCategory = null;
-  if (parent) {
-    parentCategory = await Category.findById(parent);
-    if (!parentCategory) {
-      throw new ApiError(404, "Parent category not found.");
+  // Handle parent categories (if provided)
+  const parentIds = Array.isArray(parent) ? parent : parent ? [parent] : [];
+
+  // Validate that all parent IDs exist and are valid
+  if (parentIds.length > 0) {
+    const parentCategories = await Category.find({
+      _id: { $in: parentIds },
+    });
+
+    if (parentCategories.length !== parentIds.length) {
+      throw new ApiError(404, "One or more parent categories not found.");
     }
   }
 
@@ -81,7 +87,7 @@ const createCategory = asyncHandler(async (req, res) => {
     name,
     slug,
     description,
-    parent: parentCategory ? parentCategory._id : null,
+    parent: parentIds,
     icon: uploadedIcon,
   });
 
@@ -130,9 +136,13 @@ const getAllCategoriesAdmin = asyncHandler(async (req, res) => {
 
   // Parent category filter
   if (parent && parent !== "null" && parent !== "undefined") {
-    query.parent = parent;
+    // If a specific parent ID is provided, find all children that have this ID in their parent array
+    query.parent = {
+      $in: [mongoose.Types.ObjectId.createFromHexString(parent)],
+    };
   } else if (parent === "null") {
-    query.parent = null;
+    // This now queries for root categories, which have an empty parent array
+    query.parent = { $size: 0 };
   }
 
   // Sorting options
@@ -244,10 +254,9 @@ const updateCategory = asyncHandler(async (req, res) => {
 
   if (name && name.trim() !== "" && name.trim() !== category.name) {
     const newSlug = slugify(name, { lower: true, strict: true });
-    // Check for duplicate name/slug if changed
     const existingCategoryWithNewNameOrSlug = await Category.findOne({
       $or: [{ name: name }, { slug: newSlug }],
-      _id: { $ne: categoryId }, // Exclude current category
+      _id: { $ne: categoryId },
     });
     if (existingCategoryWithNewNameOrSlug) {
       throw new ApiError(
@@ -259,32 +268,32 @@ const updateCategory = asyncHandler(async (req, res) => {
     category.slug = newSlug;
   }
 
-  // Update description if provided
   if (description !== undefined) {
     category.description = description.trim();
   }
 
-  // Update parent category
-  if (parent !== undefined) {
-    if (parent === categoryId) {
-      throw new ApiError(400, "A category cannot be its own parent.");
-    }
-    if (parent === null || parent.trim() === "") {
-      category.parent = null; // Remove parent
-    } else {
-      const parentCategory = await Category.findById(parent);
-      if (!parentCategory) {
-        throw new ApiError(404, "New parent category not found.");
-      }
-      //Todo: Prevent circular dependencies (A->B, B->A).
-      // For now, simply assign. Mongoose won't automatically detect deeper cycles.
-      category.parent = parent;
+  // Handle the parent array update logic
+
+  const parentIds = Array.isArray(parent) ? parent : parent ? [parent] : [];
+
+  // Check if the category is trying to be its own parent
+  if (parentIds.some((pId) => pId === categoryId)) {
+    throw new ApiError(400, "A category cannot be its own parent.");
+  }
+
+  // Validate that all parent IDs exist
+  if (parentIds.length > 0) {
+    const parentCategories = await Category.find({ _id: { $in: parentIds } });
+    if (parentCategories.length !== parentIds.length) {
+      throw new ApiError(404, "One or more parent categories not found.");
     }
   }
 
+  // Update the parent field with the new array
+  category.parent = parentIds;
+
   // Handle icon update
   if (iconLocalPath) {
-    // Delete old icon from Cloudinary if it exists
     if (category.icon && category.icon.publicId) {
       try {
         await deleteImageFromCloudinary(category.icon.publicId);
@@ -296,7 +305,6 @@ const updateCategory = asyncHandler(async (req, res) => {
       }
     }
 
-    // Upload new icon
     let uploadedIcon = {};
     try {
       const result = await uploadOnCloudinary(iconLocalPath);
@@ -311,7 +319,6 @@ const updateCategory = asyncHandler(async (req, res) => {
     }
     category.icon = uploadedIcon;
   } else if (req.body.clearIcon === "true") {
-    // Allow explicit clearing of icon
     if (category.icon && category.icon.publicId) {
       try {
         await deleteImageFromCloudinary(category.icon.publicId);
@@ -352,8 +359,9 @@ const deleteCategory = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Category not found.");
   }
 
-  // Check if category has any child categories
-  const hasChildren = await Category.exists({ parent: categoryId });
+  // Check if category has any child categories by checking if any other category
+  // has this ID in their parent array
+  const hasChildren = await Category.exists({ parent: { $in: [categoryId] } });
   if (hasChildren) {
     throw new ApiError(
       400,
