@@ -6,16 +6,32 @@ import SubMenu from "./SubMenu";
 import images from "../../../utils/images";
 
 export const MobileMenu = ({ onClose, categories, collections }) => {
-  const ParentCategories = categories.filter((cat) => cat.parent === null);
+  const ParentCategories = categories.filter(
+    (cat) => !cat.parent || cat.parent.length === 0
+  );
 
   // Track selected category / section
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [viewCollections, setViewCollections] = useState(false);
 
-  // Recursive function to get all subcategories of a category
+  // Updated recursive function to get all subcategories, including nested ones.
+  // This now checks if the parent field is an object and extracts its ID.
   const getSubCategories = (categories, parentId) => {
-    const directSubs = categories.filter((cat) => cat.parent?._id === parentId);
+    // Find categories whose parent is the given parentId
+    const directSubs = categories.filter((cat) => {
+      // Handle cases where parent is null or an empty array
+      if (!cat.parent || cat.parent.length === 0) {
+        return false;
+      }
+      // If parent is an array, use some() to check for the parentId
+      if (Array.isArray(cat.parent)) {
+        return cat.parent.some((p) => p._id === parentId);
+      }
+      // If parent is an object, check its _id
+      return cat.parent._id === parentId;
+    });
 
+    // Recursively find sub-sub-categories
     return directSubs.flatMap((sub) => [
       sub,
       ...getSubCategories(categories, sub._id),

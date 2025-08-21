@@ -116,11 +116,13 @@ const SubMenu = ({
             options={filters.gender(selectedCategory?.name)}
             onSelect={(val) => handleFilterSelect("gender", val)}
           />
-          <FilterSection
-            title="Metals & Stones"
-            options={filters.metals}
-            onSelect={(val) => handleFilterSelect("metal", val)}
-          />
+          {selectedCategory?.name !== "Diamond" && (
+            <FilterSection
+              title="Metals & Stones"
+              options={filters.metals(selectedCategory?.name)}
+              onSelect={(val) => handleFilterSelect("metal", val)}
+            />
+          )}
         </>
       )}
     </div>

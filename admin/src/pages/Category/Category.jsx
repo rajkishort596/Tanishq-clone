@@ -82,7 +82,22 @@ const Category = () => {
   const confirmDelete = async () => {
     if (!toDeleteId) return;
     try {
+      const totalBeforeDelete = totalCategories;
       await deleteCategory(toDeleteId);
+
+      // Check if the deleted category was the last on the page
+      const newTotal = totalBeforeDelete - 1;
+      const maxPageAfterDelete = Math.ceil(newTotal / itemsPerPage);
+
+      // If the current page is now empty and not the first page,
+      // decrement the page number.
+      if (
+        categories.length === 1 &&
+        currentPage > 1 &&
+        currentPage > maxPageAfterDelete
+      ) {
+        setCurrentPage(currentPage - 1);
+      }
     } finally {
       setShowConfirm(false);
       setToDeleteId(null);

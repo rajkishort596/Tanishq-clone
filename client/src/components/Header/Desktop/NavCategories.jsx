@@ -4,7 +4,10 @@ import images from "../../../utils/images";
 import MegaMenu from "./MegaMenu";
 
 export const NavCategories = ({ categories, collctions }) => {
-  const ParentCategories = categories.filter((cat) => cat.parent === null);
+  console.log(categories);
+  const ParentCategories = categories.filter(
+    (cat) => !cat.parent || cat.parent.length === 0
+  );
 
   const [activeCategory, setActiveCategory] = useState({ slug: "rings" });
   const [showCollectionsMegaMenu, setShowCollectionsMegaMenu] = useState(false);

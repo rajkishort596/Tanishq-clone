@@ -18,13 +18,27 @@ const MegaMenu = ({
   const [activeTab, setActiveTab] = useState("Category");
   const navigate = useNavigate();
 
-  // Recursive function to get all subcategories of a category
-  const getSubCategories = (categories, parentId) => {
-    const directSubs = categories.filter((cat) => cat.parent?._id === parentId);
+  // Updated recursive function to get all subcategories, including nested ones.
+  // This now checks if the parent field is an object and extracts its ID.
+  const getSubCategories = (allCategories, parentId) => {
+    // Find categories whose parent is the given parentId
+    const directSubs = allCategories.filter((cat) => {
+      // Handle cases where parent is null or an empty array
+      if (!cat.parent || cat.parent.length === 0) {
+        return false;
+      }
+      // If parent is an array, use some() to check for the parentId
+      if (Array.isArray(cat.parent)) {
+        return cat.parent.some((p) => p._id === parentId);
+      }
+      // If parent is an object, check its _id
+      return cat.parent._id === parentId;
+    });
 
+    // Recursively find sub-sub-categories
     return directSubs.flatMap((sub) => [
       sub,
-      ...getSubCategories(categories, sub._id),
+      ...getSubCategories(allCategories, sub._id),
     ]);
   };
 
@@ -44,7 +58,7 @@ const MegaMenu = ({
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
     navigate(`/shop/${slug}`);
-    onClose();
+    setActiveCategory(null); // Assuming onClose is setActiveCategory(null)
   };
 
   // Conditionally render based on isCollections prop
@@ -116,8 +130,12 @@ const MegaMenu = ({
     <div className="flex gap-6 border-t border-[#ececea]">
       {/* LEFT NAVIGATION */}
       <div className="w-45 py-6 pl-6">
-        {["Category", "Price", "Occasion", "Gender", "Metals & Stones"].map(
-          (tab) => (
+        {["Category", "Price", "Occasion", "Gender", "Metals & Stones"]
+          .filter(
+            (tab) =>
+              !(tab === "Metals & Stones" && category?.name === "Diamond")
+          )
+          .map((tab) => (
             <button
               key={tab}
               onMouseEnter={() => setActiveTab(tab)}
@@ -129,8 +147,7 @@ const MegaMenu = ({
             >
               {tab}
             </button>
-          )
-        )}
+          ))}
       </div>
 
       {/* CENTER CONTENT */}
@@ -169,7 +186,7 @@ const MegaMenu = ({
             {/* Small banner below subcategories */}
             <BannerBottom
               category={category}
-              setActiveCategor={setActiveCategory}
+              setActiveCategory={setActiveCategory}
             />
           </>
         )}
@@ -205,10 +222,10 @@ const MegaMenu = ({
             <BannerBottom category={category} />
           </>
         )}
-        {activeTab === "Metals & Stones" && (
+        {activeTab === "Metals & Stones" && category?.name !== "Diamond" && (
           <>
             <MetalsFilterSection
-              options={filters.metals}
+              options={filters.metals(category?.name)}
               onSelect={(val) => handleFilterSelect("metal", val)}
             />
             {/* Small banner below subcategories */}

@@ -26,26 +26,37 @@ const CategoryForm = () => {
     register,
     handleSubmit,
     setValue,
+    getValues,
     watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
       name: "",
       description: "",
-      parent: "",
+      parent: [], // Now an array
       icon: null,
       clearIcon: false,
     },
   });
 
   const watchIcon = watch("icon");
+  const watchParents = watch("parent"); // Watch the parent array
   const [previewIconUrl, setpreviewIconUrl] = useState(null);
 
   useEffect(() => {
     if (isEditMode && categoryData) {
       setValue("name", categoryData.name);
       setValue("description", categoryData.description);
-      setValue("parent", categoryData.parent?._id || "");
+      // Ensure the parent data is an array before mapping
+      const parentsArray = categoryData.parent
+        ? Array.isArray(categoryData.parent)
+          ? categoryData.parent
+          : [categoryData.parent]
+        : [];
+      setValue(
+        "parent",
+        parentsArray.map((p) => p._id)
+      );
       setpreviewIconUrl(categoryData.icon?.url || null);
     }
   }, [isEditMode, categoryData, setValue]);
@@ -67,14 +78,35 @@ const CategoryForm = () => {
     }
   }, [formError]);
 
+  const handleParentToggle = (id) => {
+    // console.log(id);
+    const currentParents = watchParents || [];
+    const newParents = currentParents.includes(id)
+      ? currentParents.filter((pId) => pId !== id)
+      : [...currentParents, id];
+    setValue("parent", newParents);
+    console.log(newParents);
+  };
+
   const onSubmit = async (data) => {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("description", data.description);
-    formData.append("parent", data.parent || "");
+
+    console.log(data.parent);
+
+    if (data.parent.length > 0) {
+      data.parent.forEach((parentId) => {
+        formData.append("parent", parentId);
+      });
+    }
 
     if (data.icon && data.icon[0] instanceof File) {
       formData.append("icon", data.icon?.[0]);
+    }
+
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
     }
 
     if (isEditMode) {
@@ -86,8 +118,6 @@ const CategoryForm = () => {
     }
     navigate("/categories");
   };
-
-  console.log("isCreatin:", isCreating, "isUpdating:", isUpdating);
 
   if (isLoadingForm || isCreating || isUpdating) {
     return (
@@ -102,7 +132,13 @@ const CategoryForm = () => {
     const descendants = [];
     const findDescendants = (id) => {
       categories.forEach((cat) => {
-        if (cat.parent?._id === id) {
+        // Safe check for the parent field
+        const parentArray = cat.parent
+          ? Array.isArray(cat.parent)
+            ? cat.parent
+            : [cat.parent]
+          : [];
+        if (parentArray.some((p) => p._id === id)) {
           descendants.push(cat._id);
           findDescendants(cat._id);
         }
@@ -154,37 +190,22 @@ const CategoryForm = () => {
                 </span>
               )}
               {parentCategoriesOptions.map((cat) => {
-                const isSelected = watch("parent") === cat._id;
+                const isSelected = watchParents?.includes(cat._id);
                 return (
                   <button
                     key={cat._id}
                     type="button"
-                    onClick={() =>
-                      setValue("parent", isSelected ? "" : cat._id)
-                    }
+                    onClick={() => handleParentToggle(cat._id)}
                     className={`group items-center px-2 py-1 border text-xs cursor-pointer rounded-md shadow-sm transition-all duration-200 ${
                       isSelected
                         ? "bg-primary border-none text-white hover:bg-primary/90"
                         : "border-gray-300 hover:border-primary"
                     }`}
                   >
-                    {/* <div className="w-4 h-4 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                      {cat.icon?.url ? (
-                        <img
-                          src={cat.icon.url}
-                          alt={cat.name}
-                          className="object-cover w-full h-full"
-                        />
-                      ) : (
-                        <span className="text-gray-400 text-xs">No Icon</span>
-                      )}
-                    </div> */}
-
                     {cat.name}
                   </button>
                 );
               })}
-              <input type="hidden" {...register("parent")} />
             </div>
 
             {errors.parent && (

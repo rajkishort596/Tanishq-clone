@@ -95,12 +95,32 @@ export const filters = {
   ],
 
   // METALS → same for all
-  metals: [
-    { label: "Diamond", value: "diamond", img: images.diamond },
-    { label: "Gold", value: "gold", img: images.gold },
-    { label: "Rose Gold", value: "rose-gold", img: images.roseGold },
-    { label: "Platinum Metal", value: "platinum", img: images.platinum },
-  ],
+  // metals: [
+  //   { label: "Diamond", value: "diamond", img: images.diamond },
+  //   { label: "Gold", value: "gold", img: images.gold },
+  //   { label: "Rose Gold", value: "rose-gold", img: images.roseGold },
+  //   { label: "Platinum Metal", value: "platinum", img: images.platinum },
+  // ],
+
+  metals: (categoryName) => {
+    const key = categoryName?.toLowerCase();
+
+    const metalsMap = {
+      gold: [
+        { label: "Gold", value: "gold", img: images.gold },
+        { label: "Rose Gold", value: "rose-gold", img: images.roseGold },
+      ],
+      diamond: [], // hide metals when category is diamond
+      default: [
+        { label: "Diamond", value: "diamond", img: images.diamond },
+        { label: "Gold", value: "gold", img: images.gold },
+        { label: "Rose Gold", value: "rose-gold", img: images.roseGold },
+        { label: "Platinum Metal", value: "platinum", img: images.platinum },
+      ],
+    };
+
+    return metalsMap[key] || metalsMap.default;
+  },
 
   // GENDER → labels depend on category, but images are reused
   gender: (categoryName) => {

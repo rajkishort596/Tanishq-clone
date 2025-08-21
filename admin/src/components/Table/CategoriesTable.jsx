@@ -17,7 +17,7 @@ const CategoriesTable = ({
             <th className="py-3 px-4">Category Name</th>
             <th className="py-3 px-4">Icon</th>
             <th className="py-3 px-4">Slug</th>
-            <th className="py-3 px-4">Parent Category</th>
+            <th className="py-3 px-4">Parent Categories</th>
             {showActions && <th className="py-3 px-4">Actions</th>}
           </tr>
         </thead>
@@ -42,7 +42,16 @@ const CategoriesTable = ({
                   <img src={category.icon.url} alt="icon" className="w-5 h-5" />
                 </td>
                 <td className="py-3 px-4">{category.slug}</td>
-                <td className="py-3 px-4">{category.parent?.name || "N/A"}</td>
+                <td className="py-3 px-4">
+                  {Array.isArray(category.parent) && category.parent.length > 0
+                    ? category.parent.map((parentCat, idx) => (
+                        <span key={parentCat._id || idx} className="mr-2">
+                          {parentCat.name}
+                          {idx < category.parent.length - 1 ? "," : ""}
+                        </span>
+                      ))
+                    : category.parent?.name || "N/A"}
+                </td>
                 {showActions && (
                   <td className="py-3 px-4 flex space-x-2 gap-4">
                     <button
