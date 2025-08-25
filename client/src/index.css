@@ -151,3 +151,28 @@ body {
   scrollbar-width: thin;
   scrollbar-color: var(--color-primary) var(--color-white);
 }
+
+.swiper {
+  overflow: visible !important;
+}
+.swiper-pagination {
+  position: absolute !important;
+  bottom: -40px !important; /* Adjust this value to control the spacing */
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  gap: 20px !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.swiper-pagination-bullet {
+  transform: rotate(45deg);
+  border-radius: 0 !important; /* make them square before rotation */
+  width: 5.5px !important;
+  height: 5.5px !important;
+  margin: 0 5px !important;
+}
+.swiper-pagination-bullet-active {
+  background-color: var(--color-primary) !important; /* active color */
+}

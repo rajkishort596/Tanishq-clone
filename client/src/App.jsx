@@ -6,13 +6,14 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import ClientLayout from "./layouts/ClientLayout";
+import Home from "./pages/Home";
 
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromChildren(
       <>
         <Route path="/" element={<ClientLayout />}>
-          <Route index element={<div></div>} />
+          <Route index element={<Home />} />
           <Route path="cart" element={<div>Cart</div>} />
           <Route path="wishlists" element={<div>Wishlists</div>} />
           <Route path="shop/all-jewellery" element={<div>All Jewellery</div>} />

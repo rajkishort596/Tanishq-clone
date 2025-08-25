@@ -9,7 +9,7 @@ export const NavCategories = ({ categories, collctions }) => {
     (cat) => !cat.parent || cat.parent.length === 0
   );
 
-  const [activeCategory, setActiveCategory] = useState({ slug: "rings" });
+  const [activeCategory, setActiveCategory] = useState(null);
   const [showCollectionsMegaMenu, setShowCollectionsMegaMenu] = useState(false);
 
   return (
