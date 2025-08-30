@@ -6,6 +6,8 @@ import Spinner from "../components/Spinner";
 import TanishqWorldSection from "../components/Home/TanishqWorldSection";
 import AssuranceSection from "../components/Home/AssuranceSection";
 import ExchangeProgramVideoSection from "../components/Home/ExchangeProgramVideoSection";
+import AssuranceFeaturesSection from "../components/Home/AssuranceFeatureSection";
+import CuratedForYouSection from "../components/Home/CuratedForYouSection";
 const Home = () => {
   const { banners, isLoading, error } = useBanners();
 
@@ -30,6 +32,8 @@ const Home = () => {
       <TanishqWorldSection />
       <AssuranceSection />
       <ExchangeProgramVideoSection />
+      <AssuranceFeaturesSection />
+      <CuratedForYouSection />
     </div>
   );
 };

@@ -85,6 +85,13 @@ import DailyWearWorld from "../assets/images/dailywearWorld.jpg";
 import TanishqQualityCrafting from "../assets/images/tanishq-quality-crafting.svg";
 import TanishqEthicallySourced from "../assets/images/tanishq-ethically-sourced.svg";
 import TanishqTransparency from "../assets/images/tanishq-transparency.svg";
+import TanishqExchange from "../assets/images/tanishq-exchange.svg";
+import TanishqPurity from "../assets/images/tanishq-purity.svg";
+import TanishqLifetime from "../assets/images/tanishq-lifetime.svg";
+
+import WomenJewellery from "../assets/images/womenJewellery.jpg";
+import MenJewellery from "../assets/images/menJewellery.webp";
+import kidsJewellery from "../assets/images/kidsJewellery.webp";
 
 const images = {
   promotionBagIcon: PromotionBagIcon,
@@ -115,6 +122,14 @@ const images = {
   tanishqQualityCrafting: TanishqQualityCrafting,
   tanishqEthicallySourced: TanishqEthicallySourced,
   tanishqTransparency: TanishqTransparency,
+  tanishqExchange: TanishqExchange,
+  tanishqPurity: TanishqPurity,
+  tanishqLifetime: TanishqLifetime,
+
+  //Shop by Gender
+  womenJewellery: WomenJewellery,
+  menJewellery: MenJewellery,
+  kidsJewellery: kidsJewellery,
 
   // wear occasion
   casualWear: CasualWear,
