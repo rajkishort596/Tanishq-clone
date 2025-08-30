@@ -3,7 +3,7 @@ import Carousel from "../components/Carousel";
 import MainCategorySection from "../components/Home/MainCategorySection";
 import { useBanners } from "../hooks/useBanners";
 import Spinner from "../components/Spinner";
-
+import TanishqWorldSection from "../components/Home/TanishqWorldSection";
 const Home = () => {
   const { banners, isLoading, error } = useBanners();
 
@@ -25,6 +25,7 @@ const Home = () => {
     <div>
       <Carousel banners={banners} />
       <MainCategorySection />
+      <TanishqWorldSection />
     </div>
   );
 };

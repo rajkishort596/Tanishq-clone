@@ -77,6 +77,11 @@ import BanglesCat from "../assets/images/bangles-cat.jpg";
 import BraceletCat from "../assets/images/bracelets-cat.webp";
 import ChainsCat from "../assets/images/chains-cat.webp";
 
+import WeddingWorld from "../assets/images/weddingWorld.jpg";
+import GoldWorld from "../assets/images/goldWorld.jpg";
+import DiamondWorld from "../assets/images/diamondWorld.jpg";
+import DailyWearWorld from "../assets/images/dailywearWorld.jpg";
+
 const images = {
   promotionBagIcon: PromotionBagIcon,
   collectionIcon: CollectionIcon,
@@ -96,6 +101,12 @@ const images = {
   banglesCat: BanglesCat,
   braceletCat: BraceletCat,
   chainsCat: ChainsCat,
+
+  //Occasion Category
+  weddingWorld: WeddingWorld,
+  goldWorld: GoldWorld,
+  diamondWorld: DiamondWorld,
+  dailyWearWorld: DailyWearWorld,
 
   // wear occasion
   casualWear: CasualWear,
