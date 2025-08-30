@@ -5,6 +5,7 @@ import { useBanners } from "../hooks/useBanners";
 import Spinner from "../components/Spinner";
 import TanishqWorldSection from "../components/Home/TanishqWorldSection";
 import AssuranceSection from "../components/Home/AssuranceSection";
+import ExchangeProgramVideoSection from "../components/Home/ExchangeProgramVideoSection";
 const Home = () => {
   const { banners, isLoading, error } = useBanners();
 
@@ -28,6 +29,7 @@ const Home = () => {
       <MainCategorySection />
       <TanishqWorldSection />
       <AssuranceSection />
+      <ExchangeProgramVideoSection />
     </div>
   );
 };
