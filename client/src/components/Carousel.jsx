@@ -4,23 +4,9 @@ import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import { useBanners } from "../hooks/useBanners";
+import { Link } from "react-router-dom";
 
-const Carousel = () => {
-  const { banners, isLoading, error } = useBanners();
-
-  if (isLoading)
-    return (
-      <div className="h-[400px] flex items-center justify-center">
-        Loading...
-      </div>
-    );
-  if (error)
-    return (
-      <div className="h-[400px] flex items-center justify-center">
-        Failed to load banners
-      </div>
-    );
-
+const Carousel = ({ banners }) => {
   return (
     <div className="w-full overflow-hidden rounded-xl pb-10 my-8">
       <Swiper
@@ -53,11 +39,13 @@ const Carousel = () => {
       >
         {banners.map((banner, idx) => (
           <SwiperSlide key={idx}>
-            <img
-              src={banner?.image?.url}
-              alt={`Slide ${idx + 1}`}
-              className="w-full h-64 sm:h-80 md:h-[488px] object-center rounded-xl"
-            />
+            <Link to={banner?.link}>
+              <img
+                src={banner?.image?.url}
+                alt={`Slide ${idx + 1}`}
+                className="w-full h-64 sm:h-80 md:h-[488px] object-center rounded-xl"
+              />
+            </Link>
           </SwiperSlide>
         ))}
       </Swiper>
