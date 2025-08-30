@@ -82,6 +82,10 @@ import GoldWorld from "../assets/images/goldWorld.jpg";
 import DiamondWorld from "../assets/images/diamondWorld.jpg";
 import DailyWearWorld from "../assets/images/dailywearWorld.jpg";
 
+import TanishqQualityCrafting from "../assets/images/tanishq-quality-crafting.svg";
+import TanishqEthicallySourced from "../assets/images/tanishq-ethically-sourced.svg";
+import TanishqTransparency from "../assets/images/tanishq-transparency.svg";
+
 const images = {
   promotionBagIcon: PromotionBagIcon,
   collectionIcon: CollectionIcon,
@@ -107,6 +111,10 @@ const images = {
   goldWorld: GoldWorld,
   diamondWorld: DiamondWorld,
   dailyWearWorld: DailyWearWorld,
+
+  tanishqQualityCrafting: TanishqQualityCrafting,
+  tanishqEthicallySourced: TanishqEthicallySourced,
+  tanishqTransparency: TanishqTransparency,
 
   // wear occasion
   casualWear: CasualWear,
