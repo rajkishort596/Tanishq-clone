@@ -69,8 +69,15 @@ import PriceDefault50k from "../assets/images/priceDefault50k.webp";
 import PriceDefault1l from "../assets/images/priceDefault1l.webp";
 import PriceDefaultAbove1l from "../assets/images/priceDefaultAbove1l.webp";
 
+import EarringsCat from "../assets/images/earrings-cat.webp";
+import RingsCat from "../assets/images/rings-cat.jpg";
+import PendentCat from "../assets/images/pendants-cat.webp";
+import MangalsutraCat from "../assets/images/mangalsutra-cat.jpg";
+import BanglesCat from "../assets/images/bangles-cat.jpg";
+import BraceletCat from "../assets/images/bracelets-cat.webp";
+import ChainsCat from "../assets/images/chains-cat.webp";
+
 const images = {
-  // existing
   promotionBagIcon: PromotionBagIcon,
   collectionIcon: CollectionIcon,
   subtractBack: SubtractBack,
@@ -80,6 +87,15 @@ const images = {
   kundanStoriesDesktopBanner: KundanStoriesDesktopBanner,
   elanMobileBanner: ElanMobileBanner,
   elanDesktopBanner: ElanDesktopBanner,
+
+  //Main Category
+  earringsCat: EarringsCat,
+  ringsCat: RingsCat,
+  pendentCat: PendentCat,
+  mangalsutraCat: MangalsutraCat,
+  banglesCat: BanglesCat,
+  braceletCat: BraceletCat,
+  chainsCat: ChainsCat,
 
   // wear occasion
   casualWear: CasualWear,
