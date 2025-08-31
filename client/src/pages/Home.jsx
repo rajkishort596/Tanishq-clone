@@ -8,6 +8,7 @@ import AssuranceSection from "../components/Home/AssuranceSection";
 import ExchangeProgramVideoSection from "../components/Home/ExchangeProgramVideoSection";
 import AssuranceFeaturesSection from "../components/Home/AssuranceFeatureSection";
 import CuratedForYouSection from "../components/Home/CuratedForYouSection";
+import Footer from "../components/Footer/Footer";
 const Home = () => {
   const { banners, isLoading, error } = useBanners();
 
@@ -34,6 +35,7 @@ const Home = () => {
       <ExchangeProgramVideoSection />
       <AssuranceFeaturesSection />
       <CuratedForYouSection />
+      <Footer />
     </div>
   );
 };
