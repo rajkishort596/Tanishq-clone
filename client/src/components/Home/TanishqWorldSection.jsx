@@ -7,10 +7,12 @@ const TanishqWorldSection = () => {
     <section className="py-12 px-4 sm:px-2 md:px-3 lg:px-4 font-fraunces">
       {/* Heading */}
       <div className="text-center mb-8">
-        <h2 className="text-2xl md:text-3xl font-semibold mb-2">
+        <h2 className="text-2xl md:text-3xl leading-[48px] mb-2">
           Tanishq World
         </h2>
-        <p className="text-gray-600">A companion for every occasion</p>
+        <p className="text-xl font-light text-[#56544e]">
+          A companion for every occasion
+        </p>
       </div>
 
       {/* Custom Layout */}

@@ -8,7 +8,7 @@ const Footer = () => {
 
   if (isLoading)
     return (
-      <div className="flex justify-center items-center absolute inset-0 bg-white/80 z-50">
+      <div className="flex justify-center items-center fixed inset-0 bg-white/80 z-50">
         <Spinner />
       </div>
     );
@@ -18,7 +18,7 @@ const Footer = () => {
     );
 
   return (
-    <footer className="bg-[#300708] relative text-white px-12 lg:px-20 py-15 rounded-2xl font-fraunces">
+    <footer className="bg-[#300708] relative text-white px-8 lg:px-20 py-8 md:py-15 mt-12 rounded-2xl font-fraunces">
       <img
         className="hidden md:block absolute top-0 left-1/2 h-6 transform -translate-x-1/2"
         src="https://www.tanishq.co.in/on/demandware.static/-/Library-Sites-TanishqSharedLibrary/default/dw20a12c74/images/footer/top-bottom-border-curve.png"

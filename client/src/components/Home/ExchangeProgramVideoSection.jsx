@@ -22,7 +22,9 @@ const ExchangeProgramVideoSection = () => {
     <section className="py-12 px-4 sm:px-2 md:px-3 lg:px-4 font-fraunces text-center">
       {/* Heading */}
       <div className="mb-8">
-        <h2 className="text-2xl md:text-3xl font-semibold">Exchange Program</h2>
+        <h2 className="text-2xl md:text-3xl leading-[48px] mb-2">
+          Exchange Program
+        </h2>
         <h3 className="text-xl font-light text-[#56544e]">
           Trusted by 2.8M+ families
         </h3>

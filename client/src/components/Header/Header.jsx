@@ -17,14 +17,14 @@ const Header = () => {
 
   if (isCategoryLoading || isCollectionLoading) {
     return (
-      <div className="flex justify-center items-center absolute inset-0 bg-white/80 z-50">
+      <div className="flex justify-center items-center fixed inset-0 bg-white/80 z-50">
         <Spinner />
       </div>
     );
   }
 
   return (
-    <header className="w-full sticky top-0 z-50">
+    <header className="w-full sticky bg-white top-0 z-50">
       <div className="px-4 sm:px-2 md:px-3 lg:px-4">
         <div className="flex justify-between items-center py-4">
           {/*Logo and Mobile Menu Toggle */}

@@ -25,8 +25,10 @@ const CuratedForYouSection = () => {
     <section className="py-12 px-4 sm:px-2 md:px-3 lg:px-4 font-fraunces text-center">
       {/* Heading */}
       <div className="mb-8">
-        <h2 className="text-2xl md:text-3xl font-semibold">Curated For You</h2>
-        <p className="text-gray-600 text-sm md:text-base">Shop By Gender</p>
+        <h2 className="text-2xl md:text-3xl leading-[48px] mb-2">
+          Curated For You
+        </h2>
+        <p className="text-xl font-light text-[#56544e]">Shop By Gender</p>
       </div>
 
       {/* Grid of Categories */}
@@ -42,7 +44,7 @@ const CuratedForYouSection = () => {
               <img
                 src={item.image}
                 alt={item.title}
-                className="w-full h-auto object-contain rounded-xl transform group-hover:scale-105 transition duration-300"
+                className="w-full aspect-square object-cover rounded-xl transform group-hover:scale-105 transition duration-300"
               />
             </div>
 
