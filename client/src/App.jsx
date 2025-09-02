@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import ClientLayout from "./layouts/ClientLayout";
 import Home from "./pages/Home";
+import AllJewellery from "./pages/AllJewellery";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -16,7 +17,7 @@ const App = () => {
           <Route index element={<Home />} />
           <Route path="cart" element={<div>Cart</div>} />
           <Route path="wishlists" element={<div>Wishlists</div>} />
-          <Route path="shop/all-jewellery" element={<div>All Jewellery</div>} />
+          <Route path="shop/all-jewellery" element={<AllJewellery />} />
           <Route path="shop/gold" element={<div>Gold Jewellery</div>} />
           <Route path="shop/diamond" element={<div>Diamond Jewellery</div>} />
           <Route path="shop/rings" element={<div>Rings</div>} />
