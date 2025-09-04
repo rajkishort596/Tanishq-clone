@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useProducts } from "../hooks/useProducts";
 import Spinner from "../components/Spinner";
 import ProductCard from "../components/ProductCard";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ChevronDown, FunnelIcon, Plus } from "lucide-react";
 
 const AllJewellery = () => {
@@ -10,6 +10,7 @@ const AllJewellery = () => {
   const { products, totalProducts, isLoading, isFetching, error } = useProducts(
     { limit }
   );
+  const navigate = useNavigate();
 
   if (isLoading || isFetching)
     return (
@@ -107,7 +108,7 @@ const AllJewellery = () => {
       {/* Product Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {products?.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard key={product._id} product={product} />
         ))}
       </div>
 

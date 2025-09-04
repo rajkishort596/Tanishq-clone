@@ -93,6 +93,12 @@ import WomenJewellery from "../assets/images/womenJewellery.jpg";
 import MenJewellery from "../assets/images/menJewellery.webp";
 import kidsJewellery from "../assets/images/kidsJewellery.webp";
 
+import GoldBlocks from "../assets/images/goldBlocks-Icon.svg";
+import GeneralDetails from "../assets/images/GeneralDetails-Icon.svg";
+import DescriptionIcon from "../assets/images/Description-Icon.svg";
+import YellowGoldIcon from "../assets/images/yellowGold-Icon.png";
+import PlatinumIcon from "../assets/images/platinum-Icon.webp";
+
 const images = {
   promotionBagIcon: PromotionBagIcon,
   collectionIcon: CollectionIcon,
@@ -189,6 +195,12 @@ const images = {
   priceDefault50k: PriceDefault50k,
   priceDefault1l: PriceDefault1l,
   priceDefaultAbove1l: PriceDefaultAbove1l,
+
+  goldBlocks: GoldBlocks,
+  generalDetails: GeneralDetails,
+  descriptionIcon: DescriptionIcon,
+  yellowGoldIcon: YellowGoldIcon,
+  platinumIcon: PlatinumIcon,
 };
 
 export default images;
