@@ -1,4 +1,3 @@
-// src/components/Form/SubCategorySelect.jsx
 import React, { useMemo, forwardRef } from "react";
 
 /**
@@ -6,13 +5,17 @@ import React, { useMemo, forwardRef } from "react";
  */
 const findSubCategories = (categoryId, allCategories, acc = []) => {
   allCategories.forEach((c) => {
-    const parentId =
-      c.parent && typeof c.parent === "object" ? c.parent._id : c.parent;
-    if (parentId === categoryId) {
+    // normalize parents into an array of IDs
+    const parentIds = Array.isArray(c.parent)
+      ? c.parent.map((p) => (typeof p === "object" ? p._id : p))
+      : [];
+
+    if (parentIds.includes(categoryId) && !acc.find((a) => a._id === c._id)) {
       acc.push(c);
       findSubCategories(c._id, allCategories, acc);
     }
   });
+
   return acc;
 };
 

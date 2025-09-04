@@ -76,12 +76,43 @@ const ProductDetails = () => {
       </div>
 
       {/* Image Gallery */}
-      <div className="grid grid-cols-2 gap-15 py-10 px-15 w-full">
-        {product?.images?.map((img) => (
-          <div key={img.url} className="rounded-md overflow-hidden shadow-md">
-            <img src={img.url} alt={product?.name} className="w-full h-full" />
-          </div>
-        ))}
+      <div className="w-full py-10 px-15">
+        <div
+          className={`grid gap-15 
+      ${
+        product?.images?.length === 1
+          ? "grid-cols-1 place-items-center"
+          : product?.images?.length === 3
+          ? "grid-cols-2"
+          : "grid-cols-2"
+      }`}
+        >
+          {product?.images?.map((img, index) => (
+            <div
+              key={img.url}
+              className={`rounded-md overflow-hidden shadow-md
+          ${
+            product?.images?.length === 1
+              ? "col-span-1"
+              : product?.images?.length === 3 && index === 2
+              ? "col-span-2 flex justify-center"
+              : ""
+          }`}
+            >
+              <img
+                src={img.url}
+                alt={product?.name}
+                className={`${
+                  product?.images?.length === 1
+                    ? "w-full h-auto"
+                    : product?.images?.length === 3 && index === 2
+                    ? "w-1/2 h-auto"
+                    : "w-full h-full"
+                } object-contain`}
+              />
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Jewellery Details */}
