@@ -16,8 +16,24 @@ const SubMenu = ({
   const navigate = useNavigate();
 
   const handleFilterSelect = (filterKey, value) => {
-    const queryParams = new URLSearchParams({ [filterKey]: value }).toString();
-    navigate(`/shop/${selectedCategory?.slug}?${queryParams}`);
+    let queryParams = {};
+    if (filterKey === "price" && value.includes("=")) {
+      // Parse the value string into key-value pairs
+      value.split("&").forEach((pair) => {
+        const [k, v] = pair.split("=");
+        queryParams[k] = v;
+      });
+    } else if (
+      filterKey === "metal" &&
+      value.includes("rose gold", "white gold", "white")
+    ) {
+      queryParams[filterKey] = "gold";
+      queryParams.metalColor = value;
+    } else {
+      queryParams[filterKey] = value;
+    }
+    const search = new URLSearchParams(queryParams).toString();
+    navigate(`/shop/${selectedCategory?.slug}?${search}`);
     onClose();
   };
 

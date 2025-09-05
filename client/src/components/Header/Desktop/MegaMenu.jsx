@@ -18,8 +18,7 @@ const MegaMenu = ({
   const [activeTab, setActiveTab] = useState("Category");
   const navigate = useNavigate();
 
-  // Updated recursive function to get all subcategories, including nested ones.
-  // This now checks if the parent field is an object and extracts its ID.
+  //  recursive function to get all subcategories, including nested ones.
   const getSubCategories = (allCategories, parentId) => {
     // Find categories whose parent is the given parentId
     const directSubs = allCategories.filter((cat) => {
@@ -47,8 +46,24 @@ const MegaMenu = ({
     : [];
 
   const handleFilterSelect = (filterKey, value) => {
-    const queryParams = new URLSearchParams({ [filterKey]: value }).toString();
-    navigate(`/shop/${category?.slug}?${queryParams}`);
+    let queryParams = {};
+    if (filterKey === "price" && value.includes("=")) {
+      // Parse the value string into key-value pairs
+      value.split("&").forEach((pair) => {
+        const [k, v] = pair.split("=");
+        queryParams[k] = v;
+      });
+    } else if (
+      filterKey === "metal" &&
+      value.includes("rose gold", "white gold", "white")
+    ) {
+      queryParams[filterKey] = "gold";
+      queryParams.metalColor = value;
+    } else {
+      queryParams[filterKey] = value;
+    }
+    const search = new URLSearchParams(queryParams).toString();
+    navigate(`/shop/${category?.slug}?${search}`);
     setActiveCategory(null);
   };
 
@@ -58,7 +73,7 @@ const MegaMenu = ({
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
     navigate(`/shop/${slug}`);
-    setActiveCategory(null); // Assuming onClose is setActiveCategory(null)
+    setActiveCategory(null);
   };
 
   // Conditionally render based on isCollections prop
@@ -167,6 +182,7 @@ const MegaMenu = ({
                       <Link
                         key={sub._id}
                         to={`/shop/${category.slug}/${sub.slug}`}
+                        onClick={() => setActiveCategory(null)}
                         className="flex items-center gap-3 group hover:text-primary hover:bg-[#f5f5f4] transition-colors duration-200 p-4 hover:rounded-lg hover:shadow-lg"
                       >
                         <div className="bg-[#f5f5f4] rounded-full p-2 w-11 h-11 overflow-hidden flex-shrink-0 border border-transparent group-hover:border-primary transition-colors duration-200">

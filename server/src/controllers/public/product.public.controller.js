@@ -19,8 +19,10 @@ const getProducts = asyncHandler(async (req, res) => {
     subCategory,
     collections,
     metal,
+    metalColor,
     purity,
     occasion,
+    gender,
     minPrice,
     maxPrice,
   } = req.query;
@@ -51,13 +53,31 @@ const getProducts = asyncHandler(async (req, res) => {
 
   // Filtering by other product attributes
   if (metal) {
-    query.metal = { $in: metal.split(",") };
+    query.metal = {
+      $in: metal.split(",").map((m) => new RegExp(`^${m}$`, "i")),
+    };
   }
+  if (metalColor) {
+    query.metalColor = {
+      $in: metalColor.split(",").map((mc) => new RegExp(`^${mc}$`, "i")),
+    };
+  }
+
   if (purity) {
-    query.purity = { $in: purity.split(",") };
+    query.purity = {
+      $in: purity.split(",").map((p) => new RegExp(`^${p}$`, "i")),
+    };
   }
   if (occasion) {
-    query.occasion = { $in: occasion.split(",") };
+    query.occasion = {
+      $in: occasion.split(",").map((o) => new RegExp(`^${o}$`, "i")),
+    };
+  }
+
+  if (gender) {
+    query.gender = {
+      $in: gender.split(",").map((g) => new RegExp(`^${g}$`, "i")),
+    };
   }
 
   // Price filtering

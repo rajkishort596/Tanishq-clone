@@ -5,23 +5,50 @@ import ProductCard from "../components/ProductCard";
 import Breadcrumb from "../components/Breadcrumb";
 import { ChevronDown, FunnelIcon, Plus } from "lucide-react";
 import { useCategories } from "../hooks/useCategories";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 const BraceletsAndBangles = () => {
+  const [limit, setLimit] = useState(10);
+
   const { categories } = useCategories();
   const braceletsCategory = categories.find(
     (cat) => cat.name === "Bracelets & Bangles"
   );
   const categoryId = braceletsCategory?._id;
-  const [limit, setLimit] = useState(10);
+  const categorySlug = braceletsCategory?.slug;
+
+  const { subCategory } = useParams();
+  const Category = categories.find((cat) => cat.slug === subCategory);
+  const subcategoryId = Category?._id;
+
+  const [searchParams] = useSearchParams();
+  const occasion = searchParams.get("occasion");
+  const minPrice = searchParams.get("minPrice");
+  const maxPrice = searchParams.get("maxPrice");
+  const metal = searchParams.get("metal");
+  const purity = searchParams.get("purity");
+  const gender = searchParams.get("gender");
+  const metalColor = searchParams.get("metalColor");
+
   const { products, totalProducts, isLoading, isFetching, error } = useProducts(
-    { limit, category: categoryId }
+    {
+      limit,
+      category: categoryId,
+      subCategory: subcategoryId,
+      occasion,
+      minPrice,
+      maxPrice,
+      metal,
+      metalColor,
+      purity,
+      gender,
+    }
   );
 
   const navigate = useNavigate();
 
   const handleClick = (product) => {
-    navigate(`/shop/bracelets-and-bangles/product/${product._id}`);
+    navigate(`/shop/${categorySlug}/product/${product._id}`);
   };
 
   if (isLoading || isFetching)
@@ -40,7 +67,11 @@ const BraceletsAndBangles = () => {
     <div className="px-4 sm:px-6 lg:px-8 py-8 font-fraunces">
       {/* Breadcrumb */}
       <Breadcrumb
-        items={[{ label: "Home", to: "/" }, { label: "Bracelets & Bangles" }]}
+        items={[
+          { label: "Home", to: "/" },
+          { label: "Bracelets & Bangles", to: "/shop/bracelets-and-bangles" },
+          subCategory ? { label: `${Category?.name}` } : {},
+        ]}
         className="mb-6 py-5"
       />
 

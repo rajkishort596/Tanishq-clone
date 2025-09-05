@@ -2,14 +2,45 @@ import React, { useState } from "react";
 import { useProducts } from "../hooks/useProducts";
 import Spinner from "../components/Spinner";
 import ProductCard from "../components/ProductCard";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import Breadcrumb from "../components/Breadcrumb";
 import { ChevronDown, FunnelIcon, Plus } from "lucide-react";
+import { useCategories } from "../hooks/useCategories";
 
 const AllJewellery = () => {
   const [limit, setLimit] = useState(10);
+
+  const [searchParams] = useSearchParams();
+  const occasion = searchParams.get("occasion");
+  const minPrice = searchParams.get("minPrice");
+  const maxPrice = searchParams.get("maxPrice");
+  const metal = searchParams.get("metal");
+  const purity = searchParams.get("purity");
+  const gender = searchParams.get("gender");
+  const metalColor = searchParams.get("metalColor");
+
+  const { categories } = useCategories();
+  const { subCategory } = useParams();
+  const Category = categories.find((cat) => cat.slug === subCategory);
+  const subcategoryId = Category?._id;
+
   const { products, totalProducts, isLoading, isFetching, error } = useProducts(
-    { limit }
+    {
+      limit,
+      occasion,
+      subCategory: subcategoryId,
+      minPrice,
+      maxPrice,
+      metal,
+      metalColor,
+      purity,
+      gender,
+    }
   );
 
   const navigate = useNavigate();
@@ -34,7 +65,11 @@ const AllJewellery = () => {
     <div className="px-4 sm:px-6 lg:px-8 py-8 font-fraunces">
       {/* Breadcrumb */}
       <Breadcrumb
-        items={[{ label: "Home", to: "/" }, { label: "All Jewellery" }]}
+        items={[
+          { label: "Home", to: "/" },
+          { label: "All Jewellery", to: "/shop/all-jewellery" },
+          subCategory ? { label: `${Category?.name}` } : {},
+        ]}
         className="mb-6 py-5"
       />
 

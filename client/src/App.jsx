@@ -21,6 +21,10 @@ const App = () => {
           <Route path="wishlists" element={<div>Wishlists</div>} />
           <Route path="shop/all-jewellery" element={<AllJewellery />} />
           <Route
+            path="shop/all-jewellery/:subCategory"
+            element={<AllJewellery />}
+          />
+          <Route
             path="shop/all-jewellery/product/:productId"
             element={<ProductDetails />}
           />
@@ -31,6 +35,10 @@ const App = () => {
           <Route path="shop/necklaces" element={<div>Necklaces</div>} />
           <Route
             path="shop/bracelets-and-bangles"
+            element={<BraceletsAndBangles />}
+          />
+          <Route
+            path="shop/bracelets-and-bangles/:subCategory"
             element={<BraceletsAndBangles />}
           />
           <Route
