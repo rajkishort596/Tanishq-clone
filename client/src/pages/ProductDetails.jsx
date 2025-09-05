@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import Breadcrumb from "../components/Breadcrumb";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 import Spinner from "../components/Spinner";
@@ -15,7 +16,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 
 const ProductDetails = () => {
-  const { productId } = useParams();
+  const { productId, category } = useParams();
   const [activeTab, setActiveTab] = useState("details");
 
   const priceRef = useRef(null);
@@ -31,7 +32,24 @@ const ProductDetails = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  console.log(product);
+  const categoryMap = {
+    "all-jewellery": "All Jewellery",
+    "bracelets-and-bangles": "Bracelets & Bangles",
+    earrings: "Earrings",
+    necklaces: "Necklaces",
+    rings: "Rings",
+    gold: "Gold",
+    diamond: "Diamond",
+  };
+
+  const breadcrumbItems = [
+    { label: "Home", to: "/" },
+    category
+      ? { label: categoryMap[category] || category, to: `/shop/${category}` }
+      : { label: "All Jewellery", to: "/shop/all-jewellery" },
+    { label: product?.name || "..." },
+  ];
+
   const { metalRate } = useMetalRate(product?.metal);
 
   const handleAccordionClick = (accordionName) => {
@@ -68,20 +86,7 @@ const ProductDetails = () => {
   return (
     <div className="w-full relative">
       {/* Breadcrumb */}
-      <div className="hidden px-4 md:flex gap-2 items-center w-full text-sm text-gray-500 bg-white pt-10">
-        <Link to="/">Home</Link>
-        <span>&gt;</span>
-        <Link
-          to="/shop/all-jewellery"
-          className="text-primary font-medium font-IBM-Plex"
-        >
-          All Jewellery
-        </Link>
-        <span>&gt;</span>
-        <span className="text-primary font-medium font-IBM-Plex">
-          {product?.name}
-        </span>
-      </div>
+      <Breadcrumb items={breadcrumbItems} />
       <div className="py-15">
         {/* Title & Price */}
         <div className="flex flex-col gap-2 md:gap-4 items-center">

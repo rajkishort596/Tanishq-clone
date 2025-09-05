@@ -3,16 +3,10 @@ import { Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import TanishqIcon from "../assets/images/Spinner-Icon.png";
 
-const ProductCard = ({ product }) => {
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    navigate(`/shop/all-jewellery/product/${product._id}`);
-  };
-
+const ProductCard = ({ product, onClick }) => {
   return (
     <div
-      onClick={handleClick}
+      onClick={onClick}
       className="group relative cursor-pointer bg-white rounded-lg overflow-hidden transition-all duration-300"
     >
       {/* Product Image */}

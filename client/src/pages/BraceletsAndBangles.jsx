@@ -2,20 +2,26 @@ import React, { useState } from "react";
 import { useProducts } from "../hooks/useProducts";
 import Spinner from "../components/Spinner";
 import ProductCard from "../components/ProductCard";
-import { Link, useNavigate } from "react-router-dom";
 import Breadcrumb from "../components/Breadcrumb";
 import { ChevronDown, FunnelIcon, Plus } from "lucide-react";
+import { useCategories } from "../hooks/useCategories";
+import { useNavigate } from "react-router-dom";
 
-const AllJewellery = () => {
+const BraceletsAndBangles = () => {
+  const { categories } = useCategories();
+  const braceletsCategory = categories.find(
+    (cat) => cat.name === "Bracelets & Bangles"
+  );
+  const categoryId = braceletsCategory?._id;
   const [limit, setLimit] = useState(10);
   const { products, totalProducts, isLoading, isFetching, error } = useProducts(
-    { limit }
+    { limit, category: categoryId }
   );
 
   const navigate = useNavigate();
 
   const handleClick = (product) => {
-    navigate(`/shop/all-jewellery/product/${product._id}`);
+    navigate(`/shop/bracelets-and-bangles/product/${product._id}`);
   };
 
   if (isLoading || isFetching)
@@ -34,13 +40,13 @@ const AllJewellery = () => {
     <div className="px-4 sm:px-6 lg:px-8 py-8 font-fraunces">
       {/* Breadcrumb */}
       <Breadcrumb
-        items={[{ label: "Home", to: "/" }, { label: "All Jewellery" }]}
+        items={[{ label: "Home", to: "/" }, { label: "Bracelets & Bangles" }]}
         className="mb-6 py-5"
       />
 
       {/* Heading */}
       <h1 className="text-2xl text-[#300708] mb-6">
-        All Jewellery{" "}
+        Bracelets & Bangles{" "}
         <span className="text-gray-500 text-lg font-IBM-Plex">
           ({totalProducts} results)
         </span>
@@ -135,4 +141,4 @@ const AllJewellery = () => {
   );
 };
 
-export default AllJewellery;
+export default BraceletsAndBangles;

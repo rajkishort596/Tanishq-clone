@@ -9,6 +9,7 @@ import ClientLayout from "./layouts/ClientLayout";
 import Home from "./pages/Home";
 import AllJewellery from "./pages/AllJewellery";
 import ProductDetails from "./pages/ProductDetails";
+import BraceletsAndBangles from "./pages/BraceletsAndBangles";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -30,7 +31,11 @@ const App = () => {
           <Route path="shop/necklaces" element={<div>Necklaces</div>} />
           <Route
             path="shop/bracelets-and-bangles"
-            element={<div>Bracelets & Bangles</div>}
+            element={<BraceletsAndBangles />}
+          />
+          <Route
+            path="shop/:category/product/:productId"
+            element={<ProductDetails />}
           />
           <Route path="shop/collections" element={<div>Collections</div>} />
         </Route>
