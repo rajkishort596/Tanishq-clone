@@ -351,6 +351,7 @@ const createProductValidation = [
 
   // Now validate the parsed 'collections' array
   body("collections")
+    .optional({ checkFalsy: true }) // Collections are optional
     .isArray()
     .withMessage("Collections must be an array.")
     .custom((value) => {
@@ -361,8 +362,7 @@ const createProductValidation = [
         }
       }
       return true;
-    })
-    .optional(), // Collections are optional based on your schema
+    }),
 
   // Now validate the parsed 'occasion' array
   body("occasion")
