@@ -11,7 +11,9 @@ const ClientLayout = () => {
         <main className="relative p-4 lg:p-6 min-h-screen bg-white rounded-tl-xl">
           <ScrollToTop />
           <Header />
-          <Outlet />
+          <div className="min-h-screen">
+            <Outlet />
+          </div>
           <Footer />
         </main>
       </div>
