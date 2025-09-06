@@ -19,7 +19,7 @@ const TanishqWorldSection = () => {
       <div className="flex gap-2 md:gap-4 justify-center">
         <div className="flex flex-col gap-2 md:gap-4 ">
           {/* Top-left Image (Horizontal) */}
-          <Link to="/all-jewellery?occasion=wedding">
+          <Link to="/shop/all-jewellery?occasion=wedding">
             <div className="relative rounded-lg overflow-hidden group cursor-pointer">
               <img
                 src={images.weddingWorld}
@@ -64,7 +64,7 @@ const TanishqWorldSection = () => {
             </div>
           </Link>
           {/* Bottom-right Image (Horizontal) */}
-          <Link to="/all-jewellery?occasion=dailyWear">
+          <Link to="/shop/all-jewellery?occasion=daily Wear">
             <div className="relative rounded-lg overflow-hidden group cursor-pointer">
               <img
                 src={images.dailyWearWorld}

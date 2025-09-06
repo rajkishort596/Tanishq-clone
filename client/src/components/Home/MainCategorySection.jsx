@@ -20,17 +20,17 @@ const categories = [
   {
     title: "MANGALSUTRA",
     image: images.mangalsutraCat,
-    link: "/shop/necklaces/mangalsutra",
+    link: "/shop/necklaces/gold-mangalsutra",
   },
   {
     title: "BRACELETS",
     image: images.braceletCat,
-    link: "/shop/bracelets-and-bangles/bracelets",
+    link: "/shop/bracelets-and-bangles/diamond-bracelets",
   },
   {
     title: "BANGLES",
     image: images.banglesCat,
-    link: "/shop/bracelets-and-bangles/bangles",
+    link: "/shop/bracelets-and-bangles/gold-bangles",
   },
   {
     title: "CHAINS",
