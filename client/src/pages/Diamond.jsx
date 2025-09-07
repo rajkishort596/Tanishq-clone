@@ -2,19 +2,22 @@ import React, { useState } from "react";
 import { useProducts } from "../hooks/useProducts";
 import Spinner from "../components/Spinner";
 import ProductCard from "../components/ProductCard";
-import {
-  Link,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
 import Breadcrumb from "../components/Breadcrumb";
 import { ChevronDown, FunnelIcon, Plus } from "lucide-react";
 import { useCategories } from "../hooks/useCategories";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import FilterSection from "../components/Filter/FilterSection";
 
-const AllJewellery = () => {
+const Diamond = () => {
   const [limit, setLimit] = useState(10);
+
+  const { categories } = useCategories();
+  const diamondCategory = categories.find((cat) => cat.name === "Diamond");
+  const categorySlug = diamondCategory?.slug;
+
+  const { subCategory } = useParams();
+  const Category = categories.find((cat) => cat.slug === subCategory);
+  const subcategoryId = Category?._id;
 
   const [searchParams] = useSearchParams();
   const occasion = searchParams.get("occasion");
@@ -25,29 +28,25 @@ const AllJewellery = () => {
   const gender = searchParams.get("gender");
   const metalColor = searchParams.get("metalColor");
 
-  const { categories } = useCategories();
-  const { subCategory } = useParams();
-  const Category = categories.find((cat) => cat.slug === subCategory);
-  const subcategoryId = Category?._id;
-
   const { products, totalProducts, isLoading, isFetching, error } = useProducts(
     {
       limit,
-      occasion,
       subCategory: subcategoryId,
+      occasion,
       minPrice,
       maxPrice,
       metal,
       metalColor,
       purity,
       gender,
+      productType: "diamond",
     }
   );
 
   const navigate = useNavigate();
 
   const handleClick = (product) => {
-    const basePath = "/shop/all-jewellery";
+    const basePath = `/shop/${categorySlug}`;
     const path = subCategory
       ? `${basePath}/${subCategory}/product/${product._id}`
       : `${basePath}/product/${product._id}`;
@@ -72,7 +71,7 @@ const AllJewellery = () => {
       <Breadcrumb
         items={[
           { label: "Home", to: "/" },
-          { label: "All Jewellery", to: "/shop/all-jewellery" },
+          { label: "Diamond", to: "/shop/diamond" },
           subCategory ? { label: `${Category?.name}` } : {},
         ]}
         className="mb-6 py-5"
@@ -80,7 +79,7 @@ const AllJewellery = () => {
 
       {/* Heading */}
       <h1 className="text-2xl text-[#300708] mb-6">
-        All Jewellery{" "}
+        Earrings{" "}
         <span className="text-gray-500 text-lg font-IBM-Plex">
           ({totalProducts} results)
         </span>
@@ -116,4 +115,4 @@ const AllJewellery = () => {
   );
 };
 
-export default AllJewellery;
+export default Diamond;

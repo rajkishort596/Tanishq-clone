@@ -3,17 +3,17 @@ import { useProducts } from "../hooks/useProducts";
 import Spinner from "../components/Spinner";
 import ProductCard from "../components/ProductCard";
 import Breadcrumb from "../components/Breadcrumb";
-import { ChevronDown, FunnelIcon, Plus } from "lucide-react";
 import { useCategories } from "../hooks/useCategories";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import FilterSection from "../components/Filter/FilterSection";
 
 const Earrings = () => {
   const [limit, setLimit] = useState(10);
 
   const { categories } = useCategories();
-  const braceletsCategory = categories.find((cat) => cat.name === "Earrings");
-  const categoryId = braceletsCategory?._id;
-  const categorySlug = braceletsCategory?.slug;
+  const earringsCategory = categories.find((cat) => cat.name === "Earrings");
+  const categoryId = earringsCategory?._id;
+  const categorySlug = earringsCategory?.slug;
 
   const { subCategory } = useParams();
   const Category = categories.find((cat) => cat.slug === subCategory);
@@ -46,7 +46,11 @@ const Earrings = () => {
   const navigate = useNavigate();
 
   const handleClick = (product) => {
-    navigate(`/shop/${categorySlug}/product/${product._id}`);
+    const basePath = `/shop/${categorySlug}`;
+    const path = subCategory
+      ? `${basePath}/${subCategory}/product/${product._id}`
+      : `${basePath}/product/${product._id}`;
+    navigate(path);
   };
 
   if (isLoading || isFetching)
@@ -81,67 +85,8 @@ const Earrings = () => {
         </span>
       </h1>
 
-      {/* Filter + Sort (Placeholder) */}
-      <div className="flex flex-wrap gap-3 items-center justify-between mb-8 font-IBM-Plex">
-        <div className="flex flex-wrap items-center gap-4">
-          <button className="px-8 py-[10px] border border-[#e0e0e0] rounded-4xl text-sm text-black cursor-pointer">
-            <FunnelIcon
-              size={20}
-              strokeWidth={1}
-              className="inline-block mr-2"
-            />
-            Filter
-            <ChevronDown
-              size={20}
-              strokeWidth={1}
-              className="inline-block ml-2 text-primary"
-            />
-          </button>
-          <button className="px-4 py-[10px] border flex items-center border-[#e0e0e0]  rounded-4xl text-sm text-black cursor-pointer">
-            <span className="bg-[#fbe9ea] p-1 flex justify-center items-center rounded-full mr-2">
-              <Plus
-                strokeWidth={1}
-                size={14}
-                className="text-primary inline-block"
-              />
-            </span>
-            ₹25,000 - ₹50,000
-          </button>
-          <button className="px-4 py-[10px] border flex items-center border-[#e0e0e0]  rounded-4xl text-sm text-black cursor-pointer">
-            <span className="bg-[#fbe9ea] p-1 flex justify-center items-center rounded-full mr-2">
-              <Plus
-                strokeWidth={1}
-                size={14}
-                className="text-primary inline-block"
-              />
-            </span>
-            Women
-          </button>
-          <button className="px-4 py-[10px] border flex items-center border-[#e0e0e0]  rounded-4xl text-sm text-black cursor-pointer">
-            <span className="bg-[#fbe9ea] p-1 flex justify-center items-center rounded-full mr-2">
-              <Plus
-                strokeWidth={1}
-                size={14}
-                className="text-primary inline-block"
-              />
-            </span>
-            Men
-          </button>
-          <button className="px-4 py-[10px] border flex items-center border-[#e0e0e0]  rounded-4xl text-sm text-black cursor-pointer">
-            <span className="bg-[#fbe9ea] p-1 flex justify-center items-center rounded-full mr-2">
-              <Plus
-                strokeWidth={1}
-                size={14}
-                className="text-primary inline-block"
-              />
-            </span>
-            Gold Jewellery
-          </button>
-          <button className="text-primary text-sm font-semibold cursor-pointer">
-            +See More
-          </button>
-        </div>
-      </div>
+      {/* Reusable Filter Section */}
+      <FilterSection />
 
       {/* Product Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

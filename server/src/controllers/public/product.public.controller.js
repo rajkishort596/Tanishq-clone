@@ -23,6 +23,7 @@ const getProducts = asyncHandler(async (req, res) => {
     purity,
     occasion,
     gender,
+    productType,
     minPrice,
     maxPrice,
   } = req.query;
@@ -77,6 +78,11 @@ const getProducts = asyncHandler(async (req, res) => {
   if (gender) {
     query.gender = {
       $in: gender.split(",").map((g) => new RegExp(`^${g}$`, "i")),
+    };
+  }
+  if (productType) {
+    query.productType = {
+      $in: productType.split(",").map((pt) => new RegExp(`^${pt}$`, "i")),
     };
   }
 

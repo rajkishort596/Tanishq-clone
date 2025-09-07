@@ -16,8 +16,16 @@ import "swiper/css";
 import "swiper/css/pagination";
 
 const ProductDetails = () => {
-  const { productId, category } = useParams();
+  const { productId, category, subCategory } = useParams();
   const [activeTab, setActiveTab] = useState("details");
+
+  const formatSubCategory = (slug) => {
+    if (!slug) return "";
+    return slug
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
 
   const priceRef = useRef(null);
   const [activeAccordion, setActiveAccordion] = useState("metalDetails");
@@ -47,8 +55,14 @@ const ProductDetails = () => {
     category
       ? { label: categoryMap[category] || category, to: `/shop/${category}` }
       : { label: "All Jewellery", to: "/shop/all-jewellery" },
+    subCategory && subCategory !== "undefined"
+      ? {
+          label: formatSubCategory(subCategory),
+          to: `/shop/${category}/${subCategory}`,
+        }
+      : null,
     { label: product?.name || "..." },
-  ];
+  ].filter(Boolean);
 
   const { metalRate } = useMetalRate(product?.metal);
 

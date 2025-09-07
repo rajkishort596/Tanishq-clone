@@ -3,7 +3,6 @@ import { useProducts } from "../hooks/useProducts";
 import Spinner from "../components/Spinner";
 import ProductCard from "../components/ProductCard";
 import Breadcrumb from "../components/Breadcrumb";
-import { ChevronDown, FunnelIcon, Plus } from "lucide-react";
 import { useCategories } from "../hooks/useCategories";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import FilterSection from "../components/Filter/FilterSection";
@@ -12,9 +11,9 @@ const Necklaces = () => {
   const [limit, setLimit] = useState(10);
 
   const { categories } = useCategories();
-  const braceletsCategory = categories.find((cat) => cat.name === "Necklaces");
-  const categoryId = braceletsCategory?._id;
-  const categorySlug = braceletsCategory?.slug;
+  const necklacesCategory = categories.find((cat) => cat.name === "Necklaces");
+  const categoryId = necklacesCategory?._id;
+  const categorySlug = necklacesCategory?.slug;
 
   const { subCategory } = useParams();
   const Category = categories.find((cat) => cat.slug === subCategory);
@@ -47,7 +46,11 @@ const Necklaces = () => {
   const navigate = useNavigate();
 
   const handleClick = (product) => {
-    navigate(`/shop/${categorySlug}/product/${product._id}`);
+    const basePath = `/shop/${categorySlug}`;
+    const path = subCategory
+      ? `${basePath}/${subCategory}/product/${product._id}`
+      : `${basePath}/product/${product._id}`;
+    navigate(path);
   };
 
   if (isLoading || isFetching)

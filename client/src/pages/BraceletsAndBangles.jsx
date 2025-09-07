@@ -49,7 +49,11 @@ const BraceletsAndBangles = () => {
   const navigate = useNavigate();
 
   const handleClick = (product) => {
-    navigate(`/shop/${categorySlug}/product/${product._id}`);
+    const basePath = `/shop/${categorySlug}`;
+    const path = subCategory
+      ? `${basePath}/${subCategory}/product/${product._id}`
+      : `${basePath}/product/${product._id}`;
+    navigate(path);
   };
 
   if (isLoading || isFetching)
