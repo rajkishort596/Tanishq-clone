@@ -11,6 +11,8 @@ import AllJewellery from "./pages/AllJewellery";
 import ProductDetails from "./pages/ProductDetails";
 import BraceletsAndBangles from "./pages/BraceletsAndBangles";
 import Earrings from "./pages/Earrings";
+import Rings from "./pages/Rings";
+import Necklaces from "./pages/Necklaces";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -31,14 +33,16 @@ const App = () => {
           />
           <Route path="shop/gold" element={<div>Gold Jewellery</div>} />
           <Route path="shop/diamond" element={<div>Diamond Jewellery</div>} />
-          <Route path="shop/rings" element={<div>Rings</div>} />
+          <Route path="shop/rings" element={<Rings />} />
+          <Route path="shop/rings/:subCategory" element={<Rings />} />
           <Route path="shop/earrings" element={<Earrings />} />
           <Route path="shop/earrings/:subCategory" element={<Earrings />} />
           <Route
             path="shop/:category/product/:productId"
             element={<ProductDetails />}
           />
-          <Route path="shop/necklaces" element={<div>Necklaces</div>} />
+          <Route path="shop/necklaces" element={<Necklaces />} />
+          <Route path="shop/necklaces/:subCategory" element={<Necklaces />} />
           <Route
             path="shop/bracelets-and-bangles"
             element={<BraceletsAndBangles />}
