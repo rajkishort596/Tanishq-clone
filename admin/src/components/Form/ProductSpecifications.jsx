@@ -55,7 +55,7 @@ const ProductSpecifications = ({
         </Select>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Gender Select */}
         <Select
           label="Gender"
@@ -68,6 +68,21 @@ const ProductSpecifications = ({
           <option value="men">Men</option>
           <option value="kids">Kids</option>
           <option value="unisex">Unisex</option>
+        </Select>
+        {/* Product Type Select */}
+        <Select
+          label="Product Type"
+          id="productType"
+          {...register("productType", {
+            required: "Product Type is required.",
+          })}
+          error={errors.productType?.message}
+        >
+          <option value="">-- Select Product Type --</option>
+          <option value="gold">Gold</option>
+          <option value="diamond">Diamond</option>
+          <option value="platinum">Platinum</option>
+          <option value="silver">Silver</option>
         </Select>
 
         {/* MetalColor Select */}

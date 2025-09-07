@@ -284,9 +284,17 @@ const createProductValidation = [
 
   body("gender")
     .trim()
-    .notEmpty() // Made required based on product model
+    .notEmpty()
     .isIn(["men", "women", "kids", "unisex"]) // Add enum validation
     .withMessage("Gender must be one of 'men', 'women', 'kids', 'unisex'."),
+
+  body("productType")
+    .trim()
+    .notEmpty()
+    .isIn(["gold", "diamond", "platinum", "silver"]) // Add enum validation
+    .withMessage(
+      "Product Type must be one of 'gold', 'diamond', 'platinum', 'silver'."
+    ),
 
   body("category")
     .notEmpty()
@@ -488,6 +496,13 @@ const updateProductValidation = [
     .trim()
     .isIn(["men", "women", "kids", "unisex"])
     .withMessage("Gender must be one of 'men', 'women', 'kids', 'unisex'."),
+  body("productType")
+    .trim()
+    .notEmpty()
+    .isIn(["gold", "diamond", "platinum", "silver"]) // Add enum validation
+    .withMessage(
+      "Product Type must be one of 'gold', 'diamond', 'platinum', 'silver'."
+    ),
   body("category").optional().isMongoId().withMessage("Invalid category ID."),
   body("subCategory")
     .optional({ checkFalsy: true })

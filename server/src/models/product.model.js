@@ -89,6 +89,12 @@ const productSchema = new Schema(
       type: String,
       required: true,
     }, // 18K, 22K
+    productType: {
+      type: String,
+      required: true,
+      default: "gold",
+      enum: ["gold", "diamond", "platinum", "silver"],
+    },
     gender: {
       type: String,
       required: true,

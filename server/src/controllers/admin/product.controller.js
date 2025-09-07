@@ -38,6 +38,7 @@ const createProduct = asyncHandler(async (req, res) => {
     metal,
     purity,
     gender,
+    productType,
     metalColor,
   } = req.body;
 
@@ -55,6 +56,7 @@ const createProduct = asyncHandler(async (req, res) => {
       category,
       metal,
       purity,
+      productType,
       gender,
     ].some(
       (field) =>
@@ -132,6 +134,7 @@ const createProduct = asyncHandler(async (req, res) => {
     metal,
     purity,
     gender,
+    productType,
     metalColor,
   });
 
@@ -280,6 +283,7 @@ const getAllProductsAdmin = asyncHandler(async (req, res) => {
         metal: 1,
         purity: 1,
         gender: 1,
+        productType: 1,
         isActive: 1,
         ratings: 1,
         createdAt: 1,
@@ -387,6 +391,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     metal,
     purity,
     gender,
+    productType,
     metalColor,
     clearImages,
   } = req.body;
@@ -453,6 +458,7 @@ const updateProduct = asyncHandler(async (req, res) => {
   if (metal !== undefined) product.metal = metal;
   if (purity !== undefined) product.purity = purity;
   if (gender !== undefined) product.gender = gender;
+  if (productType !== undefined) product.productType = productType;
   if (metalColor !== undefined) product.metalColor = metalColor;
   if (req.body.isActive !== undefined) product.isActive = req.body.isActive;
 

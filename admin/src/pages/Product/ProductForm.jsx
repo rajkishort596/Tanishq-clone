@@ -58,6 +58,7 @@ const ProductForm = () => {
       metal: "",
       purity: "",
       gender: "",
+      productType: "",
       metalColor: "",
       images: null,
       isActive: true,
@@ -83,6 +84,7 @@ const ProductForm = () => {
       setValue("variants", productData.variants || []);
       setValue("metal", productData.metal || "");
       setValue("purity", productData.purity || "");
+      setValue("productType", productData.productType || "");
       setValue("gender", productData.gender || "");
       setValue("metalColor", productData.metalColor || "");
       setValue("isActive", productData.isActive);
