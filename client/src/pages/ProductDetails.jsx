@@ -63,7 +63,7 @@ const ProductDetails = () => {
           to: `/shop/${category}/${subCategory}`,
         }
       : null,
-    collection ? { label: "Collections", to: `/shop/collection` } : null,
+    collection ? { label: "Collections", to: `/shop/collections` } : null,
     collection
       ? { label: formatSubCategory(collection), to: `/shop/${collection}` }
       : null,

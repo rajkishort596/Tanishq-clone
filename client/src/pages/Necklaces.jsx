@@ -6,9 +6,10 @@ import Breadcrumb from "../components/Breadcrumb";
 import { useCategories } from "../hooks/useCategories";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import FilterSection from "../components/Filter/FilterSection";
+import FloatingWidget from "../components/FloatingWidget";
 
 const Necklaces = () => {
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(24);
 
   const { categories } = useCategories();
   const necklacesCategory = categories.find((cat) => cat.name === "Necklaces");
@@ -113,6 +114,11 @@ const Necklaces = () => {
           </button>
         </div>
       )}
+      {/* Floating Widget */}
+      <FloatingWidget
+        shownCount={products?.length || 0}
+        totalCount={totalProducts || 0}
+      />
     </div>
   );
 };

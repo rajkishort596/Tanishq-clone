@@ -13,7 +13,7 @@ const Home = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center absolute inset-0 bg-white/80 z-50">
+      <div className="flex justify-center items-center fixed inset-0 bg-white/80 z-50">
         <Spinner />
       </div>
     );

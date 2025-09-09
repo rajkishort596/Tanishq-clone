@@ -3,13 +3,13 @@ import { useProducts } from "../hooks/useProducts";
 import Spinner from "../components/Spinner";
 import ProductCard from "../components/ProductCard";
 import Breadcrumb from "../components/Breadcrumb";
-import { ChevronDown, FunnelIcon, Plus } from "lucide-react";
 import { useCategories } from "../hooks/useCategories";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import FilterSection from "../components/Filter/FilterSection";
+import FloatingWidget from "../components/FloatingWidget";
 
 const Diamond = () => {
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(24);
 
   const { categories } = useCategories();
   const diamondCategory = categories.find((cat) => cat.name === "Diamond");
@@ -111,6 +111,11 @@ const Diamond = () => {
           </button>
         </div>
       )}
+      {/* Floating Widget */}
+      <FloatingWidget
+        shownCount={products?.length || 0}
+        totalCount={totalProducts || 0}
+      />
     </div>
   );
 };

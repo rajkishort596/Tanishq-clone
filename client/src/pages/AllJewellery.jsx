@@ -9,12 +9,12 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import Breadcrumb from "../components/Breadcrumb";
-import { ChevronDown, FunnelIcon, Plus } from "lucide-react";
 import { useCategories } from "../hooks/useCategories";
 import FilterSection from "../components/Filter/FilterSection";
+import FloatingWidget from "../components/FloatingWidget";
 
 const AllJewellery = () => {
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(24);
 
   const [searchParams] = useSearchParams();
   const occasion = searchParams.get("occasion");
@@ -114,6 +114,11 @@ const AllJewellery = () => {
           </button>
         </div>
       )}
+      {/* Floating Widget */}
+      <FloatingWidget
+        shownCount={products?.length || 0}
+        totalCount={totalProducts || 0}
+      />
     </div>
   );
 };
