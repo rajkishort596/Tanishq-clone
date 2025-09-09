@@ -27,6 +27,7 @@ const Rings = () => {
   const purity = searchParams.get("purity");
   const gender = searchParams.get("gender");
   const metalColor = searchParams.get("metalColor");
+  const productType = searchParams.get("productType");
 
   const { products, totalProducts, isLoading, isFetching, error } = useProducts(
     {
@@ -40,6 +41,7 @@ const Rings = () => {
       metalColor,
       purity,
       gender,
+      productType,
     }
   );
 

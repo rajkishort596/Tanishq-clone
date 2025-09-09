@@ -55,10 +55,14 @@ const MegaMenu = ({
       });
     } else if (
       filterKey === "metal" &&
-      value.includes("rose gold", "white gold", "white")
+      ["rose gold", "white gold", "white", "diamond"].includes(value)
     ) {
-      queryParams[filterKey] = "gold";
-      queryParams.metalColor = value;
+      if (value === "diamond") {
+        queryParams.productType = value;
+      } else {
+        queryParams[filterKey] = "gold";
+        queryParams.metalColor = value;
+      }
     } else {
       queryParams[filterKey] = value;
     }

@@ -24,6 +24,7 @@ const AllJewellery = () => {
   const purity = searchParams.get("purity");
   const gender = searchParams.get("gender");
   const metalColor = searchParams.get("metalColor");
+  const productType = searchParams.get("productType");
 
   const { categories } = useCategories();
   const { subCategory } = useParams();
@@ -41,6 +42,7 @@ const AllJewellery = () => {
       metalColor,
       purity,
       gender,
+      productType,
     }
   );
 
