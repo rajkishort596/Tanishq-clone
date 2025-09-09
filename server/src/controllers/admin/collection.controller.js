@@ -3,6 +3,7 @@ import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { Collection } from "../../models/collection.model.js";
 import { Product } from "../../models/product.model.js";
+import slugify from "slugify";
 import {
   uploadOnCloudinary,
   deleteImageFromCloudinary,
@@ -27,8 +28,11 @@ const createCollection = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Collection name is required.");
   }
 
+  // Generate slug
+  const slug = slugify(name, { lower: true, strict: true });
+
   const existingCollection = await Collection.findOne({
-    name: { $regex: new RegExp(`^${name}$`, "i") },
+    $or: [{ name: name }, { slug: slug }],
   });
   if (existingCollection) {
     throw new ApiError(409, "Collection with this name already exists.");
@@ -74,6 +78,7 @@ const createCollection = asyncHandler(async (req, res) => {
 
   const collection = await Collection.create({
     name,
+    slug,
     description: description || "",
     image: uploadedMainImage,
     bannerImage: bannerImageLocalPath ? uploadedBannerImage : undefined,
@@ -212,13 +217,21 @@ const updateCollection = asyncHandler(async (req, res) => {
 
   if (name && name.trim() !== "" && name.trim() !== collection.name) {
     const existingCollectionWithNewName = await Collection.findOne({
-      name: { $regex: new RegExp(`^${name.trim()}$`, "i") },
+      $or: [
+        { name: { $regex: new RegExp(`^${name.trim()}$`, "i") } },
+        { slug: slugify(name.trim(), { lower: true, strict: true }) },
+      ],
       _id: { $ne: collectionId }, // Exclude current collection
     });
     if (existingCollectionWithNewName) {
-      throw new ApiError(409, "Collection with this name already exists.");
+      throw new ApiError(
+        409,
+        "Collection with this name or slug already exists."
+      );
     }
+
     collection.name = name.trim();
+    collection.slug = slugify(name.trim(), { lower: true, strict: true }); //  update slug
   }
 
   if (description !== undefined) collection.description = description;

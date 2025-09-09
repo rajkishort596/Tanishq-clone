@@ -81,7 +81,9 @@ const DetailsAccordian = ({ product, isOpen, handleAccordionClick }) => {
           <div className="grid grid-cols-3 w-full h-full mt-6">
             <div className="mb-4">
               <h4 className="text-xl mb-[10px] font-fraunces text-black">
-                {product.metal + " Jewellery"}
+                {product.productType.charAt(0).toUpperCase() +
+                  product.productType.slice(1) +
+                  " Jewellery"}
               </h4>
               <p>Jewellery Type</p>
             </div>

@@ -15,6 +15,8 @@ import Rings from "./pages/Rings";
 import Necklaces from "./pages/Necklaces";
 import Diamond from "./pages/Diamond";
 import Gold from "./pages/Gold";
+import Collections from "./pages/Collections/Collections";
+import Collection from "./pages/Collections/Collection";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -55,7 +57,15 @@ const App = () => {
             path="shop/:category/:subCategory?/product/:productId"
             element={<ProductDetails />}
           />
-          <Route path="shop/collections" element={<div>Collections</div>} />
+          <Route path="shop/collections" element={<Collections />} />
+
+          {/* Collection Pages Routes */}
+          <Route path="shop/:collection" element={<Collection />} />
+
+          <Route
+            path="shop/collections/:collection?/product/:productId"
+            element={<ProductDetails />}
+          />
         </Route>
       </>
     )

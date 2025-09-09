@@ -68,11 +68,7 @@ const MegaMenu = ({
   };
 
   const handleCollectionClick = (collection) => {
-    const slug = collection?.name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-    navigate(`/shop/${slug}`);
+    navigate(`/shop/${collection?.slug}`);
     setActiveCategory(null);
   };
 
@@ -83,7 +79,10 @@ const MegaMenu = ({
         {/* LEFT NAVIGATION */}
         <div className="w-45 py-6 pl-6">
           <button
-            onClick={() => navigate("/shop/collections")}
+            onClick={() => {
+              navigate("/shop/collections");
+              setActiveCategory(null);
+            }}
             className={`w-full text-left px-4 py-3 rounded-lg mb-2 font-fraunces cursor-pointer leading-none bg-gradient-to-r from-[#f3e9e9] to-[#f2e7e9] text-primary font-semibold border border-[#d9bdbe]`}
           >
             View All

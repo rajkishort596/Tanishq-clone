@@ -16,8 +16,10 @@ import "swiper/css";
 import "swiper/css/pagination";
 
 const ProductDetails = () => {
-  const { productId, category, subCategory } = useParams();
+  const { productId, category, subCategory, collection } = useParams();
   const [activeTab, setActiveTab] = useState("details");
+
+  console.log(collection, productId, category, subCategory);
 
   const formatSubCategory = (slug) => {
     if (!slug) return "";
@@ -54,12 +56,16 @@ const ProductDetails = () => {
     { label: "Home", to: "/" },
     category
       ? { label: categoryMap[category] || category, to: `/shop/${category}` }
-      : { label: "All Jewellery", to: "/shop/all-jewellery" },
+      : null,
     subCategory && subCategory !== "undefined"
       ? {
           label: formatSubCategory(subCategory),
           to: `/shop/${category}/${subCategory}`,
         }
+      : null,
+    collection ? { label: "Collections", to: `/shop/collection` } : null,
+    collection
+      ? { label: formatSubCategory(collection), to: `/shop/${collection}` }
       : null,
     { label: product?.name || "..." },
   ].filter(Boolean);

@@ -27,7 +27,7 @@ const getAllCollections = asyncHandler(async (req, res) => {
     page: parseInt(page, 10),
     limit: parseInt(limit, 10),
     sort: { createdAt: -1 },
-    select: "name description image bannerImage startDate endDate",
+    select: "name slug description image bannerImage startDate endDate",
     customLabels: {
       totalDocs: "totalCollections",
       docs: "collections",
@@ -68,7 +68,7 @@ const getCollectionById = asyncHandler(async (req, res) => {
   const collection = await Collection.find({
     _id: collectionId,
     isActive: true,
-  }).select("name description image bannerImage startDate endDate");
+  }).select("name slug description image bannerImage startDate endDate");
 
   if (!collection) {
     throw new ApiError(404, "Collection not found or is not active.");

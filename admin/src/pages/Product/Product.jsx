@@ -165,7 +165,9 @@ const Product = () => {
         >
           <option value="">All Collections</option>
           {collections.map((collection) => (
-            <option value={collection._id}>{collection.name}</option>
+            <option key={collection._id} value={collection._id}>
+              {collection.name}
+            </option>
           ))}
         </select>
       </div>

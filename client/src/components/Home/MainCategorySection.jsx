@@ -20,7 +20,7 @@ const categories = [
   {
     title: "MANGALSUTRA",
     image: images.mangalsutraCat,
-    link: "/shop/necklaces/gold-mangalsutra",
+    link: "/shop/necklaces/gold-mangalsutras",
   },
   {
     title: "BRACELETS",

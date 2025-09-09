@@ -10,6 +10,11 @@ const collectionSchema = new Schema(
       unique: true, // Collection names should be unique
       trim: true,
     },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     description: {
       type: String,
       trim: true,
