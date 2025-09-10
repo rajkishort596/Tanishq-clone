@@ -99,6 +99,7 @@ import DescriptionIcon from "../assets/images/Description-Icon.svg";
 import YellowGoldIcon from "../assets/images/yellowGold-Icon.png";
 import PlatinumIcon from "../assets/images/platinum-Icon.webp";
 
+import EmptyCartIcon from "../assets/images/EmptyCart.svg";
 const images = {
   promotionBagIcon: PromotionBagIcon,
   collectionIcon: CollectionIcon,
@@ -201,6 +202,8 @@ const images = {
   descriptionIcon: DescriptionIcon,
   yellowGoldIcon: YellowGoldIcon,
   platinumIcon: PlatinumIcon,
+
+  emptyCartIcon: EmptyCartIcon,
 };
 
 export default images;

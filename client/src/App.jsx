@@ -18,6 +18,7 @@ import Gold from "./pages/Gold";
 import Collections from "./pages/Collections/Collections";
 import Collection from "./pages/Collections/Collection";
 import SearchResults from "./pages/SearchResults";
+import Cart from "./pages/Cart";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -25,7 +26,7 @@ const App = () => {
       <>
         <Route path="/" element={<ClientLayout />}>
           <Route index element={<Home />} />
-          <Route path="cart" element={<div>Cart</div>} />
+          <Route path="cart" element={<Cart />} />
           <Route path="wishlists" element={<div>Wishlists</div>} />
           <Route path="shop/all-jewellery" element={<AllJewellery />} />
           <Route
