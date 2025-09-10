@@ -27,9 +27,10 @@ const Header = () => {
 
   return (
     <header className="w-full sticky bg-white top-0 z-50">
-      <div className="px-4 sm:px-2 md:px-3 lg:px-4">
-        <div className="flex justify-between items-center py-4">
-          {/*Logo and Mobile Menu Toggle */}
+      <div className="px-4 py-2 sm:px-2 md:px-3 lg:px-4">
+        {/* Top Row: Logo & Icons */}
+        <div className="flex justify-between items-center mb-4 lg:mb-0">
+          {/* Left - Logo and Mobile Menu Toggle */}
           <div className="flex items-center gap-3">
             {/* Mobile Menu Toggle */}
             <button
@@ -39,7 +40,7 @@ const Header = () => {
               <Menu size={24} strokeWidth={1} className="text-black" />
             </button>
 
-            {/* Left - Logo */}
+            {/* Tanishq Logo */}
             <div className="flex items-center">
               <Link to={"/"}>
                 <img
@@ -56,13 +57,20 @@ const Header = () => {
             </div>
           </div>
 
-          {/* Middle - Search Bar (desktop only) */}
-          <SearchBar />
+          {/* Middle - Search Bar (hidden on mobile) */}
+          <div className="hidden lg:flex justify-center items-center flex-grow mx-10">
+            <SearchBar />
+          </div>
 
           {/* Right - Icons */}
           <div className="flex items-center space-x-4">
             <NavIcons />
           </div>
+        </div>
+
+        {/* Bottom Row: Search Bar (visible on mobile) */}
+        <div className="block lg:hidden mt-2">
+          <SearchBar />
         </div>
       </div>
       <div className="px-4 sm:px-2 lg:px-4 w-full relative">

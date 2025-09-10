@@ -2,6 +2,8 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { Product } from "../../models/product.model.js";
+import { Category } from "../../models/category.model.js";
+import { Collection } from "../../models/collection.model.js";
 
 /**
  * @desc Get all products with filtering, search, sorting, and pagination
@@ -33,12 +35,56 @@ const getProducts = asyncHandler(async (req, res) => {
     stock: { $gt: 0 },
   };
 
-  // Text search on name and description
+  let orConditions = [];
+
   if (search) {
-    query.$or = [
-      { name: { $regex: search, $options: "i" } },
-      { description: { $regex: search, $options: "i" } },
+    const regex = new RegExp(search, "i");
+
+    // Direct fields on Product
+    orConditions = [
+      { name: regex },
+      { description: regex },
+      { metal: regex },
+      { metalColor: regex },
+      { purity: regex },
+      { occasion: regex },
+      { gender: regex },
+      { productType: regex },
     ];
+
+    // Lookups for category, subCategory, and collections
+    const [matchedCategories, matchedSubCategories, matchedCollections] =
+      await Promise.all([
+        Category.find({ $or: [{ name: regex }, { slug: regex }] }).select(
+          "_id"
+        ),
+        Category.find({ $or: [{ name: regex }, { slug: regex }] }).select(
+          "_id"
+        ),
+        Collection.find({ $or: [{ name: regex }, { slug: regex }] }).select(
+          "_id"
+        ),
+      ]);
+
+    if (matchedCategories.length > 0) {
+      orConditions.push({
+        category: { $in: matchedCategories.map((c) => c._id) },
+      });
+    }
+    if (matchedSubCategories.length > 0) {
+      orConditions.push({
+        subCategory: { $in: matchedSubCategories.map((s) => s._id) },
+      });
+    }
+    if (matchedCollections.length > 0) {
+      orConditions.push({
+        collections: { $in: matchedCollections.map((col) => col._id) },
+      });
+    }
+  }
+
+  if (orConditions.length > 0) {
+    query.$or = orConditions;
   }
 
   // Filtering by category, subCategory, and collections
@@ -58,6 +104,7 @@ const getProducts = asyncHandler(async (req, res) => {
       $in: metal.split(",").map((m) => new RegExp(`^${m}$`, "i")),
     };
   }
+
   if (metalColor) {
     query.metalColor = {
       $in: metalColor.split(",").map((mc) => new RegExp(`^${mc}$`, "i")),
@@ -69,6 +116,7 @@ const getProducts = asyncHandler(async (req, res) => {
       $in: purity.split(",").map((p) => new RegExp(`^${p}$`, "i")),
     };
   }
+
   if (occasion) {
     query.occasion = {
       $in: occasion.split(",").map((o) => new RegExp(`^${o}$`, "i")),
@@ -80,6 +128,7 @@ const getProducts = asyncHandler(async (req, res) => {
       $in: gender.split(",").map((g) => new RegExp(`^${g}$`, "i")),
     };
   }
+
   if (productType) {
     query.productType = {
       $in: productType.split(",").map((pt) => new RegExp(`^${pt}$`, "i")),
@@ -109,7 +158,7 @@ const getProducts = asyncHandler(async (req, res) => {
     populate: [
       { path: "category", select: "name slug" },
       { path: "subCategory", select: "name slug" },
-      { path: "collections", select: "name" },
+      { path: "collections", select: "name slug" },
     ],
     customLabels: {
       totalDocs: "totalProducts",

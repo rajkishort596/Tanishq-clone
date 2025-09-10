@@ -17,6 +17,7 @@ import Diamond from "./pages/Diamond";
 import Gold from "./pages/Gold";
 import Collections from "./pages/Collections/Collections";
 import Collection from "./pages/Collections/Collection";
+import SearchResults from "./pages/SearchResults";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -66,6 +67,10 @@ const App = () => {
             path="shop/collections/:collection?/product/:productId"
             element={<ProductDetails />}
           />
+
+          {/* Search Pages Routes */}
+          <Route path="search/" element={<SearchResults />} />
+          <Route path="shop/product/:productId" element={<ProductDetails />} />
         </Route>
       </>
     )
