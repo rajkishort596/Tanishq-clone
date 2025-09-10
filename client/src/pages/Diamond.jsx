@@ -79,7 +79,7 @@ const Diamond = () => {
 
       {/* Heading */}
       <h1 className="text-2xl text-[#300708] mb-6">
-        Earrings{" "}
+        Diamond{" "}
         <span className="text-gray-500 text-lg font-IBM-Plex">
           ({totalProducts} results)
         </span>

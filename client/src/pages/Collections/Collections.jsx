@@ -4,18 +4,16 @@ import Breadcrumb from "../../components/Breadcrumb";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../../components/Spinner";
 
-const BANNER_INTERVAL = 5000; // 5 seconds
-
 const Collections = () => {
+  const [limit, setLimit] = useState(100);
   const navigate = useNavigate();
   const {
     collections,
     totalCollections,
     isLoading: isCollectionLoading,
+    isFetching,
     error,
-  } = useCollections();
-
-  const [activeBannerIndex, setActiveBannerIndex] = useState(0);
+  } = useCollections({ limit });
 
   useEffect(() => {
     if (collections && collections.length > 0) {
@@ -31,8 +29,6 @@ const Collections = () => {
   const handleCollectionClick = (collection) => {
     navigate(`/shop/${collection?.slug}`);
   };
-
-  const activeBanner = collections?.[activeBannerIndex];
 
   if (isCollectionLoading) {
     return (
@@ -50,26 +46,22 @@ const Collections = () => {
   console.log(collections);
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 font-fraunces">
-      {/* Dynamic Hero Banner (hidden on mobile, visible on md and above) */}
-      {activeBanner && (
-        <section className="hidden md:block w-full overflow-hidden rounded-xl">
-          <img
-            key={activeBanner?._id}
-            src={activeBanner?.bannerImage?.url}
-            alt={`Banner for ${activeBanner?.name}`}
-            className="
+      <section className="hidden md:block w-full overflow-hidden rounded-xl">
+        <img
+          src="/CollectionsBanner.png"
+          alt={`Collections Banner`}
+          className="
                       w-full 
-                      h-80 lg:h-[50vh] 
-                      object-cover 
+                      h-auto
+                      object-contain 
                       transition-opacity 
                       duration-1000 
                       ease-in-out 
                       opacity-100
                       rounded-xl
                     "
-          />
-        </section>
-      )}
+        />
+      </section>
 
       {/* Breadcrumb */}
       <Breadcrumb
@@ -108,6 +100,18 @@ const Collections = () => {
           </button>
         ))}
       </div>
+      {/* Load More Button */}
+      {collections?.length < totalCollections && (
+        <div className="flex justify-center mt-10">
+          <button
+            onClick={() => setLimit(limit + 12)}
+            disabled={isFetching}
+            className="btn-primary rounded-full py-5 px-8 shadow-md hover:scale-105 transition-transform disabled:opacity-50"
+          >
+            {isFetching ? "Loading..." : "Load More"}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

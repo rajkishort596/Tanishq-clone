@@ -13,7 +13,9 @@ const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const { categories, isLoading: isCategoryLoading } = useCategories();
-  const { collections, isLoading: isCollectionLoading } = useCollections();
+  const { collections, isLoading: isCollectionLoading } = useCollections({
+    limit: 100,
+  });
 
   if (isCategoryLoading || isCollectionLoading) {
     return (

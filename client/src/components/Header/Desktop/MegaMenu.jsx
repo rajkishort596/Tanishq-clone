@@ -95,26 +95,30 @@ const MegaMenu = ({
         {/* CENTER CONTENT */}
         <div className="flex-1 border-l border-r border-[#ececea]">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 p-6">
-            {collections.map((collection) => (
-              <button
-                key={collection?._id}
-                onClick={() => handleCollectionClick(collection)}
-                className="flex flex-col cursor-pointer items-center p-[5px] text-center group rounded-xl hover:border-1 hover:border-[#c09293] hover:shadow-[0_20px_26px_-15px_#490a0c45]"
-              >
-                <div className="w-full h-full rounded-xl overflow-hidden shadow-md border border-gray-200 group-hover:shadow-lg transition">
-                  <img
-                    src={collection?.image?.url}
-                    alt={collection?.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <span className="mt-3 text-sm font-medium text-gray-700 group-hover:text-black">
-                  {collection?.name}
-                </span>
-              </button>
-            ))}
+            {collections
+              ?.sort(() => Math.random() - 0.5)
+              .slice(0, 8)
+              .map((collection) => (
+                <button
+                  key={collection?._id}
+                  onClick={() => handleCollectionClick(collection)}
+                  className="flex flex-col cursor-pointer items-center p-[5px] text-center group rounded-xl hover:border-1 hover:border-[#c09293] hover:shadow-[0_20px_26px_-15px_#490a0c45]"
+                >
+                  <div className="w-full h-full rounded-xl overflow-hidden shadow-md border border-gray-200 group-hover:shadow-lg transition">
+                    <img
+                      src={collection?.image?.url}
+                      alt={collection?.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <span className="mt-3 text-sm font-medium text-gray-700 group-hover:text-black">
+                    {collection?.name}
+                  </span>
+                </button>
+              ))}
           </div>
         </div>
+
         {/* RIGHT SIDE BANNER */}
         <div className="w-1/4 p-6">
           <div className="h-[300px] w-[300px] mb-3 bg-red-50">

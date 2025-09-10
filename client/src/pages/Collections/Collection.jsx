@@ -11,14 +11,14 @@ const Collection = () => {
   const navigate = useNavigate();
   const [limit, setLimit] = useState(10);
 
-  const { collections } = useCollections();
+  const { collections } = useCollections({ limit: 100 });
   const { collection } = useParams();
 
+  console.log(collection);
   const Collection = collections.find((col) => col.slug === collection);
   const collectionId = Collection?._id;
-  const collectionSlug = Collection?.slug;
 
-  console.log(collections);
+  console.log(Collection);
 
   const [searchParams] = useSearchParams();
   const occasion = searchParams.get("occasion");
@@ -71,8 +71,8 @@ const Collection = () => {
           alt={`Banner for ${Collection?.name}`}
           className="
                       w-full 
-                      h-80 lg:h-[50vh] 
-                      object-cover 
+                      h-auto 
+                      object-contain 
                       transition-opacity 
                       duration-1000 
                       ease-in-out 
