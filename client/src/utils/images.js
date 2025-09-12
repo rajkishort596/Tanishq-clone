@@ -100,6 +100,17 @@ import YellowGoldIcon from "../assets/images/yellowGold-Icon.png";
 import PlatinumIcon from "../assets/images/platinum-Icon.webp";
 
 import EmptyCartIcon from "../assets/images/EmptyCart.svg";
+
+import LoginEncircle from "../assets/images/login-encircle.svg";
+import LoginShopping from "../assets/images/login-shopping.svg";
+import LoginWishlist from "../assets/images/login-wishlist.svg";
+
+import LoginStarBg from "../assets/images/login-star-group.svg";
+import LoginRibbon from "../assets/images/login-ribbon.svg";
+
+import LoginFirstScreen from "../assets/images/first-screen.png";
+import LoginSecondScreen from "../assets/images/second-screen.png";
+
 const images = {
   promotionBagIcon: PromotionBagIcon,
   collectionIcon: CollectionIcon,
@@ -204,6 +215,14 @@ const images = {
   platinumIcon: PlatinumIcon,
 
   emptyCartIcon: EmptyCartIcon,
+
+  loginEncircle: LoginEncircle,
+  loginShopping: LoginShopping,
+  loginWishlist: LoginWishlist,
+  loginStarBg: LoginStarBg,
+  loginRibbon: LoginRibbon,
+  loginFirstScreen: LoginFirstScreen,
+  loginSecondScreen: LoginSecondScreen,
 };
 
 export default images;

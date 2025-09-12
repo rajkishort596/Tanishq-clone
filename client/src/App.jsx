@@ -19,6 +19,7 @@ import Collections from "./pages/Collections/Collections";
 import Collection from "./pages/Collections/Collection";
 import SearchResults from "./pages/SearchResults";
 import Cart from "./pages/Cart";
+import { ToastContainer } from "react-toastify";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -76,7 +77,23 @@ const App = () => {
       </>
     )
   );
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+    </>
+  );
 };
 
 export default App;

@@ -15,17 +15,6 @@ const Collections = () => {
     error,
   } = useCollections({ limit });
 
-  useEffect(() => {
-    if (collections && collections.length > 0) {
-      const intervalId = setInterval(() => {
-        setActiveBannerIndex(
-          (prevIndex) => (prevIndex + 1) % collections.length
-        );
-      }, BANNER_INTERVAL);
-      return () => clearInterval(intervalId);
-    }
-  }, [collections]);
-
   const handleCollectionClick = (collection) => {
     navigate(`/shop/${collection?.slug}`);
   };

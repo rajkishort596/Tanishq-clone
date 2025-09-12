@@ -14,6 +14,7 @@
     "@tailwindcss/vite": "^4.1.12",
     "@tanstack/react-query": "^5.85.3",
     "axios": "^1.11.0",
+    "flag-icons": "^7.5.0",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.541.0",
     "react": "^19.1.1",

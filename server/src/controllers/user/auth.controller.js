@@ -72,8 +72,16 @@ const registerUser = asyncHandler(async (req, res) => {
     { expiresIn: `${OTP_EXPIRY_MINUTES + 2}m` }
   );
 
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    maxAge: 24 * 60 * 60 * 1000,
+  };
+
   return res
     .status(200)
+    .cookie("tempRegistrationToken", tempToken, options)
     .json(
       new ApiResponse(
         200,
@@ -92,21 +100,22 @@ const registerUser = asyncHandler(async (req, res) => {
  */
 const verifyUserOTP = asyncHandler(async (req, res) => {
   const { email, otp } = req.body;
-  const tempTokenHeader = req.headers.authorization?.split(" ")[1];
+  // const tempToken = req.headers.authorization?.split(" ")[1];
+
+  const tempToken =
+    req.cookies.tempRegistrationToken ||
+    req.headers.authorization?.split(" ")[1];
 
   if (!email || email.trim() === "" || !otp || otp.trim() === "") {
     throw new ApiError(400, "Email and OTP are required.");
   }
-  if (!tempTokenHeader) {
+  if (!tempToken) {
     throw new ApiError(401, "Unauthorized: Temporary token missing.");
   }
 
   let decodedToken;
   try {
-    decodedToken = jwt.verify(
-      tempTokenHeader,
-      process.env.TEMP_REGISTRATION_SECRET
-    );
+    decodedToken = jwt.verify(tempToken, process.env.TEMP_REGISTRATION_SECRET);
 
     if (decodedToken.email !== email) {
       throw new ApiError(
@@ -157,8 +166,16 @@ const verifyUserOTP = asyncHandler(async (req, res) => {
     { expiresIn: "15m" }
   );
 
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    maxAge: 24 * 60 * 60 * 1000,
+  };
+
   return res
     .status(200)
+    .cookie("tempVerificationToken", verificationSuccessToken, options)
     .json(
       new ApiResponse(
         200,
@@ -176,7 +193,10 @@ const verifyUserOTP = asyncHandler(async (req, res) => {
  * - Generates and returns access/refresh tokens for immediate login.
  */
 const completeUserRegistration = asyncHandler(async (req, res) => {
-  const verificationToken = req.headers.authorization?.split(" ")[1];
+  // const verificationToken = req.headers.authorization?.split(" ")[1];
+  const verificationToken =
+    req.cookies.tempVerificationToken ||
+    req.headers.authorization?.split(" ")[1];
 
   if (!verificationToken) {
     throw new ApiError(
@@ -232,7 +252,7 @@ const completeUserRegistration = asyncHandler(async (req, res) => {
   }
 
   const avatarLocalPath = req.file?.path;
-  if (!avatarLocalPath) throw new ApiError(400, "Avatar file is required");
+  // if (!avatarLocalPath) throw new ApiError(400, "Avatar file is required");
   let avatar = {};
   if (avatarLocalPath) {
     try {

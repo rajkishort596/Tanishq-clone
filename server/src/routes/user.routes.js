@@ -70,11 +70,7 @@ router
   .post(verifyUserOTPValidation, verifyUserOTP);
 router
   .route("/register/complete")
-  .post(
-    upload.single("avatar"),
-    completeUserRegistrationValidation,
-    completeUserRegistration
-  );
+  .post(completeUserRegistrationValidation, completeUserRegistration);
 router.route("/login").post(loginUser);
 router.route("/logout").post(verifyUserJWT, logoutUser); //? Secured route
 router.route("/forgot-password").post(forgotPassword);
