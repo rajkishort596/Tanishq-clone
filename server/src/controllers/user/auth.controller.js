@@ -44,12 +44,14 @@ const registerUser = asyncHandler(async (req, res) => {
     user.otp = otp;
     user.otpExpiry = otpExpiry;
     user.verified = false;
+    user.otpAttempts = 5; // Reset attempts on resend
   } else {
     user = new User({
       email,
       otp,
       otpExpiry,
       verified: false,
+      otpAttempts: 5, // Set attempts on new user
     });
   }
 
@@ -85,7 +87,7 @@ const registerUser = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { tempToken },
+        { tempToken, attemptsLeft: user.otpAttempts },
         "OTP sent successfully to your email. Please verify to continue registration."
       )
     );
@@ -143,8 +145,33 @@ const verifyUserOTP = asyncHandler(async (req, res) => {
     throw new ApiError(404, "User not found. Please re-initiate registration.");
   }
 
+  if (user.otpAttempts === undefined) user.otpAttempts = 5;
+  if (user.otpAttempts === 0) {
+    throw new ApiError(
+      429,
+      "Maximum OTP attempts reached. Please resend OTP.",
+      { attemptsLeft: 0 }
+    );
+  }
   if (user.otp !== otp) {
-    throw new ApiError(400, "Invalid OTP. Please check and try again.");
+    user.otpAttempts -= 1;
+
+    if (user.otpAttempts <= 0) {
+      user.otpAttempts = 0;
+      await user.save({ validateBeforeSave: false });
+      throw new ApiError(
+        429,
+        "Maximum OTP attempts reached. Please resend OTP.",
+        { attemptsLeft: 0 }
+      );
+    }
+
+    await user.save({ validateBeforeSave: false });
+    throw new ApiError(
+      400,
+      `Invalid OTP. ${user.otpAttempts} attempt(s) left.`,
+      { attemptsLeft: user.otpAttempts }
+    );
   }
 
   if (user.otpExpiry < Date.now()) {
@@ -157,6 +184,7 @@ const verifyUserOTP = asyncHandler(async (req, res) => {
   user.verified = true;
   user.otp = undefined;
   user.otpExpiry = undefined;
+  user.otpAttempts = undefined;
 
   await user.save({ validateBeforeSave: false });
 
@@ -179,7 +207,7 @@ const verifyUserOTP = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { tempToken: verificationSuccessToken },
+        { tempToken: verificationSuccessToken, attemptsLeft: 5 },
         "Email verified successfully. You can now complete your registration."
       )
     );

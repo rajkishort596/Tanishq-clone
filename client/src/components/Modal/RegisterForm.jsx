@@ -1,10 +1,9 @@
 import React from "react";
 import Input from "../Input/Input";
-import { useForm } from "react-hook-form";
 import "flag-icons/css/flag-icons.min.css";
 import { Lock } from "lucide-react";
 
-const RegisterForm = ({ onRegister, onClose, errors, register, email }) => {
+const RegisterForm = ({ onRegister, errors, register, email }) => {
   return (
     <>
       <div className="text-center mb-6">

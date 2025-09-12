@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import Input from "../Input/Input";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   completeUserRegistration,
   loginUser,
@@ -12,6 +12,7 @@ import {
   verifyUserOTP,
 } from "../../api/auth.Api";
 import { setCredentials } from "../../features/authSlice.js";
+import { startLoading, stopLoading } from "../../features/loadingSlice.js";
 import OtpForm from "./OtpForm";
 import RegisterForm from "./RegisterForm";
 
@@ -20,10 +21,12 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
   const [timer, setTimer] = useState(180);
   const [email, setEmail] = useState("");
   const [otpError, setOtpError] = useState("");
+  const [otpAttemptsLeft, setOtpAttemptsLeft] = useState(5);
+  const [resendLoading, setResendLoading] = useState(false);
 
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const loading = useSelector((state) => state.loading.isLoading);
 
   const {
     register,
@@ -45,12 +48,15 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
   }, [step, timer]);
 
   const handleSendOtp = async (data) => {
-    setLoading(true);
+    dispatch(startLoading());
     try {
       setEmail(data.email);
       setTimer(180);
       const res = await registerUser(data);
       console.log(res);
+      if (typeof res?.attemptsLeft === "number") {
+        setOtpAttemptsLeft(res.attemptsLeft);
+      }
       toast.success(`OTP Sent to ${data.email}`);
       reset();
       setStep("otp");
@@ -60,31 +66,61 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
       console.error("OTP error:", err);
       toast.error(errorMsg);
     } finally {
-      setLoading(false);
+      dispatch(stopLoading());
+    }
+  };
+
+  // Resend OTP handler
+  const handleResendOtp = async () => {
+    setResendLoading(true);
+    try {
+      const res = await registerUser({ email });
+      if (typeof res?.attemptsLeft === "number") {
+        setOtpAttemptsLeft(res.attemptsLeft);
+      }
+      toast.success(`OTP resent to ${email}`);
+      setOtpError("");
+    } catch (err) {
+      const errorMsg =
+        err?.response?.data?.message || "Resend OTP failed. Please try again.";
+      toast.error(errorMsg);
+    } finally {
+      setResendLoading(false);
+      setTimer(180);
     }
   };
 
   const handleVerifyOtp = async (enteredOtp) => {
-    setLoading(true);
+    dispatch(startLoading());
     try {
       const res = await verifyUserOTP({ email, otp: enteredOtp });
+      console.log(res);
+      if (typeof res?.attemptsLeft === "number") {
+        setOtpAttemptsLeft(res.attemptsLeft);
+      }
       toast.success("OTP verified! Please complete your registration.");
       setStep("register");
       setOtpError("");
       reset();
     } catch (err) {
+      // Prefer backend error and attemptsLeft
       const errorMsg =
         err?.response?.data?.message ||
         "OTP verification failed. Please try again.";
+      const attemptsLeft = err?.response?.data?.errors?.attemptsLeft;
+      console.log(attemptsLeft);
+      if (typeof attemptsLeft === "number") {
+        setOtpAttemptsLeft(attemptsLeft);
+      }
       setOtpError(errorMsg);
       toast.error(errorMsg);
     } finally {
-      setLoading(false);
+      dispatch(stopLoading());
     }
   };
 
   const handleRegister = async (data) => {
-    setLoading(true);
+    dispatch(startLoading());
     try {
       const res = await completeUserRegistration(data);
       onClose();
@@ -97,7 +133,7 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
         "Registration failed. Please try again.";
       toast.error(errorMsg);
     } finally {
-      setLoading(false);
+      dispatch(stopLoading());
     }
   };
 
@@ -108,7 +144,7 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
   };
 
   const handleLogin = async (data) => {
-    setLoading(true);
+    dispatch(startLoading());
     try {
       console.log("Login data:", data);
       const res = await loginUser(data);
@@ -123,10 +159,12 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
       console.error("Login error:", err);
       toast.error(errorMsg);
     } finally {
-      setLoading(false);
+      dispatch(stopLoading());
       onClose();
     }
   };
+
+  console.log(otpAttemptsLeft);
 
   const renderContent = () => {
     switch (step) {
@@ -134,10 +172,13 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
         return (
           <OtpForm
             onVerify={handleVerifyOtp}
+            onResend={handleResendOtp}
             timer={timer}
             email={email}
             error={otpError}
             setError={setOtpError}
+            attemptsLeft={otpAttemptsLeft}
+            resendLoading={resendLoading}
           />
         );
       case "register":
@@ -201,8 +242,9 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
                 <button
                   type="submit"
                   className="btn-primary w-1/2 mx-auto rounded-full mt-4"
+                  disabled={loading}
                 >
-                  {loading ? "logging..." : "login"}
+                  {loading ? "Logging..." : "Login"}
                 </button>
               </form>
             ) : (
@@ -227,6 +269,7 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
                 <button
                   type="submit"
                   className="btn-primary w-1/2 mx-auto rounded-full mt-4"
+                  disabled={loading}
                 >
                   {loading ? "Sending..." : "Send OTP"}
                 </button>
