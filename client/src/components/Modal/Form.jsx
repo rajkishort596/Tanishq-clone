@@ -152,7 +152,7 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
       dispatch(setCredentials({ user: res.user, isAuthenticated: true }));
       toast.success(`Welcome back ${res.user.firstName || "User"}`);
       reset();
-      navigate("/");
+      onClose();
     } catch (err) {
       const errorMsg =
         err?.response?.data?.message || "Login failed. Please try again.";
@@ -160,7 +160,6 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
       toast.error(errorMsg);
     } finally {
       dispatch(stopLoading());
-      onClose();
     }
   };
 

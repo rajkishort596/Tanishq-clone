@@ -94,7 +94,7 @@ const OtpForm = ({
           <button
             type="button"
             onClick={handleResendOTP}
-            className="text-[#631517] underline text-sm mb-2 cursor-pointer"
+            className="text-[#631517] underline text-sm mb-2 cursor-pointer disabled:cursor-not-allowed"
             disabled={resendLoading}
           >
             {resendLoading ? "Resending..." : "Resend OTP"}
