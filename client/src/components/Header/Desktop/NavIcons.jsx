@@ -13,21 +13,27 @@ import AuthModal from "../../Modal/AuthModal";
 import { logoutUser } from "../../../api/auth.Api";
 import { logout } from "../../../features/authSlice";
 import { toast } from "react-toastify";
+import {
+  closeAuthModal,
+  openAuthModal,
+  setIsLogin,
+} from "../../../features/authModalSlice";
 
 export const NavIcons = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [authModalopen, setAuthModalOpen] = useState(false);
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  // const [isLogin, setIsLogin] = useState(true);
+  const { isOpen, isLogin } = useSelector((state) => state.authModal);
 
-  console.log(user, isAuthenticated);
+  // const [authModalopen, setAuthModalOpen] = useState(false);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
 
   // Handler for user icon click
   const handleUserClick = () => {
     if (isAuthenticated && user) {
       navigate("/user");
     } else {
-      setAuthModalOpen(true);
+      dispatch(openAuthModal(false));
     }
   };
 
@@ -91,7 +97,7 @@ export const NavIcons = () => {
               </>
             ) : (
               <button
-                onClick={() => setAuthModalOpen(true)}
+                onClick={() => dispatch(openAuthModal(false))}
                 className="flex p-2 cursor-pointer rounded-md gap-2 items-center 
                      hover:bg-[#f2e7e9] hover:border hover:border-[#631517] hover:text-[#631517] 
                      hover:shadow-[0_8px_24px_-5px_#490a0c33]"
@@ -122,8 +128,10 @@ export const NavIcons = () => {
 
       {/* Auth Modal */}
       <AuthModal
-        isOpen={authModalopen}
-        onClose={() => setAuthModalOpen(false)}
+        isOpen={isOpen}
+        onClose={() => dispatch(closeAuthModal())}
+        isLogin={isLogin}
+        setIsLogin={(val) => dispatch(setIsLogin(val))}
       />
     </div>
   );

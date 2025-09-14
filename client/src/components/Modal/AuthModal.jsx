@@ -3,9 +3,7 @@ import { X } from "lucide-react";
 import OfferBanner from "./OfferBanner";
 import Form from "./Form";
 
-const AuthModal = ({ isOpen, onClose }) => {
-  const [isLogin, setIsLogin] = useState(false);
-
+const AuthModal = ({ isOpen, onClose, isLogin = false, setIsLogin }) => {
   if (!isOpen) return null;
 
   return (

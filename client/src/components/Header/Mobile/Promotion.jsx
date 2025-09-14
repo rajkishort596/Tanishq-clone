@@ -1,8 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 import images from "../../../utils/images";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logoutUser } from "../../../api/auth.Api";
+import { setCredentials } from "../../../features/authSlice";
+import AuthModal from "../../Modal/AuthModal";
+import {
+  closeAuthModal,
+  openAuthModal,
+  setIsLogin,
+} from "../../../features/authModalSlice";
 
 const Promotion = () => {
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const { isOpen, isLogin } = useSelector((state) => state.authModal);
+
+  const handleLogin = () => {
+    dispatch(openAuthModal(true));
+  };
+
+  const handleSignUp = () => {
+    dispatch(openAuthModal(false));
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      dispatch(setCredentials({ user: null, isAuthenticated: false }));
+    } catch (err) {
+      // Optionally show error
+    }
+  };
+
   return (
     <div className="Promotion-content w-full mb-6">
       <div className="w-full relative">
@@ -25,20 +55,42 @@ const Promotion = () => {
                 </p>
               </div>
               <div className="text-primary uppercase font-nunito text-xs sm:text-sm md:font-semibold md:text-lg flex gap-2">
-                <Link
-                  to="#"
-                  className="pr-2 border-r border-primary inline-block leading-none"
-                >
-                  LOGIN
-                </Link>
-                <Link href="#" className="inline-block leading-none">
-                  SIGN UP
-                </Link>
+                {isAuthenticated ? (
+                  <button
+                    onClick={handleLogout}
+                    className="inline-block leading-none text-primary font-semibold"
+                  >
+                    LOGOUT
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      onClick={handleLogin}
+                      className="pr-2 border-r border-primary inline-block leading-none text-primary font-semibold"
+                    >
+                      LOGIN
+                    </button>
+                    <button
+                      onClick={handleSignUp}
+                      className="inline-block leading-none text-primary font-semibold"
+                    >
+                      SIGN UP
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
+      {isOpen && (
+        <AuthModal
+          isOpen={isOpen}
+          onClose={() => dispatch(closeAuthModal())}
+          isLogin={isLogin}
+          setIsLogin={(val) => dispatch(setIsLogin(val))}
+        />
+      )}
     </div>
   );
 };

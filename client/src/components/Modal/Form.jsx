@@ -301,7 +301,7 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
   };
 
   return (
-    <div className="w-full relative flex-1 p-4 sm:p-8 bg-white flex flex-col justify-center rounded-xl shadow-2xl">
+    <div className="w-full relative flex-1 p-8 bg-white flex flex-col justify-center rounded-xl shadow-2xl">
       <button
         onClick={onClose}
         className="absolute lg:hidden top-4 right-4 text-gray-500 hover:text-gray-700"

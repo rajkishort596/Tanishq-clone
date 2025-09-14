@@ -1,11 +1,34 @@
 import React, { useState } from "react";
-import { ChevronRight, User, X } from "lucide-react";
+import { ChevronRight, CircleUserRound, User, X } from "lucide-react";
 import MainMenu from "./MainMenu";
 import Promotion from "./Promotion";
 import SubMenu from "./SubMenu";
 import images from "../../../utils/images";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import AuthModal from "../../Modal/AuthModal";
+import {
+  closeAuthModal,
+  openAuthModal,
+  setIsLogin,
+} from "../../../features/authModalSlice";
 
 export const MobileMenu = ({ onClose, categories, collections }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isOpen, isLogin } = useSelector((state) => state.authModal);
+
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+
+  // Handler for user icon click
+  const handleUserClick = () => {
+    if (isAuthenticated && user) {
+      navigate("/user");
+    } else {
+      dispatch(openAuthModal(false));
+    }
+  };
+
   const ParentCategories = categories.filter(
     (cat) => !cat.parent || cat.parent.length === 0
   );
@@ -64,8 +87,15 @@ export const MobileMenu = ({ onClose, categories, collections }) => {
         <>
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
-            <button className="p-2 hover:text-primary">
-              <User size={24} strokeWidth={1} className="text-primary" />
+            <button
+              onClick={handleUserClick}
+              className="p-2 hover:text-primary"
+            >
+              {isAuthenticated && user ? (
+                <CircleUserRound size={20} strokeWidth={1} />
+              ) : (
+                <User size={20} strokeWidth={1} />
+              )}
             </button>
             <button onClick={onClose} className="p-1 rounded-full bg-gray-100">
               <X size={24} />
@@ -94,6 +124,14 @@ export const MobileMenu = ({ onClose, categories, collections }) => {
             </button>
           </li>
         </>
+      )}
+      {isOpen && (
+        <AuthModal
+          isOpen={isOpen}
+          onClose={() => dispatch(closeAuthModal())}
+          isLogin={isLogin}
+          setIsLogin={(val) => dispatch(setIsLogin(val))}
+        />
       )}
     </div>
   );
