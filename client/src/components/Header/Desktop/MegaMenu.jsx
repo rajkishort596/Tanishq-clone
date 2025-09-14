@@ -181,7 +181,7 @@ const MegaMenu = ({
               {[0, 1, 2].map((colIndex) => (
                 <div
                   key={colIndex}
-                  className="flex flex-col gap-6 p-4 border-r border-b border-[#ececea]"
+                  className="flex flex-col gap-2 p-4 border-r border-b border-[#ececea]"
                 >
                   {subCategories
                     .filter((_, i) => i % 3 === colIndex) // Distribute items into 3 cols

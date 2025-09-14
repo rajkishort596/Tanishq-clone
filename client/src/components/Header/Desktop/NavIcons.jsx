@@ -22,10 +22,9 @@ import {
 export const NavIcons = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // const [isLogin, setIsLogin] = useState(true);
+
   const { isOpen, isLogin } = useSelector((state) => state.authModal);
 
-  // const [authModalopen, setAuthModalOpen] = useState(false);
   const { user, isAuthenticated } = useSelector((state) => state.auth);
 
   // Handler for user icon click
@@ -45,7 +44,7 @@ export const NavIcons = () => {
   };
 
   return (
-    <div className="flex items-center space-x-4">
+    <div className="flex items-center md:space-x-4">
       {/* User Icon with hover dropdown */}
       <div className="relative">
         <div className="relative group inline-block">

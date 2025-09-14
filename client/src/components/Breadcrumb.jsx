@@ -11,23 +11,32 @@ const Breadcrumb = ({ items = [], className = "" }) => {
     <div
       className={`hidden px-4 md:flex gap-2 items-center w-full text-sm text-gray-500 bg-white pt-10 ${className}`}
     >
-      {items.map((item, idx) => (
-        <React.Fragment key={idx}>
-          {idx > 0 && <span>&gt;</span>}
-          {item.to && idx !== items.length - 1 ? (
-            <Link
-              to={item.to}
-              className="text-primary font-medium font-IBM-Plex"
-            >
-              {item.label}
-            </Link>
-          ) : (
-            <span className="text-primary font-medium font-IBM-Plex">
-              {item.label}
-            </span>
-          )}
-        </React.Fragment>
-      ))}
+      {items.map((item, idx) => {
+        const isEmpty =
+          !item ||
+          (typeof item === "object" && Object.keys(item).length === 0) ||
+          (typeof item === "string" && item.trim() === "");
+
+        return (
+          <React.Fragment key={idx}>
+            {idx > 0 && !isEmpty && <span>&gt;</span>}
+            {!isEmpty ? (
+              item.to && idx !== items.length - 1 ? (
+                <Link
+                  to={item.to}
+                  className="text-primary font-medium font-IBM-Plex"
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <span className="text-primary font-medium font-IBM-Plex">
+                  {item.label}
+                </span>
+              )
+            ) : null}
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 };
