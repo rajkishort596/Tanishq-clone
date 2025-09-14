@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NavCategories } from "./Desktop/NavCategories";
-import { NavIcons } from "./Desktop/NavIcons";
+import { NavIcons } from "./Desktop/NavIcons/NavIcons";
 import { MobileMenu } from "./Mobile/MobileMenu";
 import { Menu } from "lucide-react";
 import SearchBar from "./Desktop/SearchBar";

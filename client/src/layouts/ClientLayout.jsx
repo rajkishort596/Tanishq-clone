@@ -1,3 +1,4 @@
+// ClientLayout.jsx
 import React, { useEffect } from "react";
 import Container from "../components/Container/Container";
 import { Outlet } from "react-router-dom";
@@ -8,7 +9,8 @@ import Spinner from "../components/Spinner";
 import { useDispatch } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserProfile } from "../api/auth.Api";
-import { setCredentials } from "../features/authSlice";
+import { setCredentials, setAuthStatus } from "../features/authSlice";
+
 const ClientLayout = () => {
   const dispatch = useDispatch();
 
@@ -19,12 +21,16 @@ const ClientLayout = () => {
     refetchOnWindowFocus: false,
   });
 
-  // Set Redux when query succeeds
   useEffect(() => {
-    if (isSuccess && data) {
+    if (isLoading) {
+      dispatch(setAuthStatus("loading"));
+    } else if (isSuccess && data) {
       dispatch(setCredentials({ user: data, isAuthenticated: true }));
+      dispatch(setAuthStatus("succeeded"));
+    } else if (error) {
+      dispatch(setAuthStatus("failed"));
     }
-  }, [isSuccess, data, dispatch]);
+  }, [isLoading, isSuccess, error, data, dispatch]);
 
   if (isLoading) {
     return (

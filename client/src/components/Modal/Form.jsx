@@ -11,7 +11,7 @@ import {
   registerUser,
   verifyUserOTP,
 } from "../../api/auth.Api";
-import { setCredentials } from "../../features/authSlice.js";
+import { setAuthStatus, setCredentials } from "../../features/authSlice.js";
 import { startLoading, stopLoading } from "../../features/loadingSlice.js";
 import OtpForm from "./OtpForm";
 import RegisterForm from "./RegisterForm";
@@ -150,6 +150,7 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
       const res = await loginUser(data);
       console.log(res);
       dispatch(setCredentials({ user: res.user, isAuthenticated: true }));
+      dispatch(setAuthStatus("succeeded"));
       toast.success(`Welcome back ${res.user.firstName || "User"}`);
       reset();
       onClose();
@@ -158,6 +159,7 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
         err?.response?.data?.message || "Login failed. Please try again.";
       console.error("Login error:", err);
       toast.error(errorMsg);
+      dispatch(setAuthStatus("failed"));
     } finally {
       dispatch(stopLoading());
     }

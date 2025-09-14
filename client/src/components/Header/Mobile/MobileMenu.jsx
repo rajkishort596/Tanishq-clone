@@ -23,7 +23,7 @@ export const MobileMenu = ({ onClose, categories, collections }) => {
   // Handler for user icon click
   const handleUserClick = () => {
     if (isAuthenticated && user) {
-      navigate("/user");
+      navigate("/myaccount");
     } else {
       dispatch(openAuthModal(false));
     }

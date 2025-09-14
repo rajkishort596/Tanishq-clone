@@ -25,12 +25,9 @@ const Promotion = () => {
   };
 
   const handleLogout = async () => {
-    try {
-      await logoutUser();
-      dispatch(setCredentials({ user: null, isAuthenticated: false }));
-    } catch (err) {
-      // Optionally show error
-    }
+    await logoutUser();
+    toast.success("User Logged out successfully");
+    dispatch(logout());
   };
 
   return (

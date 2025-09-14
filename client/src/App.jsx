@@ -20,6 +20,7 @@ import Collection from "./pages/Collections/Collection";
 import SearchResults from "./pages/SearchResults";
 import Cart from "./pages/Cart";
 import { ToastContainer } from "react-toastify";
+import PrivateRoute from "./components/PrivateRoute";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -73,6 +74,16 @@ const App = () => {
           {/* Search Pages Routes */}
           <Route path="search/" element={<SearchResults />} />
           <Route path="shop/product/:productId" element={<ProductDetails />} />
+
+          {/* Protected Routes */}
+          <Route
+            path="myaccount"
+            element={
+              <PrivateRoute>
+                <div>My Account</div>
+              </PrivateRoute>
+            }
+          ></Route>
         </Route>
       </>
     )
