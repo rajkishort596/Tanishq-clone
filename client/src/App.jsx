@@ -21,6 +21,7 @@ import SearchResults from "./pages/SearchResults";
 import Cart from "./pages/Cart";
 import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./components/PrivateRoute";
+import MyAccount from "./pages/MyAccount/MyAccount";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -80,10 +81,25 @@ const App = () => {
             path="myaccount"
             element={
               <PrivateRoute>
-                <div>My Account</div>
+                <MyAccount />
               </PrivateRoute>
             }
-          ></Route>
+          >
+            <Route index element={<div>Overview Content</div>} />
+            <Route
+              path="personal-info"
+              element={<div>Personal Info Content</div>}
+            />
+            <Route path="wishlist" element={<div>Wishlist Content</div>} />
+            <Route
+              path="order-history"
+              element={<div>Order History Content</div>}
+            />
+            <Route
+              path="address-book"
+              element={<div>Address Book Content</div>}
+            />
+          </Route>
         </Route>
       </>
     )
