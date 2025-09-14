@@ -42,7 +42,16 @@ export const logoutUser = async () => {
   }
 };
 
-// Complete user registration (step 3)
+export const fetchUserProfile = async () => {
+  try {
+    const response = await axios.get("/users/me");
+    return response.data.data;
+  } catch (error) {
+    console.error("Failed to Fetch User Profile:", error);
+    throw error;
+  }
+};
+
 export const completeUserRegistration = async (userData) => {
   try {
     const response = await axios.post("/users/register/complete", userData);

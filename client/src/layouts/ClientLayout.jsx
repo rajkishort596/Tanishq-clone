@@ -1,10 +1,39 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Container from "../components/Container/Container";
 import { Outlet } from "react-router-dom";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import ScrollToTop from "../components/ScrollToTop";
+import Spinner from "../components/Spinner";
+import { useDispatch } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUserProfile } from "../api/auth.Api";
+import { setCredentials } from "../features/authSlice";
 const ClientLayout = () => {
+  const dispatch = useDispatch();
+
+  const { data, isLoading, error, isSuccess } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: fetchUserProfile,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+
+  // Set Redux when query succeeds
+  useEffect(() => {
+    if (isSuccess && data) {
+      dispatch(setCredentials({ user: data, isAuthenticated: true }));
+    }
+  }, [isSuccess, data, dispatch]);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center absolute inset-0 bg-white/80 z-50">
+        <Spinner />
+      </div>
+    );
+  }
+
   return (
     <Container>
       <div className="min-h-screen">
