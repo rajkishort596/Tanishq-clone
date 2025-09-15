@@ -23,6 +23,7 @@ import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./components/PrivateRoute";
 import MyAccount from "./pages/MyAccount/MyAccount";
 import Overview from "./pages/MyAccount/Overview";
+import PersonalInfo from "./pages/MyAccount/PersonalInfo";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -87,10 +88,7 @@ const App = () => {
             }
           >
             <Route index element={<Overview />} />
-            <Route
-              path="personal-info"
-              element={<div>Personal Info Content</div>}
-            />
+            <Route path="personal-info" element={<PersonalInfo />} />
             <Route path="wishlist" element={<div>Wishlist Content</div>} />
             <Route
               path="order-history"
