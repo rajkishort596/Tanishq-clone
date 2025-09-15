@@ -30,6 +30,11 @@ export const formatDate = (isoDate) => {
   return `${day}/${month}/${year}`;
 };
 
+export const formatInputDate = (isoDate) => {
+  if (!isoDate) return "";
+  return new Date(isoDate).toISOString().split("T")[0];
+};
+
 export const formatTime = (timeString) => {
   const [hours, minutes] = timeString.split(":").map(Number);
   const date = new Date();

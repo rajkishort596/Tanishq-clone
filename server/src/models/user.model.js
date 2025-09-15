@@ -22,6 +22,18 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+    },
+    dob: {
+      type: Date,
+      default: null,
+    },
+    anniversary: {
+      type: Date,
+      default: null,
+    },
     avatar: {
       url: {
         type: String,

@@ -22,6 +22,7 @@ import Cart from "./pages/Cart";
 import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./components/PrivateRoute";
 import MyAccount from "./pages/MyAccount/MyAccount";
+import Overview from "./pages/MyAccount/Overview";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -85,7 +86,7 @@ const App = () => {
               </PrivateRoute>
             }
           >
-            <Route index element={<div>Overview Content</div>} />
+            <Route index element={<Overview />} />
             <Route
               path="personal-info"
               element={<div>Personal Info Content</div>}

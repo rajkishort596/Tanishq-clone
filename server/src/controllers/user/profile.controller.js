@@ -34,7 +34,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     throw new ApiError(401, "User not authenticated");
   }
 
-  const { firstName, lastName, phone } = req.body;
+  const { firstName, lastName, phone, dob, anniversary, gender } = req.body;
 
   // Basic validation: ensure at least one field is provided for update
   if (
@@ -64,13 +64,22 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   if (phone && phone.trim() !== "") {
     user.phone = phone.trim();
   }
+  if (dob && dob.trim() !== "") {
+    user.dob = dob.trim();
+  }
+  if (anniversary && anniversary.trim() !== "") {
+    user.anniversary = anniversary.trim();
+  }
+  if (gender && gender.trim() !== "") {
+    user.gender = gender.trim();
+  }
 
   await user.save({ validateBeforeSave: true });
 
   // Return the updated user profile, excluding sensitive data
-  const updatedUser = await User.findById(req.user._id).select(
-    "-password -refreshToken -otp -otpExpiry"
-  );
+  const updatedUser = await User.findById(req.user._id)
+    .select("-password -refreshToken -otp -otpExpiry")
+    .populate("wishlist addresses");
 
   return res
     .status(200)

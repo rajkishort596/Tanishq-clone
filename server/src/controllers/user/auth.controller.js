@@ -359,7 +359,7 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Email and password are required");
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).populate("wishlist addresses");
 
   if (!user) {
     throw new ApiError(404, "User does not exist");
@@ -399,6 +399,11 @@ const loginUser = asyncHandler(async (req, res) => {
             firstName: user.firstName,
             lastName: user.lastName,
             phone: user.phone,
+            gender: user.gender,
+            wishlist: user.wishlist,
+            addresses: user.addresses,
+            dob: user.dob,
+            anniversary: user.anniversary,
             avatar: user.avatar?.url,
           },
           accessToken,
