@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { Edit } from "lucide-react";
 import { useSelector } from "react-redux";
-
 import Modal from "../../components/Modal/Modal";
 import EditDetailsForm from "../../components/Form/EditDetailsForm";
 import { formatDate } from "../../utils/formatters";
@@ -9,8 +7,6 @@ import { formatDate } from "../../utils/formatters";
 const Overview = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
-
-  console.log(user);
 
   const handleOnEditDetails = () => {
     setIsModalOpen(true);
@@ -22,60 +18,63 @@ const Overview = () => {
 
   return (
     <div className="bg-white rounded-lg font-nunito mb-6 text-gray-800">
-      <h2 className="text-xl font-bold pb-4">Account Overview</h2>
+      <h2 className="text-lg sm:text-xl font-bold pb-4">Account Overview</h2>
 
       <div className="border border-primary rounded-sm">
         {/* Personal Information Section */}
-        <div className="flex justify-between items-center bg-red-50  rounded-sm text-primary p-4">
-          <h3 className="text-lg font-semibold">Personal Information</h3>
+        <div className="flex justify-between items-center bg-red-50 rounded-sm text-primary p-3 sm:p-4 gap-2">
+          <h3 className="text-base sm:text-lg font-semibold">
+            Personal Information
+          </h3>
           <button
             onClick={handleOnEditDetails}
-            className="p-2 flex items-center text-sm font-medium border border-primary text-primary rounded-sm bg-white cursor-pointer"
+            className="px-3 py-2 text-xs sm:text-sm font-medium border border-primary text-primary rounded-sm bg-white cursor-pointer"
           >
             Edit Details
           </button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border-t border-primary">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 p-3 sm:p-4 border-t border-primary">
           {/* Name */}
-          <div className="flex gap-4 items-center">
-            <span className="text-sm text-gray-500">Name:</span>
-            <span className="text-sm font-bold">
+          <div className="flex flex-col sm:flex-row sm:gap-2 text-sm">
+            <span className="text-gray-500">Name:</span>
+            <span className="font-bold">
               {user?.firstName + " " + user?.lastName}
             </span>
           </div>
           {/* Date of Birth */}
-          <div className="flex gap-4 items-center">
-            <span className="text-sm text-gray-500">Date of Birth:</span>
-            <span className="text-sm font-bold">
-              {formatDate(user?.dob) || ""}
-            </span>
+          <div className="flex flex-col sm:flex-row sm:gap-2 text-sm">
+            <span className="text-gray-500">Date of Birth:</span>
+            <span className="font-bold">{formatDate(user?.dob) || ""}</span>
           </div>
           {/* Phone No */}
-          <div className="flex gap-4 items-center">
-            <span className="text-sm text-gray-500">Phone No:</span>
-            <span className="text-sm font-bold">{user?.phone || ""}</span>
+          <div className="flex flex-col sm:flex-row sm:gap-2 text-sm">
+            <span className="text-gray-500">Phone No:</span>
+            <span className="font-bold">{user?.phone || ""}</span>
           </div>
           {/* Email */}
-          <div className="flex gap-4 items-center">
-            <span className="text-sm text-gray-500">Email:</span>
-            <span className="text-sm font-bold">{user?.email || ""}</span>
+          <div className="flex flex-col sm:flex-row sm:gap-2 text-sm">
+            <span className="text-gray-500">Email:</span>
+            <span className="font-bold">{user?.email || ""}</span>
           </div>
           {/* Address */}
-          <div className="flex gap-4 items-center">
-            <span className="text-sm text-gray-500">Address:</span>
-            <span className="text-sm font-bold">
-              {user?.addresses?.[0].addressLine || ""}
+          <div className="flex flex-col sm:flex-row sm:gap-2 text-sm">
+            <span className="text-gray-500">Address:</span>
+            <span className="font-bold">
+              {user?.addresses?.[0]?.addressLine || ""}
             </span>
           </div>
           {/* Gender */}
-          <div className="flex gap-4 items-center">
-            <span className="text-sm text-gray-500">Gender:</span>
-            <span className="text-sm font-bold">{user?.gender || ""}</span>
+          <div className="flex flex-col sm:flex-row sm:gap-2 text-sm">
+            <span className="text-gray-500">Gender:</span>
+            <span className="font-bold">{user?.gender || ""}</span>
           </div>
           {/* Anniversary Date */}
-          <div className="flex gap-4 items-center">
-            <span className="text-sm text-gray-500">Anniversary Date:</span>
-            <span className="text-sm font-bold">{user?.anniversary || ""}</span>
+          <div className="flex flex-col sm:flex-row sm:gap-2 text-sm">
+            <span className="text-gray-500">Anniversary Date:</span>
+            <span className="font-bold">
+              {formatDate(user?.anniversary) || ""}
+            </span>
           </div>
         </div>
       </div>

@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import Breadcrumb from "../../components/Breadcrumb";
 import { useSelector } from "react-redux";
+import Breadcrumb from "../../components/Breadcrumb";
+import { Plus, X } from "lucide-react";
 
 const MyAccount = () => {
   const location = useLocation();
-
   const { user } = useSelector((state) => state.auth);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const accountRoutes = [
     { to: "/myaccount", label: "Overview", end: true },
@@ -20,41 +21,49 @@ const MyAccount = () => {
     { label: "Home", to: "/" },
     { label: "My Account", to: "/myaccount" },
   ];
-
   const current = accountRoutes.find((r) => r.to === location.pathname);
-  if (current) {
-    breadcrumbItems.push({ label: current.label });
-  }
+  if (current) breadcrumbItems.push({ label: current.label });
 
   return (
-    <div className="flex flex-col gap-4 px-4 sm:px-6 lg:px-8 py-8">
+    <div className="flex flex-col gap-4 py-6 sm:px-2 md:px-3 lg:px-4">
       {/* Breadcrumb */}
       <Breadcrumb items={breadcrumbItems} className="!pt-0 !px-0" />
-      <div className="grid grid-cols-2 divide-x divide-gray-200 justify-between items-center">
-        <h3 className="font-nunito text-xl md:text-2xl lg:text-3xl mt-4">
+
+      {/* Header */}
+      <div className="hidden lg:grid  grid-cols-2 divide-x divide-gray-200 items-center">
+        <h3 className="font-nunito text-lg sm:text-xl md:text-2xl lg:text-3xl mt-4">
           My Account
         </h3>
-        <h3 className="font-nunito text-right text-xl md:text-2xl lg:text-3xl mt-4">
+        {/* Hide greeting on small screens */}
+        <h3 className="font-nunito text-right text-lg sm:text-xl md:text-2xl lg:text-3xl mt-4">
           Hello,{" "}
           {user?.firstName
             ? user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)
             : "User"}
         </h3>
       </div>
+
       <div className="flex flex-col lg:flex-row bg-white border-t border-gray-200">
-        {/* Sidebar */}
-        <aside className="w-full lg:w-64">
-          <nav className="flex flex-col">
-            {accountRoutes.map((item, idx) => (
-              <div
-                className="w-full p-1 border-b border-r border-gray-200"
-                key={idx}
-              >
+        {/* Mobile Collapsible Menu */}
+        <div className="lg:hidden border border-gray-300 rounded-sm">
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="w-full flex justify-between items-center px-4 py-3 font-medium"
+          >
+            <span>My Account</span>
+            {menuOpen ? <X size={18} /> : <Plus size={18} />}
+          </button>
+
+          {menuOpen && (
+            <nav className="flex flex-col border-t border-gray-200">
+              {accountRoutes.map((item, idx) => (
                 <NavLink
+                  key={idx}
                   to={item.to}
                   end={item.end}
+                  onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>
-                    `block px-4 py-3 font-medium rounded-sm
+                    `block px-4 py-3 text-sm sm:text-base font-medium border-b border-gray-200
                     ${
                       isActive
                         ? "bg-red-50 text-primary"
@@ -64,12 +73,41 @@ const MyAccount = () => {
                 >
                   {item.label}
                 </NavLink>
+              ))}
+            </nav>
+          )}
+        </div>
+
+        {/* Sidebar for Desktop */}
+        <aside className="hidden lg:block w-64 border-r border-gray-200">
+          <nav className="flex flex-col">
+            {accountRoutes.map((item, idx) => (
+              <div
+                className="w-full p-1 border-b border-r border-gray-200"
+                key={idx}
+              >
+                <NavLink
+                  key={idx}
+                  to={item.to}
+                  end={item.end}
+                  className={({ isActive }) =>
+                    `block px-4 py-3 text-base font-medium
+                  ${
+                    isActive
+                      ? "bg-red-50 text-primary"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`
+                  }
+                >
+                  {item.label}
+                </NavLink>
               </div>
             ))}
           </nav>
         </aside>
+
         {/* Right-side content */}
-        <section className="flex-1 pl-4 lg:pl-6 py-4 lg:py-6">
+        <section className="flex-1 lg:pl-6 py-4 lg:py-6">
           <Outlet />
         </section>
       </div>

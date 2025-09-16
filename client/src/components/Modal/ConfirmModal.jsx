@@ -6,7 +6,7 @@ const ConfirmModal = ({ open, title, message, onConfirm, onCancel }) => {
 
   return (
     <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-      <div className="relative bg-white p-8 rounded-lg min-w-[300px] shadow-lg">
+      <div className="relative bg-white p-8 rounded-lg w-[90%] sm:w-auto shadow-lg">
         {title && <h2 className="text-xl font-semibold mb-2">{title}</h2>}
         {message && <p className="mb-6">{message}</p>}
         <button

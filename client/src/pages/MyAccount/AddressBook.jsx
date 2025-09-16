@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import { useProfile } from "../../hooks/useProfile";
 import Spinner from "../../components/Spinner";
 import AddressForm from "../../components/Form/AddressForm";
@@ -87,70 +86,71 @@ const AddressBook = () => {
 
   return (
     <div className="bg-white rounded-lg font-nunito mb-6 text-gray-800">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Address Book</h2>
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4 gap-2">
+        <h2 className="text-lg sm:text-xl font-bold">Address Book</h2>
         <button
           onClick={handleOnAddAddress}
-          className="py-2 px-4 flex items-center text-sm font-medium border border-primary text-primary rounded-sm bg-white cursor-pointer"
+          className="py-2 px-4 text-xs sm:text-sm font-medium border border-primary text-primary rounded-sm bg-white cursor-pointer"
         >
           Add New Address
         </button>
       </div>
+
+      {/* Address Cards */}
       {addresses.map((address, idx) => (
         <div className="border border-primary rounded-sm mt-4" key={idx}>
-          <div className="flex justify-between items-center bg-red-50  rounded-sm text-primary p-4">
-            <h3 className="text-lg font-semibold">
-              Address ( {address.type} )
+          {/* Card Header */}
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-red-50 rounded-sm text-primary p-3 sm:p-4 gap-2 sm:gap-0">
+            <h3 className="text-base sm:text-lg font-semibold">
+              Address ({address.type})
             </h3>
             <div className="flex gap-2">
               <button
                 onClick={() => handleOnEditAddress(address)}
-                className="px-4 py-2 flex items-center text-sm font-medium border border-primary text-primary rounded-sm bg-white cursor-pointer"
+                className="px-3 py-2 text-xs sm:text-sm font-medium border border-primary text-primary rounded-sm bg-white cursor-pointer"
               >
                 Edit Address
               </button>
               <button
                 onClick={() => handleOnDeleteAddress(address._id)}
-                className="px-4 py-2 flex items-center text-sm font-medium border border-primary text-primary rounded-sm bg-white cursor-pointer"
+                className="px-3 py-2 text-xs sm:text-sm font-medium border border-primary text-primary rounded-sm bg-white cursor-pointer"
               >
                 Delete Address
               </button>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border-t border-primary">
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 p-3 sm:p-4 border-t border-primary">
             {/* Address Line */}
-            <div className="flex gap-4 items-center">
-              <span className="text-sm text-gray-500">Address Line:</span>
-              <span className="text-sm font-bold">
-                {address.addressLine || ""}
-              </span>
+            <div className="flex flex-col lg:flex-row lg:gap-2 text-sm">
+              <span className="text-gray-500">Address Line:</span>
+              <span className="font-bold">{address.addressLine || ""}</span>
             </div>
-            {/* landmark */}
-            <div className="flex gap-4 items-center">
-              <span className="text-sm text-gray-500">Landmark:</span>
-              <span className="text-sm font-bold">
-                {address.landmark || ""}
-              </span>
+            {/* Landmark */}
+            <div className="flex flex-col lg:flex-row lg:gap-2 text-sm">
+              <span className="text-gray-500">Landmark:</span>
+              <span className="font-bold">{address.landmark || ""}</span>
             </div>
-            {/* city */}
-            <div className="flex gap-4 items-center">
-              <span className="text-sm text-gray-500">City:</span>
-              <span className="text-sm font-bold">{address.city || ""}</span>
+            {/* City */}
+            <div className="flex flex-col lg:flex-row lg:gap-2 text-sm">
+              <span className="text-gray-500">City:</span>
+              <span className="font-bold">{address.city || ""}</span>
             </div>
-            {/* state */}
-            <div className="flex gap-4 items-center">
-              <span className="text-sm text-gray-500">State:</span>
-              <span className="text-sm font-bold">{address.state || ""}</span>
+            {/* State */}
+            <div className="flex flex-col lg:flex-row lg:gap-2 text-sm">
+              <span className="text-gray-500">State:</span>
+              <span className="font-bold">{address.state || ""}</span>
             </div>
-            {/* pincode */}
-            <div className="flex gap-4 items-center">
-              <span className="text-sm text-gray-500">Pincode:</span>
-              <span className="text-sm font-bold">{address.pincode || ""}</span>
+            {/* Pincode */}
+            <div className="flex flex-col lg:flex-row lg:gap-2 text-sm">
+              <span className="text-gray-500">Pincode:</span>
+              <span className="font-bold">{address.pincode || ""}</span>
             </div>
-            {/* Address type */}
-            <div className="flex gap-4 items-center">
-              <span className="text-sm text-gray-500">Address Type:</span>
-              <span className="text-sm font-bold">{address.type || ""}</span>
+            {/* Address Type */}
+            <div className="flex flex-col lg:flex-row lg:gap-2 text-sm">
+              <span className="text-gray-500">Address Type:</span>
+              <span className="font-bold">{address.type || ""}</span>
             </div>
           </div>
         </div>
