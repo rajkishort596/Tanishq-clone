@@ -25,6 +25,7 @@ import MyAccount from "./pages/MyAccount/MyAccount";
 import Overview from "./pages/MyAccount/Overview";
 import PersonalInfo from "./pages/MyAccount/PersonalInfo";
 import AddressBook from "./pages/MyAccount/AddressBook";
+import Wishlist from "./pages/MyAccount/Wishlist";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -90,7 +91,7 @@ const App = () => {
           >
             <Route index element={<Overview />} />
             <Route path="personal-info" element={<PersonalInfo />} />
-            <Route path="wishlist" element={<div>Wishlist Content</div>} />
+            <Route path="wishlist" element={<Wishlist />} />
             <Route
               path="order-history"
               element={<div>Order History Content</div>}

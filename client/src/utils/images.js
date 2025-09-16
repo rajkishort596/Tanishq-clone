@@ -111,6 +111,7 @@ import LoginRibbon from "../assets/images/login-ribbon.svg";
 import LoginFirstScreen from "../assets/images/first-screen.png";
 import LoginSecondScreen from "../assets/images/second-screen.png";
 
+import EmptyWishlistIcon from "../assets/images/noWish.webp";
 const images = {
   promotionBagIcon: PromotionBagIcon,
   collectionIcon: CollectionIcon,
@@ -223,6 +224,8 @@ const images = {
   loginRibbon: LoginRibbon,
   loginFirstScreen: LoginFirstScreen,
   loginSecondScreen: LoginSecondScreen,
+
+  emptyWishlistIcon: EmptyWishlistIcon,
 };
 
 export default images;

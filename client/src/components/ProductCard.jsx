@@ -1,9 +1,45 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import TanishqIcon from "../assets/images/Spinner-Icon.png";
+import { useWishlist } from "../hooks/useWishlist";
+import Spinner from "./Spinner";
 
 const ProductCard = ({ product, onClick }) => {
+  const { wishlist, addToWishlist, isAdding, removeFromWishlist, isRemoving } =
+    useWishlist();
+
+  // check if this product is already in user's wishlist
+  const [inWishlist, setInWishlist] = useState(false);
+
+  useEffect(() => {
+    if (wishlist?.some((item) => item._id === product._id)) {
+      setInWishlist(true);
+    }
+  }, [wishlist, product._id]);
+
+  const handleWishlistClick = async (e) => {
+    e.stopPropagation();
+
+    try {
+      if (inWishlist) {
+        await removeFromWishlist(product._id);
+        setInWishlist(false);
+      } else {
+        await addToWishlist(product._id);
+        setInWishlist(true);
+      }
+    } catch (error) {
+      console.error("Wishlist toggle failed:", error);
+    }
+  };
+
+  if (isAdding || isRemoving)
+    return (
+      <div className="flex justify-center items-center fixed inset-0 bg-white/80 z-50">
+        <Spinner />
+      </div>
+    );
+
   return (
     <div
       onClick={onClick}
@@ -37,15 +73,25 @@ const ProductCard = ({ product, onClick }) => {
         </div>
 
         {/* Wishlist Button */}
-        <button className="absolute top-2 right-2 bg-white p-1.5 rounded-full shadow hover:scale-110 transition">
-          <Heart size={16} className="text-gray-600 cursor-pointer" />
+        <button
+          onClick={handleWishlistClick}
+          className="absolute top-2 right-2 bg-white p-1.5 rounded-full shadow hover:scale-110 transition"
+        >
+          <Heart
+            size={18}
+            className={`cursor-pointer ${
+              inWishlist ? "text-red-500 fill-red-500" : "text-gray-600"
+            }`}
+          />
         </button>
       </div>
 
       {/* Product Info */}
       <div className="px-3 py-4">
-        <h3 className="text-lg text-gray-800 truncate">{product?.name}</h3>
-        <p className="text-xl text-gray-900 mt-1">
+        <h3 className="text-base sm:text-lg text-gray-800 truncate">
+          {product?.name}
+        </h3>
+        <p className="text-lg sm:text-xl text-gray-900 mt-1">
           ₹ {Math.floor(product?.price?.final)}
         </p>
       </div>
