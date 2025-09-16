@@ -24,6 +24,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import MyAccount from "./pages/MyAccount/MyAccount";
 import Overview from "./pages/MyAccount/Overview";
 import PersonalInfo from "./pages/MyAccount/PersonalInfo";
+import AddressBook from "./pages/MyAccount/AddressBook";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -94,10 +95,7 @@ const App = () => {
               path="order-history"
               element={<div>Order History Content</div>}
             />
-            <Route
-              path="address-book"
-              element={<div>Address Book Content</div>}
-            />
+            <Route path="address-book" element={<AddressBook />} />
           </Route>
         </Route>
       </>
