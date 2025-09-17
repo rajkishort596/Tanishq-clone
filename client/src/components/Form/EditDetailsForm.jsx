@@ -1,15 +1,11 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import Input from "../Input/Input";
-import { useDispatch, useSelector } from "react-redux";
 import Select from "../Input/Select";
-import { updateProfile } from "../../api/profile.Api";
-import { startLoading, stopLoading } from "../../features/loadingSlice";
-import { setCredentials } from "../../features/authSlice";
 import { toast } from "react-toastify";
 import { formatInputDate } from "../../utils/formatters";
+import { useProfile } from "../../hooks/useProfile";
 const EditDetailsForm = ({ onClose, user }) => {
-  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
@@ -26,21 +22,16 @@ const EditDetailsForm = ({ onClose, user }) => {
     },
   });
 
-  const loading = useSelector((state) => state.loading.isLoading);
+  const { updateUser, isUpdating } = useProfile();
 
   const onSubmit = async (data) => {
-    dispatch(startLoading());
     try {
-      const user = await updateProfile(data);
-      dispatch(setCredentials({ user: user, isAuthenticated: true }));
-      toast.success("Profile Update Successfully");
+      await updateUser(data);
       onClose();
     } catch (err) {
       const errorMsg =
         err?.response?.data?.message || "Failed to update profile";
       toast.error(errorMsg);
-    } finally {
-      dispatch(stopLoading());
     }
   };
 
@@ -142,9 +133,9 @@ const EditDetailsForm = ({ onClose, user }) => {
             <button
               type="submit"
               className="btn-primary px-8 cursor-pointer"
-              disabled={loading}
+              disabled={isUpdating}
             >
-              {loading ? "Saving..." : "Save"}
+              {isUpdating ? "Saving..." : "Save"}
             </button>
           </div>
         </div>

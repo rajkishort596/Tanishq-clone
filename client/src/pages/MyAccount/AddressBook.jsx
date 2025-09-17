@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useProfile } from "../../hooks/useProfile";
+import { useAddresses } from "../../hooks/useAddresses";
 import Spinner from "../../components/Spinner";
 import AddressForm from "../../components/Form/AddressForm";
 import Modal from "../../components/Modal/Modal";
@@ -55,7 +55,7 @@ const AddressBook = () => {
     isLoading,
     error,
     isFetching,
-  } = useProfile();
+  } = useAddresses();
 
   const handleSubmitAddress = async (data) => {
     if (selectedAddress) {
@@ -68,7 +68,7 @@ const AddressBook = () => {
     }
   };
 
-  if (isLoading || isFetching || isAdding || isUpdating || isDeleting) {
+  if (isLoading || isFetching || isDeleting) {
     return (
       <div className="flex justify-center items-center fixed inset-0 bg-white/80 z-50">
         <Spinner />
@@ -162,6 +162,8 @@ const AddressBook = () => {
           <AddressForm
             onClose={handleCloseModal}
             address={selectedAddress}
+            isUpdating={isUpdating}
+            isAdding={isAdding}
             onSubmitAddress={handleSubmitAddress}
           />
         </Modal>

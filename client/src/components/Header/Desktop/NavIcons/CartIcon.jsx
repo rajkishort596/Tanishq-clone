@@ -11,7 +11,7 @@ const CartIcon = () => {
       className="p-2 cursor-pointer text-primary relative"
     >
       <ShoppingBag size={20} strokeWidth={1} />
-      <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full px-1">
+      <span className="absolute -top-0.5 -right-0.5 bg-primary text-white text-xs rounded-full px-1">
         0
       </span>
     </button>

@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import Modal from "../../components/Modal/Modal";
 import EditDetailsForm from "../../components/Form/EditDetailsForm";
 import { formatDate } from "../../utils/formatters";
+import Spinner from "../../components/Spinner";
+import { useProfile } from "../../hooks/useProfile";
 
 const Overview = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { user } = useSelector((state) => state.auth);
+
+  const { user, isLoading, error, isFetching } = useProfile();
 
   const handleOnEditDetails = () => {
     setIsModalOpen(true);
@@ -15,6 +17,22 @@ const Overview = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
+  if (isLoading || isFetching) {
+    return (
+      <div className="flex justify-center items-center fixed inset-0 bg-white/80 z-50">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 bg-red-100 text-red-700 rounded">
+        Error loading User Details. Please try again later.
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-lg font-nunito mb-6 text-gray-800">

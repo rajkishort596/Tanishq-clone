@@ -1,4 +1,3 @@
-// ClientLayout.jsx
 import React, { useEffect } from "react";
 import Container from "../components/Container/Container";
 import { Outlet } from "react-router-dom";
@@ -7,30 +6,24 @@ import Footer from "../components/Footer/Footer";
 import ScrollToTop from "../components/ScrollToTop";
 import Spinner from "../components/Spinner";
 import { useDispatch } from "react-redux";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUserProfile } from "../api/auth.Api";
 import { setCredentials, setAuthStatus } from "../features/authSlice";
+import { useProfile } from "../hooks/useProfile";
 
 const ClientLayout = () => {
   const dispatch = useDispatch();
 
-  const { data, isLoading, error, isSuccess } = useQuery({
-    queryKey: ["userProfile"],
-    queryFn: fetchUserProfile,
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
+  const { user, isLoading, error, isSuccess } = useProfile();
 
   useEffect(() => {
     if (isLoading) {
       dispatch(setAuthStatus("loading"));
-    } else if (isSuccess && data) {
-      dispatch(setCredentials({ user: data, isAuthenticated: true }));
+    } else if (isSuccess && user) {
+      dispatch(setCredentials({ user: user, isAuthenticated: true }));
       dispatch(setAuthStatus("succeeded"));
     } else if (error) {
       dispatch(setAuthStatus("failed"));
     }
-  }, [isLoading, isSuccess, error, data, dispatch]);
+  }, [isLoading, isSuccess, error, user, dispatch]);
 
   if (isLoading) {
     return (

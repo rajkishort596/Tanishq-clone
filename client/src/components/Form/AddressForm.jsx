@@ -3,7 +3,13 @@ import { useForm } from "react-hook-form";
 import Select from "../Input/Select";
 import Input from "../Input/Input";
 
-const AddressForm = ({ onClose, address, onSubmitAddress }) => {
+const AddressForm = ({
+  onClose,
+  address,
+  onSubmitAddress,
+  isAdding,
+  isUpdating,
+}) => {
   const {
     register,
     handleSubmit,
@@ -19,9 +25,9 @@ const AddressForm = ({ onClose, address, onSubmitAddress }) => {
     },
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     if (onSubmitAddress) {
-      onSubmitAddress(data);
+      await onSubmitAddress(data);
     }
     onClose();
   };
@@ -150,9 +156,15 @@ const AddressForm = ({ onClose, address, onSubmitAddress }) => {
           <button
             type="submit"
             className="btn-primary px-8 cursor-pointer"
-            // disabled={loading}
+            disabled={isUpdating || isAdding}
           >
-            {address ? "Update" : "Add"}
+            {isUpdating
+              ? "Updating..."
+              : isAdding
+              ? "Adding..."
+              : address
+              ? "Update"
+              : "Add"}
           </button>
         </div>
       </form>

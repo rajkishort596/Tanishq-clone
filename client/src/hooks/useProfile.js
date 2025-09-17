@@ -1,60 +1,41 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  addNewAddress,
-  deleteAddress,
-  fetchAllAddress,
-  updateAddress,
-} from "../api/profile.Api";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import { fetchUserProfile } from "../api/auth.Api";
+import { updateProfile } from "../api/profile.Api";
 
 export const useProfile = () => {
   const queryClient = useQueryClient();
+
   const {
-    data: addresses,
+    data: user,
     isLoading,
     error,
     isFetching,
+    isSuccess,
   } = useQuery({
-    queryKey: ["addresses"],
-    queryFn: fetchAllAddress,
+    queryKey: ["userProfile"],
+    queryFn: fetchUserProfile,
     staleTime: 5 * 60 * 1000,
   });
 
-  const addAddressMutation = useMutation({
-    mutationFn: addNewAddress,
+  const updateUserMutation = useMutation({
+    mutationFn: updateProfile,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["addresses"] });
-      toast.success("Address added successfully");
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      toast.success("Profile updated successfully!");
     },
-  });
-
-  const updateAddressMutation = useMutation({
-    mutationFn: ({ addressId, addressData }) =>
-      updateAddress(addressId, addressData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["addresses"] });
-      toast.success("Address updated successfully");
-    },
-  });
-
-  const deleteAddressMutation = useMutation({
-    mutationFn: (addressId) => deleteAddress(addressId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["addresses"] });
-      toast.success("Address deleted successfully");
+    onError: (err) => {
+      toast.error(err.message || "Failed to update profile.");
     },
   });
 
   return {
-    addresses: addresses || [],
-    addAddress: addAddressMutation.mutateAsync,
-    updateAddress: updateAddressMutation.mutateAsync,
-    deleteAddress: deleteAddressMutation.mutateAsync,
-    isUpdating: updateAddressMutation.isPending,
-    isAdding: addAddressMutation.isPending,
-    isDeleting: deleteAddressMutation.isPending,
+    user,
     isLoading,
-    error,
     isFetching,
+    isSuccess,
+    error,
+    updateUser: updateUserMutation.mutateAsync,
+    isUpdating: updateUserMutation.isPending,
   };
 };

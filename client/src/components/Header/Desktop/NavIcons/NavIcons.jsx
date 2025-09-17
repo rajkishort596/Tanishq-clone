@@ -13,7 +13,7 @@ export const NavIcons = () => {
   const dispatch = useDispatch();
   const { isOpen, isLogin } = useSelector((state) => state.authModal);
   return (
-    <div className="flex items-center md:space-x-4">
+    <div className="flex items-center space-x-2 md:space-x-4">
       <UserIcon />
       <WishlistIcon />
       <CartIcon />
