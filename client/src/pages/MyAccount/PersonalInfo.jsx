@@ -34,13 +34,13 @@ const PersonalInfo = () => {
           </h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 p-3 sm:p-4 border-t border-primary">
-          <div className="flex flex-col sm:flex-row sm:gap-4">
+          <div className="flex flex-col sm:items-center sm:flex-row sm:gap-4">
             <span className="text-xs sm:text-sm text-gray-500">Name:</span>
             <span className="text-sm sm:text-base font-bold">
               {user?.firstName + " " + user?.lastName}
             </span>
           </div>
-          <div className="flex flex-col sm:flex-row sm:gap-4">
+          <div className="flex flex-col sm:items-center sm:flex-row sm:gap-4">
             <span className="text-xs sm:text-sm text-gray-500">
               Date of Birth:
             </span>
@@ -48,13 +48,13 @@ const PersonalInfo = () => {
               {formatDate(user?.dob) || ""}
             </span>
           </div>
-          <div className="flex flex-col sm:flex-row sm:gap-4">
+          <div className="flex flex-col sm:items-center sm:flex-row sm:gap-4">
             <span className="text-xs sm:text-sm text-gray-500">Gender:</span>
             <span className="text-sm sm:text-base font-bold">
               {user?.gender || ""}
             </span>
           </div>
-          <div className="flex flex-col sm:flex-row sm:gap-4">
+          <div className="flex flex-col sm:items-center sm:flex-row sm:gap-4">
             <span className="text-xs sm:text-sm text-gray-500">
               Anniversary Date:
             </span>
@@ -73,19 +73,19 @@ const PersonalInfo = () => {
           </h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 p-3 sm:p-4 border-t border-primary">
-          <div className="flex flex-col sm:flex-row sm:gap-4">
+          <div className="flex flex-col sm:items-center sm:flex-row sm:gap-4">
             <span className="text-xs sm:text-sm text-gray-500">Phone No:</span>
             <span className="text-sm sm:text-base font-bold">
               {user?.phone || ""}
             </span>
           </div>
-          <div className="flex flex-col sm:flex-row sm:gap-4">
+          <div className="flex flex-col sm:items-center sm:flex-row sm:gap-4">
             <span className="text-xs sm:text-sm text-gray-500">Email:</span>
             <span className="text-sm sm:text-base font-bold">
               {user?.email || ""}
             </span>
           </div>
-          <div className="flex flex-col sm:flex-row sm:gap-4">
+          <div className="flex flex-col sm:items-center sm:flex-row sm:gap-4">
             <span className="text-xs sm:text-sm text-gray-500">Address:</span>
             <span className="text-sm sm:text-base font-bold">
               {user?.addresses?.[0].addressLine || ""}

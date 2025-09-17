@@ -47,11 +47,14 @@ const SubMenu = ({
   };
 
   const handleCollectionClick = (collection) => {
-    const slug = collection?.name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-    navigate(`/shop/${slug}`);
+    navigate(`/shop/${collection.slug}`);
+    onClose();
+  };
+
+  const handleTitleClick = () => {
+    navigate(
+      isCollection ? "/shop/collections" : `/shop/${selectedCategory?.slug}`
+    );
     onClose();
   };
 
@@ -66,7 +69,10 @@ const SubMenu = ({
           <ArrowLeft strokeWidth={1} />
         </button>
         {/* Title */}
-        <div className="flex items-center mx-auto gap-2">
+        <div
+          onClick={handleTitleClick}
+          className="flex items-center mx-auto gap-2"
+        >
           {isCollection ? (
             <img src={images.collectionIcon} className="w-6 h-6" />
           ) : (
