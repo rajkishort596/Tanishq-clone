@@ -195,39 +195,31 @@ const getUserOrders = asyncHandler(async (req, res) => {
   }
 
   const { page = 1, limit = 10, status } = req.query;
-  const query = { user: req.user._id };
+
+  const matchStage = { user: req.user._id };
   if (status) {
-    query.status = status;
+    matchStage.status = status;
   }
 
-  const parsedPage = parseInt(page, 10);
-  const parsedLimit = parseInt(limit, 10);
+  // Aggregation pipeline
+  const pipeline = [{ $match: matchStage }, { $sort: { createdAt: -1 } }];
 
-  let orders, totalDocs;
+  const options = {
+    page: parseInt(page, 10),
+    limit: parseInt(limit, 10),
+    customLabels: {
+      totalDocs: "totalOrders",
+      docs: "orders",
+    },
+  };
 
-  if (typeof Order.paginate === "function") {
-    // If using mongoose-paginate-v2
-    const options = {
-      page: parsedPage,
-      limit: parsedLimit,
-      sort: { createdAt: -1 },
-    };
-    orders = await Order.paginate(query, options);
-  } else {
-    // Manual pagination fallback
-    orders = await Order.find(query)
-      .sort({ createdAt: -1 })
-      .skip((parsedPage - 1) * parsedLimit)
-      .limit(parsedLimit)
-      .lean();
+  const orders = await Order.aggregatePaginate(
+    Order.aggregate(pipeline),
+    options
+  );
 
-    totalDocs = await Order.countDocuments(query);
-    orders = {
-      docs: orders,
-      totalDocs,
-      page: parsedPage,
-      limit: parsedLimit,
-    };
+  if (!orders) {
+    throw new ApiError(500, "Failed to fetch orders.");
   }
 
   return res
@@ -236,9 +228,7 @@ const getUserOrders = asyncHandler(async (req, res) => {
       new ApiResponse(
         200,
         orders,
-        orders?.docs?.length > 0
-          ? "Orders fetched successfully."
-          : "No orders found."
+        orders.length > 0 ? "Orders fetched successfully." : "No orders found."
       )
     );
 });

@@ -112,6 +112,7 @@ import LoginFirstScreen from "../assets/images/first-screen.png";
 import LoginSecondScreen from "../assets/images/second-screen.png";
 
 import EmptyWishlistIcon from "../assets/images/noWish.webp";
+import EmptyOrdersIcon from "../assets/images/no-order.svg";
 const images = {
   promotionBagIcon: PromotionBagIcon,
   collectionIcon: CollectionIcon,
@@ -226,6 +227,7 @@ const images = {
   loginSecondScreen: LoginSecondScreen,
 
   emptyWishlistIcon: EmptyWishlistIcon,
+  emptyOrdersIcon: EmptyOrdersIcon,
 };
 
 export default images;
