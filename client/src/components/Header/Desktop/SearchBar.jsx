@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Search, X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && searchTerm.trim()) {
@@ -16,6 +17,12 @@ const SearchBar = () => {
   const clearSearch = () => {
     setSearchTerm("");
   };
+
+  useEffect(() => {
+    if (!location.pathname.startsWith("/search")) {
+      setSearchTerm("");
+    }
+  }, [location.pathname]);
 
   return (
     <div className="w-full relative flex items-center lg:max-w-xl rounded-xl border border-gray-300 px-4 py-2 focus-within:ring-1 focus-within:ring-primary">

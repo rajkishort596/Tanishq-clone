@@ -6,10 +6,12 @@ import { logoutUser } from "../../../../api/auth.Api";
 import { logout } from "../../../../features/authSlice";
 import { toast } from "react-toastify";
 import { openAuthModal } from "../../../../features/authModalSlice";
+import { useQueryClient } from "@tanstack/react-query";
 
 const UserIcon = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const { user, isAuthenticated } = useSelector((state) => state.auth);
 
   const handleUserClick = () => {
@@ -22,6 +24,9 @@ const UserIcon = () => {
 
   const handleLogout = async () => {
     await logoutUser();
+    queryClient.removeQueries({ queryKey: ["cart"] });
+    queryClient.removeQueries({ queryKey: ["wishlist"] });
+
     toast.success("User Logged out successfully");
     dispatch(logout());
   };

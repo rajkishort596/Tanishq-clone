@@ -58,7 +58,7 @@ const Cart = () => {
     });
   };
 
-  if (!cart || cart.items?.length === 0) {
+  if (!cart || cart.items?.length === 0 || !isAuthenticated) {
     return (
       <div className="flex flex-col items-center pt-20 min-h-screen bg-white px-4">
         {/* Shopping Bag Icon */}

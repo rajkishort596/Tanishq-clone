@@ -20,9 +20,11 @@ export const useCart = () => {
   } = useQuery({
     queryKey: ["cart"],
     queryFn: fetchCart,
-    staleTime: 5 * 60 * 1000,
-    retry: false,
+    refetchOnWindowFocus: false,
     enabled: isAuthenticated,
+    staleTime: 5 * 60 * 1000,
+    refetchOnReconnect: true,
+    retry: isAuthenticated ? 1 : 0,
   });
 
   // Add item mutation

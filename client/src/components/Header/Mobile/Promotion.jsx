@@ -3,16 +3,19 @@ import images from "../../../utils/images";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../../../api/auth.Api";
-import { setCredentials } from "../../../features/authSlice";
+import { logout, setCredentials } from "../../../features/authSlice";
 import AuthModal from "../../Modal/AuthModal";
 import {
   closeAuthModal,
   openAuthModal,
   setIsLogin,
 } from "../../../features/authModalSlice";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 const Promotion = () => {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const { isOpen, isLogin } = useSelector((state) => state.authModal);
 
@@ -26,6 +29,8 @@ const Promotion = () => {
 
   const handleLogout = async () => {
     await logoutUser();
+    queryClient.removeQueries({ queryKey: ["cart"] });
+    queryClient.removeQueries({ queryKey: ["wishlist"] });
     toast.success("User Logged out successfully");
     dispatch(logout());
   };
