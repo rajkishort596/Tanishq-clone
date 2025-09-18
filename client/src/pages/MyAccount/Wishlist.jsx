@@ -1,10 +1,10 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Trash2 } from "lucide-react";
 import images from "../../utils/images";
 import { useWishlist } from "../../hooks/useWishlist";
 import Spinner from "../../components/Spinner";
+import { useCart } from "../../hooks/useCart";
 
 const Wishlist = () => {
   const navigate = useNavigate();
@@ -18,15 +18,14 @@ const Wishlist = () => {
     isFetching,
   } = useWishlist();
 
+  const { addToCart, isAdding } = useCart();
+
   const handleRemove = async (productId) => {
-    console.log("Remove item from wishlist:", productId);
-    // TODO: call API and update redux
     await removeFromWishlist(productId);
   };
 
-  const handleMoveToCart = (id) => {
-    console.log("Move to cart:", id);
-    // TODO: call API
+  const handleMoveToCart = async (id) => {
+    await addToCart({ productId: id, quantity: 1 });
   };
 
   const handleWishlistCardClick = (product, e) => {
@@ -35,7 +34,7 @@ const Wishlist = () => {
     navigate(path);
   };
 
-  if (isLoading || isFetching || isRemoving) {
+  if (isLoading || isFetching || isRemoving || isAdding) {
     return (
       <div className="flex justify-center items-center fixed inset-0 bg-white/80 z-50">
         <Spinner />
@@ -86,52 +85,57 @@ const Wishlist = () => {
     <div className="bg-white rounded-lg font-nunito">
       <h2 className="text-xl sm:text-2xl font-bold mb-6">Wishlist</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-        {wishlist.map((item) => (
-          <div
-            key={item?._id}
-            onClick={(e) => handleWishlistCardClick(item, e)}
-            className="border border-gray-200 rounded-lg p-4 relative shadow-sm cursor-pointer hover:shadow-md transition"
-          >
-            {/* Delete Button */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRemove(item?._id);
-              }}
-              className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center bg-white border border-red-200 text-red-500 rounded-full hover:bg-red-50 cursor-pointer"
-            >
-              <Trash2 size={16} />
-            </button>
+        {wishlist.map(
+          (item) => (
+            console.log(item),
+            (
+              <div
+                key={item?._id}
+                onClick={(e) => handleWishlistCardClick(item, e)}
+                className="border border-gray-200 rounded-lg p-4 relative shadow-sm cursor-pointer hover:shadow-md transition"
+              >
+                {/* Delete Button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemove(item?._id);
+                  }}
+                  className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center bg-white border border-red-200 text-red-500 rounded-full hover:bg-red-50 cursor-pointer"
+                >
+                  <Trash2 size={16} />
+                </button>
 
-            {/* Image */}
-            <img
-              src={item?.images?.[0]?.url || "/images/default-product.png"}
-              alt={item?.name}
-              className="w-full h-48 object-contain mb-4"
-            />
+                {/* Image */}
+                <img
+                  src={item?.images?.[0]?.url || "/images/default-product.png"}
+                  alt={item?.name}
+                  className="w-full h-48 object-cover mb-4 rounded-lg overflow-hidden"
+                />
 
-            {/* Name */}
-            <h3 className="text-sm sm:text-base font-semibold mb-2">
-              {item?.name}
-            </h3>
+                {/* Name */}
+                <h3 className="text-sm sm:text-base font-semibold mb-2">
+                  {item?.name}
+                </h3>
 
-            {/* Price */}
-            <p className="text-primary font-bold text-base sm:text-lg mb-4">
-              ₹ {item?.price?.final.toFixed(2)}
-            </p>
+                {/* Price */}
+                <p className="text-primary font-bold text-base sm:text-lg mb-4">
+                  ₹ {item?.price?.final.toFixed(2)}
+                </p>
 
-            {/* Move to Cart */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleMoveToCart(item?._id);
-              }}
-              className="w-full py-2 bg-primary text-white rounded-sm cursor-pointer hover:bg-red-700"
-            >
-              Move To Cart
-            </button>
-          </div>
-        ))}
+                {/* Move to Cart */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleMoveToCart(item?._id);
+                  }}
+                  className="w-full py-2 bg-primary text-white rounded-sm cursor-pointer hover:bg-red-700"
+                >
+                  Move To Cart
+                </button>
+              </div>
+            )
+          )
+        )}
       </div>
     </div>
   );

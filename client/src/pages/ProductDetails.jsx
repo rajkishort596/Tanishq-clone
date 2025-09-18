@@ -15,6 +15,8 @@ import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 
+import { useCart } from "../hooks/useCart";
+
 const ProductDetails = () => {
   const { productId, category, subCategory, collection } = useParams();
   const [activeTab, setActiveTab] = useState("details");
@@ -41,6 +43,8 @@ const ProductDetails = () => {
     queryFn: () => fetchProductById(productId),
     staleTime: 5 * 60 * 1000,
   });
+
+  const { addToCart, isAdding } = useCart();
 
   const categoryMap = {
     "all-jewellery": "All Jewellery",
@@ -78,7 +82,11 @@ const ProductDetails = () => {
     );
   };
 
-  if (isLoading) {
+  const handleAddToCart = async (productId) => {
+    await addToCart({ productId, quantity: 1 });
+  };
+
+  if (isLoading || isAdding) {
     return (
       <div className="flex justify-center items-center fixed inset-0 bg-white/80 z-50">
         <Spinner />
@@ -272,7 +280,10 @@ const ProductDetails = () => {
         </span>
 
         {/* Add to Cart Button */}
-        <button className="ml-4 w-full md:w-auto rounded-full btn-primary">
+        <button
+          onClick={() => handleAddToCart(product?._id)}
+          className="ml-4 w-full md:w-auto rounded-full btn-primary"
+        >
           Add to Cart
         </button>
       </div>

@@ -42,13 +42,6 @@ const addToCart = asyncHandler(async (req, res) => {
     availableStock = selectedVariant.stock;
   }
 
-  if (quantity > availableStock) {
-    throw new ApiError(
-      400,
-      `Insufficient stock. Only ${availableStock} available.`
-    );
-  }
-
   // 3. Find the user
   const user = await User.findById(req.user._id);
   if (!user) {
@@ -60,7 +53,7 @@ const addToCart = asyncHandler(async (req, res) => {
     user.cart = { items: [], totalQuantity: 0, totalPrice: 0 };
   }
 
-  // 4. Check if item already exists in cart
+  // 4. Check if item already exists in cart and update quantity
   let itemFound = false;
   user.cart.items = user.cart.items.map((item) => {
     const isSameProduct = item.product.toString() === productId;
@@ -71,9 +64,7 @@ const addToCart = asyncHandler(async (req, res) => {
     if (isSameProduct && isSameVariant) {
       itemFound = true;
       const newQuantity = item.quantity + parseInt(quantity, 10);
-      // console.log(typeof item.quantity, typeof quantity);
       if (newQuantity > availableStock) {
-        // console.log(newQuantity, availableStock);
         throw new ApiError(
           400,
           `Cannot add more. Max available stock is ${availableStock}.`
@@ -87,6 +78,12 @@ const addToCart = asyncHandler(async (req, res) => {
 
   // 5. If item not found, add new item to cart
   if (!itemFound) {
+    if (quantity > availableStock) {
+      throw new ApiError(
+        400,
+        `Insufficient stock. Only ${availableStock} available.`
+      );
+    }
     user.cart.items.push({
       product: productId,
       variantId: variantId || undefined, // Store undefined if no variant
@@ -95,19 +92,34 @@ const addToCart = asyncHandler(async (req, res) => {
     });
   }
 
-  // 6. Recalculate total quantity and total price
+  // 6. Recalculate total quantity
   user.cart.totalQuantity = user.cart.items.reduce(
     (sum, item) => sum + item.quantity,
     0
   );
-  user.cart.totalPrice = user.cart.items.reduce((sum, item) => {
-    const cartProduct =
-      product._id.toString() === item.product.toString() ? product : null; // Avoid re-fetching product if it's the one we just found
-    if (!cartProduct) return sum; // Should not happen if product was found earlier
 
-    let itemPrice = cartProduct.price.final;
+  // 7. Recalculate total price by fetching prices for ALL items in the cart
+  const populatedCartItems = await Product.find({
+    _id: { $in: user.cart.items.map((item) => item.product) },
+  }).select("price variants");
+
+  user.cart.totalPrice = user.cart.items.reduce((sum, item) => {
+    // Find the corresponding populated product from the fetched list
+    const populatedProduct = populatedCartItems.find(
+      (p) => p._id.toString() === item.product.toString()
+    );
+
+    if (!populatedProduct) {
+      // This case should not happen, but it's a good safeguard
+      console.error(
+        `Product with ID ${item.product} not found during price calculation.`
+      );
+      return sum;
+    }
+
+    let itemPrice = populatedProduct.price.final;
     if (item.variantId) {
-      const variant = cartProduct.variants.find(
+      const variant = populatedProduct.variants.find(
         (v) => v.variantId === item.variantId
       );
       if (variant) {
@@ -116,14 +128,14 @@ const addToCart = asyncHandler(async (req, res) => {
     }
     return sum + itemPrice * item.quantity;
   }, 0);
-  user.cart.lastUpdated = new Date();
 
+  user.cart.lastUpdated = new Date();
   await user.save({ validateBeforeSave: false }); // Save user document
 
-  // Populate product details for the response
+  // 8. Populate product details for the final response
   const updatedCart = await User.findById(req.user._id)
     .select("cart")
-    .populate("cart.items.product", "name images price variants sku"); // Populate necessary product fields
+    .populate("cart.items.product", "name images price variants sku");
 
   return res
     .status(200)
