@@ -6,9 +6,12 @@ import {
   updateAddress,
 } from "../api/profile.Api";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 export const useAddresses = () => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const queryClient = useQueryClient();
+
   const {
     data: addresses,
     isLoading,
@@ -17,7 +20,11 @@ export const useAddresses = () => {
   } = useQuery({
     queryKey: ["addresses"],
     queryFn: fetchAllAddress,
+    refetchOnWindowFocus: false,
+    enabled: isAuthenticated,
     staleTime: 5 * 60 * 1000,
+    refetchOnReconnect: true,
+    retry: isAuthenticated ? 1 : 0,
   });
 
   const addAddressMutation = useMutation({

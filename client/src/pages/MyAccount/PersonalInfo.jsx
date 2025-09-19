@@ -106,7 +106,7 @@ const PersonalInfo = () => {
           <div className="flex flex-col sm:items-center sm:flex-row sm:gap-4">
             <span className="text-xs sm:text-sm text-gray-500">Address:</span>
             <span className="text-sm sm:text-base font-bold">
-              {user?.addresses?.[0].addressLine || ""}
+              {user?.addresses?.[0]?.addressLine || ""}
             </span>
           </div>
         </div>

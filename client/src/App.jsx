@@ -28,6 +28,7 @@ import AddressBook from "./pages/MyAccount/AddressBook";
 import Wishlist from "./pages/MyAccount/Wishlist";
 import OrderHistory from "./pages/MyAccount/OrderHistory";
 import OrderDetails from "./pages/OrderDetiails";
+import Checkout from "./pages/Checkout";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -98,6 +99,14 @@ const App = () => {
             <Route path="address-book" element={<AddressBook />} />
             <Route path="orders/:id" element={<OrderDetails />} />
           </Route>
+          <Route
+            path="checkout"
+            element={
+              <PrivateRoute>
+                <Checkout />
+              </PrivateRoute>
+            }
+          />
         </Route>
       </>
     )

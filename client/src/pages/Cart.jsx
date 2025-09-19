@@ -52,10 +52,12 @@ const Cart = () => {
   };
 
   const DecrementItemQuantity = async (itemId, currentQuantity) => {
-    await updateQuantity({
-      itemId,
-      quantity: Math.max(1, currentQuantity - 1),
-    });
+    if (currentQuantity > 1) {
+      await updateQuantity({
+        itemId,
+        quantity: currentQuantity - 1,
+      });
+    }
   };
 
   if (!cart || cart.items?.length === 0 || !isAuthenticated) {
@@ -139,7 +141,8 @@ const Cart = () => {
                   onClick={() =>
                     DecrementItemQuantity(item?.product?._id, item.quantity)
                   }
-                  className="cursor-pointer p-1"
+                  className="cursor-pointer p-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={item.quantity === 1}
                 >
                   <SquareMinus
                     strokeWidth={1.5}

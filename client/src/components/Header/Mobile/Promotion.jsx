@@ -31,6 +31,8 @@ const Promotion = () => {
     await logoutUser();
     queryClient.removeQueries({ queryKey: ["cart"] });
     queryClient.removeQueries({ queryKey: ["wishlist"] });
+    queryClient.removeQueries({ queryKey: ["addresses"] });
+    queryClient.removeQueries({ queryKey: ["userProfile"] });
     toast.success("User Logged out successfully");
     dispatch(logout());
   };
