@@ -8,7 +8,7 @@ const AuthModal = ({ isOpen, onClose, isLogin = false, setIsLogin }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6">
-      <div className="flex relative gap-8 lg:bg-[#fff2e0] rounded-xl shadow-xl w-full xl:w-[80%] min-h-auto lg:h-[65vh] overflow-hidden md:px-17 md:py-7">
+      <div className="flex relative gap-8 lg:bg-[#fff2e0] rounded-xl shadow-xl w-full xl:w-[80%] min-h-auto lg:h-[70vh] overflow-hidden md:px-17 md:py-7">
         {/* Left Section (Offer Banner) */}
         <OfferBanner />
 

@@ -16,6 +16,8 @@ export const useProfile = () => {
     queryKey: ["userProfile"],
     queryFn: fetchUserProfile,
     staleTime: 5 * 60 * 1000,
+    retry: 1,
+    refetchOnWindowFocus: false,
   });
 
   const updateUserMutation = useMutation({

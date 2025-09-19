@@ -10,7 +10,7 @@ import { useAuth } from "../../hooks/useAuth.js";
 
 const Form = ({ isLogin, onClose, setIsLogin }) => {
   const [step, setStep] = useState(isLogin ? "login" : "email");
-  const [timer, setTimer] = useState(10);
+  const [timer, setTimer] = useState(180);
   const [email, setEmail] = useState("");
   const [otpError, setOtpError] = useState("");
   const [otpAttemptsLeft, setOtpAttemptsLeft] = useState(5);
@@ -53,7 +53,7 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
   // Send OTP
   const handleSendOtp = async (data) => {
     setEmail(data.email);
-    setTimer(10);
+    setTimer(180);
 
     const res = await sendOtp(data);
     if (typeof res?.attemptsLeft === "number") {
@@ -72,7 +72,7 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
     }
 
     setOtpError("");
-    setTimer(10);
+    setTimer(180);
   };
 
   // Verify OTP

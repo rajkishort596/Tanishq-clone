@@ -10,6 +10,9 @@ const RegisterForm = ({
   email,
   registering = false,
 }) => {
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
+
   return (
     <>
       <div className="text-center mb-6">
@@ -51,10 +54,15 @@ const RegisterForm = ({
           icon={<Lock size={18} />}
           error={errors.password?.message}
           {...register("password", {
-            required: "Password is required",
+            required: "Password is required.",
             minLength: {
-              value: 6,
-              message: "Password must be at least 6 characters",
+              value: 8,
+              message: "Password must be at least 8 characters long.",
+            },
+            pattern: {
+              value: passwordRegex,
+              message:
+                "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
             },
           })}
         />
