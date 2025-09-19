@@ -1,31 +1,21 @@
 import { X, Mail, Lock } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import Input from "../Input/Input";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  completeUserRegistration,
-  loginUser,
-  registerUser,
-  verifyUserOTP,
-} from "../../api/auth.Api";
-import { setAuthStatus, setCredentials } from "../../features/authSlice.js";
-import { startLoading, stopLoading } from "../../features/loadingSlice.js";
+import { useSelector } from "react-redux";
 import OtpForm from "./OtpForm";
 import RegisterForm from "./RegisterForm";
+import { useAuth } from "../../hooks/useAuth.js";
 
 const Form = ({ isLogin, onClose, setIsLogin }) => {
   const [step, setStep] = useState(isLogin ? "login" : "email");
-  const [timer, setTimer] = useState(180);
+  const [timer, setTimer] = useState(10);
   const [email, setEmail] = useState("");
   const [otpError, setOtpError] = useState("");
   const [otpAttemptsLeft, setOtpAttemptsLeft] = useState(5);
-  const [resendLoading, setResendLoading] = useState(false);
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const loading = useSelector((state) => state.loading.isLoading);
 
   const {
@@ -34,6 +24,19 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
     formState: { errors },
     reset,
   } = useForm();
+
+  const {
+    loginUser,
+    isLogging,
+    sendOtp,
+    isSendingOtp,
+    resendOtp,
+    isResendingOtp,
+    verifyOtp,
+    isVerifyingOtp,
+    completeRegistration,
+    isCompletingRegistration,
+  } = useAuth();
 
   useEffect(() => {
     let interval;
@@ -47,94 +50,59 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
     return () => clearInterval(interval);
   }, [step, timer]);
 
+  // Send OTP
   const handleSendOtp = async (data) => {
-    dispatch(startLoading());
-    try {
-      setEmail(data.email);
-      setTimer(180);
-      const res = await registerUser(data);
-      console.log(res);
-      if (typeof res?.attemptsLeft === "number") {
-        setOtpAttemptsLeft(res.attemptsLeft);
-      }
-      toast.success(`OTP Sent to ${data.email}`);
-      reset();
-      setStep("otp");
-    } catch (err) {
-      const errorMsg =
-        err?.response?.data?.message || "OTP failed. Please try again.";
-      console.error("OTP error:", err);
-      toast.error(errorMsg);
-    } finally {
-      dispatch(stopLoading());
+    setEmail(data.email);
+    setTimer(10);
+
+    const res = await sendOtp(data);
+    if (typeof res?.attemptsLeft === "number") {
+      setOtpAttemptsLeft(res.attemptsLeft);
     }
+
+    reset();
+    setStep("otp");
   };
 
-  // Resend OTP handler
+  // Resend OTP
   const handleResendOtp = async () => {
-    setResendLoading(true);
-    try {
-      const res = await registerUser({ email });
-      if (typeof res?.attemptsLeft === "number") {
-        setOtpAttemptsLeft(res.attemptsLeft);
-      }
-      toast.success(`OTP resent to ${email}`);
-      setOtpError("");
-    } catch (err) {
-      const errorMsg =
-        err?.response?.data?.message || "Resend OTP failed. Please try again.";
-      toast.error(errorMsg);
-    } finally {
-      setResendLoading(false);
-      setTimer(180);
+    const res = await resendOtp({ email });
+    if (typeof res?.attemptsLeft === "number") {
+      setOtpAttemptsLeft(res.attemptsLeft);
     }
+
+    setOtpError("");
+    setTimer(10);
   };
 
+  // Verify OTP
   const handleVerifyOtp = async (enteredOtp) => {
-    dispatch(startLoading());
     try {
-      const res = await verifyUserOTP({ email, otp: enteredOtp });
-      console.log(res);
+      const res = await verifyOtp({ email, otp: enteredOtp });
       if (typeof res?.attemptsLeft === "number") {
         setOtpAttemptsLeft(res.attemptsLeft);
       }
-      toast.success("OTP verified! Please complete your registration.");
-      setStep("register");
+
       setOtpError("");
       reset();
+      setStep("register");
     } catch (err) {
-      // Prefer backend error and attemptsLeft
-      const errorMsg =
-        err?.response?.data?.message ||
-        "OTP verification failed. Please try again.";
       const attemptsLeft = err?.response?.data?.errors?.attemptsLeft;
-      console.log(attemptsLeft);
       if (typeof attemptsLeft === "number") {
         setOtpAttemptsLeft(attemptsLeft);
       }
+      const errorMsg =
+        err?.response?.data?.message ||
+        "OTP verification failed. Please try again.";
       setOtpError(errorMsg);
-      toast.error(errorMsg);
-    } finally {
-      dispatch(stopLoading());
     }
   };
 
+  // Complete registration
   const handleRegister = async (data) => {
-    dispatch(startLoading());
-    try {
-      const res = await completeUserRegistration(data);
-      onClose();
-      dispatch(setCredentials({ user: res.user, isAuthenticated: true }));
-      toast.success(`Welcome to Tanishq ${res.user.firstName || "User"}`);
-      navigate("/");
-    } catch (err) {
-      const errorMsg =
-        err?.response?.data?.message ||
-        "Registration failed. Please try again.";
-      toast.error(errorMsg);
-    } finally {
-      dispatch(stopLoading());
-    }
+    await completeRegistration(data);
+    onClose();
+    navigate("/");
   };
 
   const handleToggle = () => {
@@ -142,30 +110,12 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
     setStep(!isLogin ? "login" : "email");
     reset();
   };
-
+  // Login User
   const handleLogin = async (data) => {
-    dispatch(startLoading());
-    try {
-      console.log("Login data:", data);
-      const res = await loginUser(data);
-      console.log(res);
-      dispatch(setCredentials({ user: res.user, isAuthenticated: true }));
-      dispatch(setAuthStatus("succeeded"));
-      toast.success(`Welcome back ${res.user.firstName || "User"}`);
-      reset();
-      onClose();
-    } catch (err) {
-      const errorMsg =
-        err?.response?.data?.message || "Login failed. Please try again.";
-      console.error("Login error:", err);
-      toast.error(errorMsg);
-      dispatch(setAuthStatus("failed"));
-    } finally {
-      dispatch(stopLoading());
-    }
+    await loginUser(data);
+    reset();
+    onClose();
   };
-
-  console.log(otpAttemptsLeft);
 
   const renderContent = () => {
     switch (step) {
@@ -179,7 +129,8 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
             error={otpError}
             setError={setOtpError}
             attemptsLeft={otpAttemptsLeft}
-            resendLoading={resendLoading}
+            resending={isResendingOtp}
+            verifying={isVerifyingOtp}
           />
         );
       case "register":
@@ -190,6 +141,7 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
             errors={errors}
             email={email}
             register={register}
+            registering={isCompletingRegistration}
           />
         );
       case "login":
@@ -245,7 +197,7 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
                   className="btn-primary w-1/2 mx-auto rounded-full mt-4"
                   disabled={loading}
                 >
-                  {loading ? "Logging..." : "Login"}
+                  {isLogging ? "Logging..." : "Login"}
                 </button>
               </form>
             ) : (
@@ -272,7 +224,7 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
                   className="btn-primary w-1/2 mx-auto rounded-full mt-4"
                   disabled={loading}
                 >
-                  {loading ? "Sending..." : "Send OTP"}
+                  {isSendingOtp ? "Sending..." : "Send OTP"}
                 </button>
               </form>
             )}

@@ -2,16 +2,13 @@ import React from "react";
 import { User, CircleUserRound, Gift, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../../../../api/auth.Api";
-import { logout } from "../../../../features/authSlice";
-import { toast } from "react-toastify";
 import { openAuthModal } from "../../../../features/authModalSlice";
-import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "../../../../hooks/useAuth";
+import Spinner from "../../../Spinner";
 
 const UserIcon = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
   const { user, isAuthenticated } = useSelector((state) => state.auth);
 
   const handleUserClick = () => {
@@ -22,16 +19,19 @@ const UserIcon = () => {
     }
   };
 
+  const { logoutUser, isLoggingOut } = useAuth();
+
   const handleLogout = async () => {
     await logoutUser();
-    queryClient.removeQueries({ queryKey: ["cart"] });
-    queryClient.removeQueries({ queryKey: ["wishlist"] });
-    queryClient.removeQueries({ queryKey: ["addresses"] });
-    queryClient.removeQueries({ queryKey: ["userProfile"] });
-
-    toast.success("User Logged out successfully");
-    dispatch(logout());
   };
+
+  if (isLoggingOut) {
+    return (
+      <div className="flex justify-center items-center fixed inset-0 bg-white/80 z-50">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <div className="relative group inline-block">

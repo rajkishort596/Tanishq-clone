@@ -3,7 +3,13 @@ import Input from "../Input/Input";
 import "flag-icons/css/flag-icons.min.css";
 import { Lock } from "lucide-react";
 
-const RegisterForm = ({ onRegister, errors, register, email }) => {
+const RegisterForm = ({
+  onRegister,
+  errors,
+  register,
+  email,
+  registering = false,
+}) => {
   return (
     <>
       <div className="text-center mb-6">
@@ -71,7 +77,7 @@ const RegisterForm = ({ onRegister, errors, register, email }) => {
         </div>
 
         <button type="submit" className="btn-primary w-full rounded-full mt-4">
-          Continue
+          {registering ? "Registering..." : "Continue"}
         </button>
       </form>
       <p className="mt-4 text-xs text-gray-500 text-center">

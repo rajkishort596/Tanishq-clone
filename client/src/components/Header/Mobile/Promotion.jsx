@@ -1,23 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
 import images from "../../../utils/images";
-import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { logoutUser } from "../../../api/auth.Api";
-import { logout, setCredentials } from "../../../features/authSlice";
 import AuthModal from "../../Modal/AuthModal";
 import {
   closeAuthModal,
   openAuthModal,
   setIsLogin,
 } from "../../../features/authModalSlice";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
+import { useAuth } from "../../../hooks/useAuth";
 
 const Promotion = () => {
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const { isOpen, isLogin } = useSelector((state) => state.authModal);
+
+  const { logoutUser } = useAuth();
 
   const handleLogin = () => {
     dispatch(openAuthModal(true));
@@ -29,12 +26,6 @@ const Promotion = () => {
 
   const handleLogout = async () => {
     await logoutUser();
-    queryClient.removeQueries({ queryKey: ["cart"] });
-    queryClient.removeQueries({ queryKey: ["wishlist"] });
-    queryClient.removeQueries({ queryKey: ["addresses"] });
-    queryClient.removeQueries({ queryKey: ["userProfile"] });
-    toast.success("User Logged out successfully");
-    dispatch(logout());
   };
 
   return (

@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-import { useSelector } from "react-redux";
 
 const OtpForm = ({
   onVerify,
@@ -9,13 +8,11 @@ const OtpForm = ({
   error,
   setError,
   attemptsLeft,
-  resendLoading,
+  verifying = false,
+  resending = false,
 }) => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
-  const loading = useSelector((state) => state.loading.isLoading);
-
-  console.log("Resend Loading:", resendLoading);
 
   const handleChange = (element, index) => {
     if (isNaN(element.value)) return false;
@@ -95,9 +92,9 @@ const OtpForm = ({
             type="button"
             onClick={handleResendOTP}
             className="text-[#631517] underline text-sm mb-2 cursor-pointer disabled:cursor-not-allowed"
-            disabled={resendLoading}
+            disabled={resending}
           >
-            {resendLoading ? "Resending..." : "Resend OTP"}
+            {resending ? "Resending..." : "Resend OTP"}
           </button>
         )}
       </div>
@@ -107,9 +104,9 @@ const OtpForm = ({
         className={`btn-primary w-full rounded-full ${
           attemptsLeft <= 0 ? "opacity-60 cursor-not-allowed" : ""
         }`}
-        disabled={loading || attemptsLeft <= 0}
+        disabled={verifying || attemptsLeft <= 0}
       >
-        {loading ? "Verifying..." : "Verify OTP"}
+        {verifying ? "Verifying..." : "Verify OTP"}
       </button>
       <p className="mt-4 text-xs text-gray-500 text-center">
         By continuing, I agree to{" "}
