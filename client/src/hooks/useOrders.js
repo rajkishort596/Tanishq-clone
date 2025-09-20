@@ -1,7 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchAllOrders, fetchOrderById } from "../api/order.Api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  fetchAllOrders,
+  fetchOrderById,
+  createNewOrder,
+} from "../api/order.Api";
+import { toast } from "react-toastify";
 
 export const useOrders = (queryParams) => {
+  const queryClient = useQueryClient();
+
   const {
     data: ordersData,
     isLoading,
@@ -14,6 +21,21 @@ export const useOrders = (queryParams) => {
     keepPreviousData: true,
   });
 
+  // Create order mutation
+  const createOrderMutation = useMutation({
+    mutationFn: (orderData) => createNewOrder(orderData),
+    onSuccess: () => {
+      toast.success("Order placed successfully!");
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+    onError: (error) => {
+      const errorMessage =
+        error?.response?.data?.message || "Failed to place order.";
+      toast.error(errorMessage);
+    },
+  });
+
   return {
     orders: ordersData?.orders || [],
     totalOrders: ordersData?.totalOrders || 0,
@@ -22,6 +44,9 @@ export const useOrders = (queryParams) => {
     isLoading,
     error,
     isFetching,
+
+    createOrder: createOrderMutation.mutateAsync,
+    isCreating: createOrderMutation.isPending,
   };
 };
 

@@ -6,6 +6,7 @@ import { useAddresses } from "../hooks/useAddresses";
 import Modal from "../components/Modal/Modal";
 import AddressForm from "../components/Form/AddressForm";
 import { toast } from "react-toastify";
+import { useOrders } from "../hooks/useOrders";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -13,10 +14,11 @@ const Checkout = () => {
   /** ------------------ State ------------------ */
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
-  const [selectedPayment, setSelectedPayment] = useState("cod"); // default to COD
+  const [selectedPayment, setSelectedPayment] = useState("COD");
 
   /** ------------------ Queries ------------------ */
   const { cart, isLoading: cartLoading, error: cartError } = useCart();
+  const { createOrder, isCreating: isCreatingOrder } = useOrders();
   const {
     addresses,
     addAddress,
@@ -49,20 +51,17 @@ const Checkout = () => {
       return;
     }
     if (!selectedPayment) {
-      alert("Please select a payment method.");
+      toast.error("Please select a payment method.");
       return;
     }
-
-    console.log("Order placed with:", {
-      cart,
-      shippingAddress: selectedAddress,
+    const newOrder = await createOrder({
+      addressId: selectedAddress._id,
       paymentMethod: selectedPayment,
     });
-
     navigate("/myaccount/order-history");
   };
 
-  if (cartLoading || addressLoading || isAddingAddress) {
+  if (cartLoading || addressLoading || isAddingAddress || isCreatingOrder) {
     return (
       <div className="flex justify-center items-center fixed inset-0 bg-white/80 z-50">
         <Spinner />
@@ -179,8 +178,8 @@ const Checkout = () => {
                 <input
                   type="radio"
                   name="payment"
-                  value="cod"
-                  checked={selectedPayment === "cod"}
+                  value="COD"
+                  checked={selectedPayment === "COD"}
                   onChange={(e) => setSelectedPayment(e.target.value)}
                 />
                 <span>Cash on Delivery</span>

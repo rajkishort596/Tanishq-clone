@@ -83,6 +83,8 @@ const OrderHistory = () => {
                     ? "bg-green-100 text-green-700"
                     : order.status === "cancelled"
                     ? "bg-red-100 text-red-700"
+                    : order.status === "shipped"
+                    ? "bg-blue-100 text-blue-700"
                     : "bg-yellow-100 text-yellow-700"
                 }`}
               >
@@ -115,7 +117,7 @@ const OrderHistory = () => {
                           {item.name}
                         </h4>
                         <p className="text-sm text-gray-600">
-                          Qty: {item.quantity} | Size: {item.size} |{" "}
+                          Qty: {item.quantity} | Size: {item.size || "NA"} |{" "}
                           {item.metalColor}
                         </p>
                       </div>

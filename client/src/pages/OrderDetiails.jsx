@@ -10,6 +10,8 @@ const OrderDetails = () => {
 
   const { order, isLoading, error, isFetching } = useOrder(id);
 
+  console.log(order);
+
   if (isLoading || isFetching) {
     return (
       <div className="flex justify-center items-center fixed inset-0 bg-white/80 z-50">
@@ -53,6 +55,8 @@ const OrderDetails = () => {
               ? "bg-green-100 text-green-700"
               : order.status === "cancelled"
               ? "bg-red-100 text-red-700"
+              : order.status === "shipped"
+              ? "bg-blue-100 text-blue-700"
               : "bg-yellow-100 text-yellow-700"
           }`}
         >
@@ -80,7 +84,8 @@ const OrderDetails = () => {
                 {item.name}
               </h4>
               <p className="text-sm text-gray-600">
-                Qty: {item.quantity} | Size: {item.size} | {item.metalColor}
+                Qty: {item.quantity} | Size: {item.size || "NA"} |{" "}
+                {item.metalColor}
               </p>
             </div>
             <p className="text-sm sm:text-base font-bold text-primary">
