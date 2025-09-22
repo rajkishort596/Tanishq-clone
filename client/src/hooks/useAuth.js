@@ -43,6 +43,8 @@ export const useAuth = () => {
       queryClient.removeQueries({ queryKey: ["wishlist"] });
       queryClient.removeQueries({ queryKey: ["addresses"] });
       queryClient.removeQueries({ queryKey: ["userProfile"] });
+      queryClient.removeQueries({ queryKey: ["orders"] });
+      queryClient.removeQueries({ queryKey: ["order"] });
 
       toast.success("User Logged out successfully");
       dispatch(logout());

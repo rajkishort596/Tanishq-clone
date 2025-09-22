@@ -75,7 +75,7 @@ const orderSchema = new Schema(
       transactionId: { type: String, trim: true },
       status: {
         type: String,
-        enum: ["pending", "paid", "failed"],
+        enum: ["pending", "paid"],
         default: "pending",
       },
       amountPaid: { type: Number },

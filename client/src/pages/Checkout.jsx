@@ -7,9 +7,13 @@ import Modal from "../components/Modal/Modal";
 import AddressForm from "../components/Form/AddressForm";
 import { toast } from "react-toastify";
 import { useOrders } from "../hooks/useOrders";
+import { useSelector } from "react-redux";
+import { usePayment } from "../hooks/usePayment";
 
 const Checkout = () => {
   const navigate = useNavigate();
+
+  const { user } = useSelector((state) => state.auth);
 
   /** ------------------ State ------------------ */
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,6 +23,8 @@ const Checkout = () => {
   /** ------------------ Queries ------------------ */
   const { cart, isLoading: cartLoading, error: cartError } = useCart();
   const { createOrder, isCreating: isCreatingOrder } = useOrders();
+  const { initiatePayment, isInitiating, isCreatingOrderAfterPayment } =
+    usePayment();
   const {
     addresses,
     addAddress,
@@ -50,18 +56,30 @@ const Checkout = () => {
       toast.error("Please select an address to proceed.");
       return;
     }
-    if (!selectedPayment) {
-      toast.error("Please select a payment method.");
-      return;
+
+    if (selectedPayment === "COD") {
+      await createOrder({
+        addressId: selectedAddress._id,
+        paymentMethod: "COD",
+      });
+      navigate("/myaccount/order-history");
+    } else {
+      await initiatePayment({
+        selectedAddress,
+        selectedPayment,
+        user,
+        cartTotal: cart?.totalPrice || 0,
+      });
     }
-    const newOrder = await createOrder({
-      addressId: selectedAddress._id,
-      paymentMethod: selectedPayment,
-    });
-    navigate("/myaccount/order-history");
   };
 
-  if (cartLoading || addressLoading || isAddingAddress || isCreatingOrder) {
+  if (
+    cartLoading ||
+    addressLoading ||
+    isAddingAddress ||
+    isCreatingOrder ||
+    isCreatingOrderAfterPayment
+  ) {
     return (
       <div className="flex justify-center items-center fixed inset-0 bg-white/80 z-50">
         <Spinner />
@@ -188,21 +206,11 @@ const Checkout = () => {
                 <input
                   type="radio"
                   name="payment"
-                  value="card"
-                  checked={selectedPayment === "card"}
+                  value="Online"
+                  checked={selectedPayment === "Online"}
                   onChange={(e) => setSelectedPayment(e.target.value)}
                 />
-                <span>Credit / Debit Card</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="payment"
-                  value="upi"
-                  checked={selectedPayment === "upi"}
-                  onChange={(e) => setSelectedPayment(e.target.value)}
-                />
-                <span>UPI</span>
+                <span>Razorpay</span>
               </label>
             </div>
           </div>
@@ -210,8 +218,9 @@ const Checkout = () => {
           <button
             onClick={handlePlaceOrder}
             className="mt-6 w-full py-3 btn-primary rounded-md"
+            disabled={isInitiating || cartLoading}
           >
-            Place Order
+            {isInitiating ? "Processing..." : "Place Order"}
           </button>
         </div>
       </div>

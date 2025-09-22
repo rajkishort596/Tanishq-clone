@@ -135,7 +135,10 @@ const addToCart = asyncHandler(async (req, res) => {
   // 8. Populate product details for the final response
   const updatedCart = await User.findById(req.user._id)
     .select("cart")
-    .populate("cart.items.product", "name images price variants sku");
+    .populate(
+      "cart.items.product",
+      "name images price variants metalColor sku"
+    );
 
   return res
     .status(200)
@@ -161,7 +164,10 @@ const getCart = asyncHandler(async (req, res) => {
 
   const user = await User.findById(req.user._id)
     .select("cart")
-    .populate("cart.items.product", "name images price variants sku"); // Populate product details
+    .populate(
+      "cart.items.product",
+      "name images price variants stock isActive metalColor sku"
+    ); // Populate product details
 
   if (!user || !user.cart) {
     return res

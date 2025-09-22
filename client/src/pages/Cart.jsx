@@ -100,80 +100,109 @@ const Cart = () => {
     );
   }
 
+  // Check if any item in the cart is out of stock to disable the checkout button
+  const isOutOfStock = cart.items.some(
+    (item) => item.product?.stock === 0 || item.product?.isActive === false
+  );
+
   return (
     <div className="bg-white rounded-lg font-nunito min-h-screen p-4 sm:p-6 pb-24">
       <h2 className="text-xl sm:text-2xl font-bold mb-6">My Shopping Cart</h2>
-
+      {/* Display Out of Stock message if applicable */}
+      {isOutOfStock && (
+        <div className="p-3 bg-red-100 text-red-700 rounded-md shadow-sm mb-6">
+          <p className="font-semibold">
+            One or more products in your cart are currently out of stock.Please
+            remove them to proceed.
+          </p>
+        </div>
+      )}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Cart Items */}
         <div className="lg:col-span-2 space-y-5">
-          {cart.items.map((item) => (
-            <div
-              key={item._id}
-              className="relative flex flex-col sm:flex-row items-center gap-6 p-4 sm:p-6 rounded-xl shadow-md border border-gray-100 bg-white hover:shadow-xl transition-all duration-300"
-            >
-              {/* Product Image */}
-              <img
-                onClick={() =>
-                  navigate(`/shop/all-jewellery/product/${item.product?._id}`)
-                }
-                src={
-                  item.product?.images?.[0]?.url ||
-                  "/images/default-product.png"
-                }
-                alt={item.product?.name}
-                className="w-28 h-28 object-contain rounded-lg border border-gray-200 bg-gray-50 cursor-pointer"
-              />
+          {cart.items.map((item) => {
+            // Check for out of stock on each individual item
+            const isItemOutOfStock =
+              item.product?.stock === 0 || item.product?.isActive === false;
 
-              {/* Product Info */}
-              <div className="flex-1 w-full text-center sm:text-left">
-                <h3 className="font-semibold text-base sm:text-lg mb-2 text-gray-800 line-clamp-1">
-                  {item.product?.name}
-                </h3>
-                <p className="text-primary font-bold text-lg">
-                  ₹ {item.product?.price?.final?.toFixed(2)}
-                </p>
-              </div>
-
-              {/* Quantity Controls */}
-              <div className="flex items-center gap-3 px-2 py-1 rounded-md font-IBM-Plex">
-                <button
-                  onClick={() =>
-                    DecrementItemQuantity(item?.product?._id, item.quantity)
-                  }
-                  className="cursor-pointer p-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={item.quantity === 1}
-                >
-                  <SquareMinus
-                    strokeWidth={1.5}
-                    size={20}
-                    className="text-primary"
-                  />
-                </button>
-                <span className="text-lg font-medium">{item.quantity}</span>
-                <button
-                  onClick={() =>
-                    IncrementItemQuantity(item?.product?._id, item.quantity)
-                  }
-                  className="cursor-pointer p-1"
-                >
-                  <SquarePlus
-                    strokeWidth={1.5}
-                    size={20}
-                    className="text-primary"
-                  />
-                </button>
-              </div>
-
-              {/* Remove Button */}
-              <button
-                onClick={() => removeFromCart(item?.product?._id)}
-                className="absolute top-3 right-3 text-gray-500 hover:text-red-500 bg-gray-100 p-1.5 rounded-full shadow-sm hover:shadow transition cursor-pointer"
+            return (
+              <div
+                key={item._id}
+                className={`relative flex flex-col sm:flex-row items-center gap-6 p-4 sm:p-6 rounded-xl shadow-md border border-gray-100 bg-white hover:shadow-xl transition-all duration-300 ${
+                  isItemOutOfStock ? "opacity-50" : ""
+                }`}
               >
-                <X size={16} />
-              </button>
-            </div>
-          ))}
+                {/* Product Image */}
+                <img
+                  onClick={() =>
+                    navigate(`/shop/all-jewellery/product/${item.product?._id}`)
+                  }
+                  src={
+                    item.product?.images?.[0]?.url ||
+                    "/images/default-product.png"
+                  }
+                  alt={item.product?.name}
+                  className="w-28 h-28 object-contain rounded-lg border border-gray-200 bg-gray-50 cursor-pointer"
+                />
+
+                {/* Product Info */}
+                <div className="flex-1 w-full text-center sm:text-left">
+                  <h3 className="font-semibold text-base sm:text-lg mb-2 text-gray-800 line-clamp-1">
+                    {item.product?.name}
+                  </h3>
+                  <p className="text-primary font-bold text-lg">
+                    ₹ {item.product?.price?.final?.toFixed(2)}
+                  </p>
+                </div>
+
+                {/*  Display out of stock message for the specific item */}
+                {isItemOutOfStock && (
+                  <div className="flex items-center gap-2 p-2 rounded-md bg-red-100 text-red-600 font-semibold text-sm">
+                    <p>Out of Stock</p>
+                  </div>
+                )}
+
+                {/* Quantity Controls */}
+                <div className="flex items-center gap-3 px-2 py-1 rounded-md font-IBM-Plex">
+                  <button
+                    onClick={() =>
+                      DecrementItemQuantity(item?.product?._id, item.quantity)
+                    }
+                    className="cursor-pointer p-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={item.quantity === 1 || isItemOutOfStock}
+                  >
+                    <SquareMinus
+                      strokeWidth={1.5}
+                      size={20}
+                      className="text-primary"
+                    />
+                  </button>
+                  <span className="text-lg font-medium">{item.quantity}</span>
+                  <button
+                    onClick={() =>
+                      IncrementItemQuantity(item?.product?._id, item.quantity)
+                    }
+                    className="cursor-pointer p-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={isItemOutOfStock}
+                  >
+                    <SquarePlus
+                      strokeWidth={1.5}
+                      size={20}
+                      className="text-primary"
+                    />
+                  </button>
+                </div>
+
+                {/* Remove Button */}
+                <button
+                  onClick={() => removeFromCart(item?.product?._id)}
+                  className="absolute top-3 right-3 text-gray-500 hover:text-red-500 bg-gray-100 p-1.5 rounded-full shadow-sm hover:shadow transition cursor-pointer"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            );
+          })}
         </div>
 
         {/* Cart Summary */}
@@ -199,7 +228,8 @@ const Cart = () => {
 
           <button
             onClick={() => navigate("/checkout")}
-            className="mt-6 w-full py-3 btn-primary rounded-md"
+            className="mt-6 w-full py-3 btn-primary rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isOutOfStock || isUpdating || isRemoving}
           >
             Proceed to Checkout
           </button>
@@ -218,8 +248,8 @@ const Cart = () => {
           </div>
           <button
             onClick={() => navigate("/checkout")}
-            className="w-full sm:w-auto px-8 py-3 btn-primary rounded-md text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
-            disabled={isUpdating || isRemoving}
+            className="w-full sm:w-auto px-8 py-3 btn-primary rounded-md text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isOutOfStock || isUpdating || isRemoving}
           >
             Proceed to Checkout
           </button>

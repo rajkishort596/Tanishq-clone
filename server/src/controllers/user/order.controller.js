@@ -5,9 +5,10 @@ import { User } from "../../models/user.model.js";
 import { Order } from "../../models/order.model.js";
 import { Address } from "../../models/address.model.js";
 import mongoose from "mongoose";
+import { fetchPaymentDetails } from "../../utils/razorpay.js";
 
 /**
- * @desc Create a new order from the user's cart.
+ * @desc Create a new order from the user's cart with payment validation.
  * @route POST /api/v1/users/me/orders
  * @access Private
  */
@@ -22,7 +23,7 @@ const createOrder = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id)
       .populate({
         path: "cart.items.product",
-        select: "name images price variants stock isActive",
+        select: "name images price variants stock metalColor isActive",
       })
       .session(session);
 
@@ -89,6 +90,7 @@ const createOrder = asyncHandler(async (req, res) => {
         product: product._id,
         variantId: cartItem.variantId,
         name: product.name,
+        metalColor: product.metalColor,
         quantity: cartItem.quantity,
         unitPrice: itemUnitPrice,
         totalItemPrice: itemUnitPrice * cartItem.quantity,
@@ -109,6 +111,40 @@ const createOrder = asyncHandler(async (req, res) => {
     const isCOD =
       paymentMethod === "COD" || paymentMethod === "Cash on delivery";
 
+    let paymentStatus;
+
+    //  Validate online payments with Razorpay API
+    if (!isCOD) {
+      if (!transactionId) {
+        throw new ApiError(
+          400,
+          "Transaction ID is required for online payments."
+        );
+      }
+
+      const payment = await fetchPaymentDetails(transactionId);
+
+      // Converting Razorpay amount (in paise) to INR
+      const razorpayAmountInRupees = Number(payment.amount / 100);
+
+      // Using rounded values for a reliable comparison
+      const roundedRazorpayAmount = Number(razorpayAmountInRupees.toFixed(2));
+      const roundedTotalOrderAmount = Number(totalOrderAmount.toFixed(2));
+
+      if (
+        !payment ||
+        payment.status !== "captured" ||
+        roundedRazorpayAmount !== roundedTotalOrderAmount
+      ) {
+        throw new ApiError(
+          400,
+          "Payment verification failed. Cannot place order."
+        );
+      }
+
+      paymentStatus = payment.status === "captured" ? "paid" : "";
+    }
+
     const newOrder = await Order.create(
       [
         {
@@ -119,11 +155,8 @@ const createOrder = asyncHandler(async (req, res) => {
           status: "processing",
           paymentDetails: {
             method: paymentMethod,
-            transactionId: isCOD
-              ? null
-              : transactionId ||
-                `TXN-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-            status: "pending",
+            transactionId: isCOD ? null : transactionId,
+            status: paymentStatus || "pending",
             amountPaid: isCOD ? 0 : totalOrderAmount,
             paymentDate: isCOD ? null : new Date(),
           },

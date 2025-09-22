@@ -36,6 +36,7 @@
     "multer": "^2.0.1",
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.4",
+    "razorpay": "^2.9.6",
     "slugify": "^1.6.6",
     "uuid": "^11.1.0"
   }

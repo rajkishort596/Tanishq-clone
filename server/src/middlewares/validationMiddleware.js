@@ -714,7 +714,7 @@ const createOrderValidation = [
     .withMessage("Payment method is required.")
     .isString()
     .withMessage("Payment method must be a string.")
-    .isIn(["COD", "Online", "UPI"])
+    .isIn(["COD", "Online"])
     .withMessage("Payment method must be COD, Online, or UPI."),
 
   body("transactionId")

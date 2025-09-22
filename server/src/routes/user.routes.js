@@ -58,6 +58,10 @@ import {
   submitReview,
   updateReview,
 } from "../controllers/user/review.controller.js";
+import {
+  createRazorpayOrder,
+  verifyRazorpayPayment,
+} from "../controllers/user/payment.controller.js";
 const router = Router();
 
 /**
@@ -130,6 +134,12 @@ router
   .get(verifyUserJWT, getUserOrders)
   .post(verifyUserJWT, createOrderValidation, createOrder);
 router.route("/me/orders/:orderId").get(verifyUserJWT, getUserOrderById);
+
+/**
+ * @Payment routes
+ */
+router.post("/payment/create", verifyUserJWT, createRazorpayOrder);
+router.post("/payment/verify", verifyUserJWT, verifyRazorpayPayment);
 
 /**
  * @WishlistRoutes
