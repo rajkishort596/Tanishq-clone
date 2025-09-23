@@ -51,9 +51,9 @@ const ProductForm = () => {
       subCategory: "",
       collections: [],
       occasion: [],
-      price: { base: 0, makingCharges: 0, gst: 0 },
-      stock: 0,
-      weight: 0,
+      price: { base: "", makingCharges: "", gst: 3 },
+      stock: "",
+      weight: "",
       variants: [],
       metal: "",
       purity: "",
@@ -76,11 +76,11 @@ const ProductForm = () => {
       setValue("subCategory", productData.subCategory?._id || "");
       setValue("collections", productData.collections?.map((c) => c._id) || []);
       setValue("occasion", productData.occasion || []);
-      setValue("price.base", productData.price?.base || 0);
-      setValue("price.makingCharges", productData.price?.makingCharges || 0);
-      setValue("price.gst", productData.price?.gst || 0);
+      setValue("price.base", productData.price?.base || "");
+      setValue("price.makingCharges", productData.price?.makingCharges || "");
+      setValue("price.gst", productData.price?.gst || 3);
       setValue("stock", productData.stock);
-      setValue("weight", productData.weight);
+      setValue("weight", productData.weight || "");
       setValue("variants", productData.variants || []);
       setValue("metal", productData.metal || "");
       setValue("purity", productData.purity || "");

@@ -3,7 +3,16 @@ import React, { forwardRef } from "react";
 
 const Select = forwardRef(
   (
-    { label, className = "", readonly = false, error, id, children, ...props },
+    {
+      label,
+      className = "",
+      readonly = false,
+      error,
+      id,
+      required = false,
+      children,
+      ...props
+    },
     ref
   ) => {
     return (
@@ -11,6 +20,7 @@ const Select = forwardRef(
         {label && (
           <label htmlFor={id} className="font-IBM-Plex text-black text-sm mb-1">
             {label}
+            {required && <span className="text-red-500">*</span>}
           </label>
         )}
 

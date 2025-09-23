@@ -2,7 +2,10 @@
 import React, { useMemo, forwardRef } from "react";
 
 const CategorySelect = forwardRef(
-  ({ categories = [], error, label = "Category", ...props }, ref) => {
+  (
+    { categories = [], error, label = "Category", required = false, ...props },
+    ref
+  ) => {
     const mainCategories = useMemo(
       () =>
         categories.filter((c) => {
@@ -17,7 +20,10 @@ const CategorySelect = forwardRef(
 
     return (
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium">{label}</label>
+        <label className="text-sm font-medium">
+          {label}
+          {required && <span className="text-red-500">*</span>}
+        </label>
         <select
           ref={ref}
           {...props} // includes onChange/onBlur/name/value from register

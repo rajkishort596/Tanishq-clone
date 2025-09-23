@@ -32,6 +32,7 @@ const SubCategorySelect = forwardRef(
           {selectedCategory
             ? label || "Sub Category"
             : "Select Category to show subcategories"}
+          <span className="text-red-500">*</span>
         </label>
         <select
           ref={ref}

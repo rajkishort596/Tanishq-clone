@@ -21,7 +21,7 @@ const ProductDetails = ({ register, errors, setValue, control }) => {
     collections = [],
     isLoading: isCollectionLoading,
     error: isCollectionError,
-  } = useCollections({ limit: Infinity });
+  } = useCollections({ limit: 100 });
 
   const selectedCategory = useWatch({ control, name: "category" });
   const occasions = useWatch({ control, name: "occasion" }) || [];
@@ -40,6 +40,7 @@ const ProductDetails = ({ register, errors, setValue, control }) => {
         type="text"
         placeholder="Enter product name"
         error={errors.name?.message}
+        required
         {...register("name", { required: "Product name is required." })}
       />
 
@@ -48,6 +49,7 @@ const ProductDetails = ({ register, errors, setValue, control }) => {
         id="description"
         placeholder="Enter product description"
         error={errors.description?.message}
+        required
         {...register("description", {
           required: "Description is required.",
         })}
@@ -57,6 +59,7 @@ const ProductDetails = ({ register, errors, setValue, control }) => {
         <CategorySelect
           categories={categories}
           value={useWatch({ control, name: "category" })}
+          required
           onChange={(v) => {
             setValue("category", v, {
               shouldValidate: true,
@@ -77,7 +80,9 @@ const ProductDetails = ({ register, errors, setValue, control }) => {
           value={useWatch({ control, name: "subCategory" })}
           onChange={(v) => setValue("subCategory", v)}
           error={errors.subCategory?.message}
-          {...register("subCategory")}
+          {...register("subCategory", {
+            required: "Sub Category name is required.",
+          })}
         />
       </div>
 

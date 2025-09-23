@@ -31,6 +31,7 @@ const ProductSpecifications = ({
         <Select
           label="Metal"
           id="metal"
+          required
           {...register("metal", { required: "Metal is required." })}
           error={errors.metal?.message}
         >
@@ -43,6 +44,7 @@ const ProductSpecifications = ({
         <Select
           label="Purity"
           id="purity"
+          required
           {...register("purity", { required: "Purity is required." })}
           error={errors.purity?.message}
         >
@@ -60,6 +62,7 @@ const ProductSpecifications = ({
         <Select
           label="Gender"
           id="gender"
+          required
           {...register("gender", { required: "Gender is required." })}
           error={errors.gender?.message}
         >
@@ -73,6 +76,7 @@ const ProductSpecifications = ({
         <Select
           label="Product Type"
           id="productType"
+          required
           {...register("productType", {
             required: "Product Type is required.",
           })}
@@ -89,6 +93,7 @@ const ProductSpecifications = ({
         <Select
           label="Metal Colour"
           id="metalColor"
+          required
           {...register("metalColor", { required: "Metal Colour is required." })}
           error={errors.metalColor?.message}
         >

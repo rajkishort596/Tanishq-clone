@@ -9,13 +9,18 @@ const Input = ({
   error,
   id,
   icon, // new icon prop
+  required = false, // new prop
   ...props
 }) => {
   return (
     <div className="flex flex-col gap-1 w-full">
       {label && (
-        <label htmlFor={id} className="font-IBM-Plex text-black text-sm mb-1">
+        <label
+          htmlFor={id}
+          className="font-IBM-Plex text-black text-sm mb-1 flex items-center gap-1"
+        >
           {label}
+          {required && <span className="text-red-500">*</span>}
         </label>
       )}
 
@@ -43,6 +48,7 @@ const Input = ({
           placeholder={placeholder}
           autoComplete="off"
           readOnly={readonly}
+          required={required}
           className={`flex-1 px-4 py-2 rounded-md outline-none bg-transparent text-gray-800 ${className}`}
           {...props}
         />

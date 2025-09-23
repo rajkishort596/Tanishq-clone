@@ -49,10 +49,10 @@ const OrdersTable = ({
               <td className="py-3 px-4">{ord.orderNumber}</td>
               <td className="py-3 px-4 capitalize">
                 <span
-                  className={`px-3 py-2 rounded text-xs font-medium ${
+                  className={`flex items-center justify-center w-full px-3 py-2 rounded text-xs font-medium ${
                     ord.paymentDetails.status === "paid"
-                      ? "bg-green-700 text-white"
-                      : "bg-yellow-700 text-white"
+                      ? "bg-emerald-200 text-emerald-700"
+                      : "bg-amber-200 text-amber-700"
                   }`}
                 >
                   {ord.paymentDetails.status}

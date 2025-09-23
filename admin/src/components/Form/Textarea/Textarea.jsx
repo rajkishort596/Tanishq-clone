@@ -10,6 +10,7 @@ const Textarea = forwardRef(
       readonly = false,
       error,
       id,
+      required = false,
       ...props
     },
     ref
@@ -19,6 +20,7 @@ const Textarea = forwardRef(
         {label && (
           <label htmlFor={id} className="font-IBM-Plex text-black text-sm mb-1">
             {label}
+            {required && <span className="text-red-500">*</span>}
           </label>
         )}
 

@@ -1,4 +1,3 @@
-// src/components/ProductForm/ProductPricing.jsx
 import React from "react";
 import { useFieldArray } from "react-hook-form";
 import { PlusCircle, MinusCircle } from "lucide-react";
@@ -19,6 +18,7 @@ const ProductPricing = ({ register, errors, control }) => {
           type="number"
           step="0.01"
           placeholder="e.g. 1500.00"
+          required
           error={errors.price?.base?.message}
           {...register("price.base", {
             required: "Base price is required.",
@@ -58,6 +58,7 @@ const ProductPricing = ({ register, errors, control }) => {
           type="number"
           placeholder="e.g. 100"
           error={errors.stock?.message}
+          required
           {...register("stock", {
             required: "Stock quantity is required.",
             valueAsNumber: true,
@@ -70,10 +71,12 @@ const ProductPricing = ({ register, errors, control }) => {
           type="number"
           step="0.01"
           placeholder="e.g. 5.25"
+          required
           error={errors.weight?.message}
           {...register("weight", {
+            required: "Weight is required.",
             valueAsNumber: true,
-            min: { value: 0, message: "Weight cannot be negative." },
+            min: { value: 0.01, message: "Weight cannot be zero or negative." },
           })}
         />
       </div>

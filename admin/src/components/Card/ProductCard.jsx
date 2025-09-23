@@ -16,7 +16,7 @@ const ProductCard = ({ product, onEdit, onDelete, onClick }) => {
         <img
           src={productImageUrl}
           alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+          className="w-full h-full object-cover rounded-md transition-transform duration-500 hover:scale-110"
         />
       </div>
 
@@ -27,30 +27,24 @@ const ProductCard = ({ product, onEdit, onDelete, onClick }) => {
             <p className="text-xs font-IBM-Plex text-primary truncate">
               {product.category?.name || "Uncategorized"}
             </p>
-            <p className="text-xs font-semibold text-primary">
-              {formatCurrency(product.price.final)}
-            </p>
-            {/* <p
-              className={`text-xs ${
-                product.stock > 0 ? " text-green" : " text-red-600"
-              }`}
-            >
-              {product.stock > 0 ? "Stock " + product.stock : "Out of Stock"}
-            </p> */}
           </div>
           <h3 className="text-xs font-IBM-Plex font-medium text-black leading-tight mt-1">
             {product.name}
           </h3>
         </div>
 
-        {/* <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center">
           <p className="text-xs font-bold text-primary">
             {formatCurrency(product.price.final)}
           </p>
-          <p className="text-xs font-medium text-grey3">
-            Stock: {product.stock > 0 ? product.stock : "out of Stock"}
+          <p
+            className={`text-xs font-semibold ${
+              product.stock > 0 ? " text-emerald-700" : " text-red-700"
+            }`}
+          >
+            {product.stock > 0 ? "Stock " + product.stock : "Out of Stock"}
           </p>
-        </div> */}
+        </div>
 
         {/* Action Buttons */}
         <div className="flex justify-between items-center gap-3">
