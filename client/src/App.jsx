@@ -29,11 +29,15 @@ import Wishlist from "./pages/MyAccount/Wishlist";
 import OrderHistory from "./pages/MyAccount/OrderHistory";
 import OrderDetails from "./pages/OrderDetiails";
 import Checkout from "./pages/Checkout";
+import ForgotPassword from "./pages/Forgotpassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromChildren(
       <>
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/" element={<ClientLayout />}>
           <Route index element={<Home />} />
           <Route path="cart" element={<Cart />} />

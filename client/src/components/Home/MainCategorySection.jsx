@@ -35,7 +35,7 @@ const categories = [
   {
     title: "CHAINS",
     image: images.chainsCat,
-    link: "/shop/all-jewellery/chains",
+    link: "/shop/all-jewellery/gold-chain",
   },
   {
     title: "VIEW ALL",

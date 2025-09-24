@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import OtpForm from "./OtpForm";
 import RegisterForm from "./RegisterForm";
 import { useAuth } from "../../hooks/useAuth.js";
+import { Link } from "react-router-dom";
 
 const Form = ({ isLogin, onClose, setIsLogin }) => {
   const [step, setStep] = useState(isLogin ? "login" : "email");
@@ -192,6 +193,14 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
                     },
                   })}
                 />
+                <div className="text-right">
+                  <Link
+                    to="/forgot-password"
+                    className="text-primary hover:underline text-sm"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
                 <button
                   type="submit"
                   className="btn-primary w-1/2 mx-auto rounded-full mt-4"

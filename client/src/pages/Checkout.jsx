@@ -217,7 +217,7 @@ const Checkout = () => {
 
           <button
             onClick={handlePlaceOrder}
-            className="mt-6 w-full py-3 btn-primary rounded-md"
+            className="mt-6 w-full py-3 btn-primary rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isInitiating || cartLoading}
           >
             {isInitiating ? "Processing..." : "Place Order"}
