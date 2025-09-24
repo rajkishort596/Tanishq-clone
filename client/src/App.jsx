@@ -31,6 +31,7 @@ import OrderDetails from "./pages/OrderDetiails";
 import Checkout from "./pages/Checkout";
 import ForgotPassword from "./pages/Forgotpassword";
 import ResetPassword from "./pages/ResetPassword";
+import NotFound from "./pages/NotFound";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -112,6 +113,7 @@ const App = () => {
             }
           />
         </Route>
+        <Route path="*" element={<NotFound />} />
       </>
     )
   );
