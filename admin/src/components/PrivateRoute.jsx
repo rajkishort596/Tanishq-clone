@@ -4,27 +4,36 @@ import { Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { fetchAdminProfile } from "../api/auth.Api";
 import Spinner from "./Spinner";
-import { setCredentials } from "../features/authSlice";
+import { setAuthStatus, setCredentials } from "../features/authSlice";
 
 const PrivateRoute = ({ children }) => {
   const dispatch = useDispatch();
-  const { admin, isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticated, status } = useSelector((state) => state.auth);
 
-  const { data, isLoading, error, isSuccess } = useQuery({
+  const {
+    data: admin,
+    isLoading,
+    error,
+    isSuccess,
+  } = useQuery({
     queryKey: ["adminProfile"],
     queryFn: fetchAdminProfile,
-    retry: false,
+    retry: 1,
     refetchOnWindowFocus: false,
   });
 
-  // Set Redux when query succeeds
   useEffect(() => {
-    if (isSuccess && data) {
-      dispatch(setCredentials({ admin: data }));
+    if (isLoading) {
+      dispatch(setAuthStatus("loading"));
+    } else if (isSuccess && admin) {
+      dispatch(setCredentials({ admin }));
+      dispatch(setAuthStatus("succeeded"));
+    } else if (error) {
+      dispatch(setAuthStatus("failed"));
     }
-  }, [isSuccess, data, dispatch]);
+  }, [isLoading, isSuccess, error, admin, dispatch]);
 
-  if (isLoading) {
+  if (status === "loading" || status === "idle") {
     return (
       <div className="flex justify-center items-center absolute inset-0 bg-white/80 z-50">
         <Spinner />
@@ -32,11 +41,11 @@ const PrivateRoute = ({ children }) => {
     );
   }
 
-  if (error) {
+  if (status === "failed") {
     return <Navigate to="/login" replace />;
   }
 
-  if (isAuthenticated || isSuccess) {
+  if (isAuthenticated && status === "succeeded") {
     return children;
   }
 

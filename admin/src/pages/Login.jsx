@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import images from "../constants/images";
 import LoginHeroImg from "../assets/images/Login-HeroImg.png";
 import { loginAdmin } from "../api/auth.Api";
-import { setCredentials } from "../features/authSlice.js";
+import { setAuthStatus, setCredentials } from "../features/authSlice.js";
 import IconInput from "../components/Form/Input/IconInput";
 
 const Login = () => {
@@ -29,6 +29,7 @@ const Login = () => {
       const res = await loginAdmin(data);
       console.log(res);
       dispatch(setCredentials({ admin: res.user }));
+      dispatch(setAuthStatus("succeeded"));
       toast.success(`Welcome back ${res.user.fullName || "Admin"}`);
       reset();
       navigate("/");
