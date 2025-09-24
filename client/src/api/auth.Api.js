@@ -63,7 +63,10 @@ export const completeUserRegistration = async (userData) => {
 };
 
 export const forgotPassword = async (email) => {
-  const response = await axios.post("/users/forgot-password", { email });
+  const response = await axios.post("/users/forgot-password", {
+    email,
+    frontendUrl: window.location.origin,
+  });
   return response.data.data;
 };
 

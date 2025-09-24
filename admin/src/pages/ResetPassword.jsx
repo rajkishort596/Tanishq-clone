@@ -75,14 +75,16 @@ const ResetPassword = () => {
                 minLength: { value: 6, message: "Minimum 6 characters" },
               })}
               error={errors.password}
+              rightIcon={
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-gray-400 hover:text-gray-200"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              }
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 bottom-4 text-gray-400 hover:text-gray-200"
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
           </div>
 
           <div className="relative">
@@ -98,14 +100,20 @@ const ResetPassword = () => {
                   value === getValues("password") || "Passwords do not match",
               })}
               error={errors.confirmPassword}
+              rightIcon={
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className=" text-gray-400 hover:text-gray-200"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff size={20} />
+                  ) : (
+                    <Eye size={20} />
+                  )}
+                </button>
+              }
             />
-            <button
-              type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 bottom-4 text-gray-400 hover:text-gray-200"
-            >
-              {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
           </div>
 
           <button type="submit" className="w-full btn-primary">

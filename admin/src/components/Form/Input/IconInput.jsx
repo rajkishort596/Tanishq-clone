@@ -4,6 +4,7 @@ const Input = ({
   id,
   type = "text",
   icon: Icon,
+  rightIcon,
   placeholder,
   error,
   register,
@@ -32,6 +33,12 @@ const Input = ({
         {...register}
         {...rest}
       />
+      {/* Right Icon (like Eye toggle) */}
+      {rightIcon && (
+        <span className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center cursor-pointer">
+          {rightIcon}
+        </span>
+      )}
     </div>
     {error && <p className="mt-1 text-sm text-red-500">{error.message}</p>}
   </div>

@@ -36,7 +36,10 @@ export const changePassword = async ({ currentPassword, newPassword }) => {
   return response.data.data;
 };
 export const forgotPassword = async (email) => {
-  const response = await axios.post("/admin/forgot-password", { email });
+  const response = await axios.post("/admin/forgot-password", {
+    email,
+    frontendUrl: window.location.origin,
+  });
   return response.data.data;
 };
 

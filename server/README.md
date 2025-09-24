@@ -358,7 +358,7 @@ const products = await Product.aggregatePaginate(
 1. **Clone the repository:**
 
    ```sh
-   git clone <https://github.com/rajkishort596/Tanishq-clone.git>
+   git clone https://github.com/rajkishort596/Tanishq-clone.git
    cd server
    ```
 
@@ -379,7 +379,6 @@ const products = await Product.aggregatePaginate(
    ACCESS_TOKEN_SECRET="your_access_token_secret"
    REFRESH_TOKEN_SECRET="your_refresh_token_secret"
    RESET_PASSWORD_SECRET="your_reset_password_secret"
-   FRONTEND_URL="http://localhost:5173"
 
    CLOUDINARY_CLOUD_NAME="your_cloudinary_cloud_name"
    CLOUDINARY_API_KEY="your_cloudinary_api_key"

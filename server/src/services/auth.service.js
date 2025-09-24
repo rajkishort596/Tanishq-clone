@@ -14,9 +14,9 @@ import bcrypt from "bcrypt";
  * @throws {ApiError} If email is missing or email sending fails.
  */
 
-export const genericForgotPassword = async (Model, email) => {
-  if (!email) {
-    throw new ApiError(400, "Email is required.");
+export const genericForgotPassword = async (Model, email, frontendUrl) => {
+  if (!email || !frontendUrl) {
+    throw new ApiError(400, "Email and frontend URL are required.");
   }
 
   const entity = await Model.findOne({ email });
@@ -28,10 +28,8 @@ export const genericForgotPassword = async (Model, email) => {
   // Generate JWT reset token using the model's method
   const resetToken = await entity.generatePasswordResetToken();
 
-  // The frontend URL where the user will reset their password
-  const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
-
-  const resetUrl = `${FRONTEND_URL}/reset-password/${resetToken}`;
+  // Use the passed frontendUrl to construct the reset link
+  const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
 
   try {
     await sendEmail(
@@ -39,13 +37,13 @@ export const genericForgotPassword = async (Model, email) => {
       "Password Reset Request",
       `
       <div style="font-family: Arial, sans-serif; color: #222; max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
-          <h2 style="color: #333; text-align: center;">Password Reset Request</h2>
-          <p>Hello ${entity.fullName || entity.firstName || "User"},</p>
-          <p>We received a request to reset your password for your Tanishq account. Click the button below to reset it:</p>
-          <a href="${resetUrl}" style="display:inline-block;padding:12px 24px;background:#a11e3b;color:#fff;text-decoration:none;border-radius:4px;font-weight:bold;text-align:center;">Reset Password</a>
-          <p style="margin-top: 20px;">If you did not request this, please ignore this email. Your password will remain unchanged.</p>
-          <p style="margin-top:32px;font-size:12px;color:#888;">If the button doesn't work, copy and paste this link into your browser:<br><a href="${resetUrl}" style="color:#a11e3b;word-break: break-all;">${resetUrl}</a></p>
-          <p style="margin-top: 20px; font-size: 14px; color: #555;">Thank you,<br>The Tanishq Team</p>
+        <h2 style="color: #333; text-align: center;">Password Reset Request</h2>
+        <p>Hello ${entity.fullName || entity.firstName || "User"},</p>
+        <p>We received a request to reset your password for your Tanishq account. Click the button below to reset it:</p>
+        <a href="${resetUrl}" style="display:inline-block;padding:12px 24px;background:#a11e3b;color:#fff;text-decoration:none;border-radius:4px;font-weight:bold;text-align:center;">Reset Password</a>
+        <p style="margin-top: 20px;">If you did not request this, please ignore this email. Your password will remain unchanged.</p>
+        <p style="margin-top:32px;font-size:12px;color:#888;">If the button doesn't work, copy and paste this link into your browser:<br><a href="${resetUrl}" style="color:#a11e3b;word-break: break-all;">${resetUrl}</a></p>
+        <p style="margin-top: 20px; font-size: 14px; color: #555;">Thank you,<br>The Tanishq Team</p>
       </div>
       `
     );

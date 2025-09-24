@@ -439,9 +439,9 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 const forgotPassword = asyncHandler(async (req, res) => {
-  const { email } = req.body;
+  const { email, frontendUrl } = req.body;
   // Call the generic service with the User model
-  const response = await genericForgotPassword(User, email);
+  const response = await genericForgotPassword(User, email, frontendUrl);
   return res.status(response.statusCode).json(response);
 });
 
