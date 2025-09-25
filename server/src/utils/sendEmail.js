@@ -1,22 +1,35 @@
 import nodemailer from "nodemailer";
 
-export const sendEmail = async (to, subject, html) => {
-  // Create a transporter using your email service credentials
-  const transporter = nodemailer.createTransport({
+let transporter;
+
+// Gmail in development, Brevo in production
+if (process.env.NODE_ENV === "production") {
+  transporter = nodemailer.createTransport({
+    host: process.env.BREVO_HOST,
+    port: process.env.BREVO_PORT || 587,
+    secure: false,
+    auth: {
+      user: process.env.BREVO_USER,
+      pass: process.env.BREVO_PASS,
+    },
+  });
+} else {
+  transporter = nodemailer.createTransport({
     service: process.env.EMAIL_SERVICE,
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
   });
+}
 
+export const sendEmail = async (to, subject, html) => {
   const mailOptions = {
-    from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+    from: process.env.EMAIL_FROM,
     to,
     subject,
     html,
   };
 
-  // Send the email
-  await transporter.sendMail(mailOptions);
+  return transporter.sendMail(mailOptions);
 };
