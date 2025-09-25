@@ -1,6 +1,6 @@
 {
   "engines": {
-  "node": ">=18"
+    "node": ">=18"
   },
   "name": "server",
   "version": "1.0.0",
@@ -24,6 +24,7 @@
     "prettier": "^3.6.2"
   },
   "dependencies": {
+    "@getbrevo/brevo": "^3.0.1",
     "axios": "^1.10.0",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.7.0",

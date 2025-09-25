@@ -1,19 +1,10 @@
 import nodemailer from "nodemailer";
+import { TransactionalEmailsApi, SendSmtpEmail } from "@getbrevo/brevo";
 
 let transporter;
 
-// Gmail in development, Brevo in production
-if (process.env.NODE_ENV === "production") {
-  transporter = nodemailer.createTransport({
-    host: process.env.BREVO_HOST,
-    port: process.env.BREVO_PORT || 587,
-    secure: false,
-    auth: {
-      user: process.env.BREVO_USER,
-      pass: process.env.BREVO_PASS,
-    },
-  });
-} else {
+// Gmail SMTP in development
+if (process.env.NODE_ENV !== "production") {
   transporter = nodemailer.createTransport({
     service: process.env.EMAIL_SERVICE,
     auth: {
@@ -23,13 +14,36 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-export const sendEmail = async (to, subject, html) => {
-  const mailOptions = {
-    from: process.env.EMAIL_FROM,
-    to,
-    subject,
-    html,
-  };
+// Brevo API client in production
+let brevoClient;
+if (process.env.NODE_ENV === "production") {
+  brevoClient = new TransactionalEmailsApi();
+  brevoClient.authentications.apiKey.apiKey = process.env.BREVO_API_KEY;
+}
 
-  return transporter.sendMail(mailOptions);
+export const sendEmail = async (to, subject, html, name = "user") => {
+  if (process.env.NODE_ENV === "production") {
+    const message = new SendSmtpEmail();
+    message.sender = { email: process.env.EMAIL_FROM };
+    message.to = [{ email: to, name }];
+    message.subject = subject;
+    message.htmlContent = html;
+
+    try {
+      const res = await brevoClient.sendTransacEmail(message);
+      console.log("Email sent:", res.body);
+      return res.body;
+    } catch (err) {
+      console.error("Error sending email via Brevo API:", err);
+      throw err;
+    }
+  } else {
+    // Local dev using Gmail SMTP
+    return transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to,
+      subject,
+      html,
+    });
+  }
 };
