@@ -42,8 +42,6 @@ const createProduct = asyncHandler(async (req, res) => {
     metalColor,
   } = req.body;
 
-  console.log(req.body);
-
   // Basic validation
   if (
     [

@@ -10,8 +10,6 @@ const OrderDetails = () => {
 
   const { order, isLoading, error, isFetching } = useOrder(id);
 
-  console.log(order);
-
   if (isLoading || isFetching) {
     return (
       <div className="flex justify-center items-center fixed inset-0 bg-white/80 z-50">

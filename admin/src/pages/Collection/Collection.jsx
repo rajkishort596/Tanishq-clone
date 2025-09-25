@@ -47,8 +47,6 @@ const Collection = () => {
     search: searchQuery,
   });
 
-  console.log("isDeleting", isDeleting, "isLoading", isLoading);
-
   useEffect(() => {
     if (error) {
       toast.error(error?.message || "Failed to load categories.");
@@ -73,9 +71,7 @@ const Collection = () => {
   };
 
   const triggerDelete = (collectionId) => {
-    console.log(collectionId);
     setToDeleteId(collectionId);
-    console.log(toDeleteId);
     setShowConfirm(true);
   };
 

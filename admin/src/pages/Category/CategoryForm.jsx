@@ -79,21 +79,17 @@ const CategoryForm = () => {
   }, [formError]);
 
   const handleParentToggle = (id) => {
-    // console.log(id);
     const currentParents = watchParents || [];
     const newParents = currentParents.includes(id)
       ? currentParents.filter((pId) => pId !== id)
       : [...currentParents, id];
     setValue("parent", newParents);
-    console.log(newParents);
   };
 
   const onSubmit = async (data) => {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("description", data.description);
-
-    console.log(data.parent);
 
     if (data.parent.length > 0) {
       data.parent.forEach((parentId) => {
@@ -103,10 +99,6 @@ const CategoryForm = () => {
 
     if (data.icon && data.icon[0] instanceof File) {
       formData.append("icon", data.icon?.[0]);
-    }
-
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
     }
 
     if (isEditMode) {

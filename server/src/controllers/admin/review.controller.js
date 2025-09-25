@@ -201,7 +201,6 @@ const updateReviewApprovalStatus = asyncHandler(async (req, res) => {
   const { reviewId } = req.params;
   const { isApproved } = req.body; // Expecting boolean true/false
 
-  console.log(isApproved);
   if (typeof isApproved !== "boolean") {
     throw new ApiError(
       400,

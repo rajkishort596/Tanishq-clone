@@ -106,7 +106,6 @@ const CollectionForm = () => {
     }
     navigate("/collections");
   };
-  console.log("isCreatin:", isCreating, "isUpdating:", isUpdating);
 
   if (isLoadingForm || isCreating || isUpdating) {
     return (

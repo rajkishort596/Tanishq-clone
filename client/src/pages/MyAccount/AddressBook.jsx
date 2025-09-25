@@ -29,7 +29,6 @@ const AddressBook = () => {
 
   const handleConfirmDelete = async () => {
     if (confirmDelete.addressId) {
-      console.log(confirmDelete.addressId);
       await deleteAddress(confirmDelete.addressId);
     }
     setConfirmDelete({ open: false, addressId: null });

@@ -15,7 +15,6 @@ export const getAdminSettings = async () => {
   }
 };
 export const updateAdminSettings = async (settingsData) => {
-  console.log(settingsData);
   try {
     const response = await axios.patch("/admin/settings", settingsData);
     return response.data.data;

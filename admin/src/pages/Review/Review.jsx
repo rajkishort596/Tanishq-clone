@@ -49,8 +49,6 @@ const Review = () => {
     isApproved: reviewStatus,
   });
 
-  console.log(reviews);
-
   useEffect(() => {
     if (error) {
       toast.error(error?.message || "Failed to load categories.");
@@ -76,14 +74,11 @@ const Review = () => {
 
   // Handlers for the table actions
   const handleUpdateStatus = async (reviewId, isApproved) => {
-    console.log(reviewId, isApproved);
     await updateReviewStatus({ reviewId, isApproved });
   };
 
   const triggerDelete = (reviewId) => {
-    console.log(reviewId);
     setToDeleteId(reviewId);
-    console.log(toDeleteId);
     setShowConfirm(true);
   };
 

@@ -76,9 +76,7 @@ const Product = () => {
   };
 
   const triggerDelete = (productId) => {
-    console.log(productId);
     setToDeleteId(productId);
-    console.log(toDeleteId);
     setShowConfirm(true);
   };
 
@@ -237,10 +235,8 @@ const Product = () => {
         description="Are you sure you want to delete this Product? This action cannot be undone."
         onConfirm={confirmDelete}
         onCancel={() => {
-          console.log("cancel invoked");
           setShowConfirm(false);
           setToDeleteId(null);
-          console.log(showConfirm);
         }}
         // loading={isDeleting}
       />

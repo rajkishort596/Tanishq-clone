@@ -4,7 +4,6 @@ import images from "../../../utils/images";
 import MegaMenu from "./MegaMenu";
 
 export const NavCategories = ({ categories, collctions }) => {
-  console.log(categories);
   const ParentCategories = categories.filter(
     (cat) => !cat.parent || cat.parent.length === 0
   );

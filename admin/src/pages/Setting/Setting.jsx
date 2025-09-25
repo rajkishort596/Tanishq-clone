@@ -24,8 +24,6 @@ const Setting = () => {
   const { settingsData, isLoading, isUpdating, error, updateSettings } =
     useSettings();
 
-  console.log(settingsData);
-
   const {
     register,
     handleSubmit,
@@ -81,10 +79,6 @@ const Setting = () => {
     formData.append("contactInfo", JSON.stringify(data.contactInfo));
     formData.append("socialLinks", JSON.stringify(data.socialLinks));
     formData.append("paymentSettings", JSON.stringify(data.paymentSettings));
-
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
 
     try {
       await updateSettings(formData);

@@ -32,7 +32,6 @@ const Collections = () => {
         Failed to load collections
       </p>
     );
-  console.log(collections);
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 font-fraunces">
       <section className="hidden md:block w-full overflow-hidden rounded-xl">

@@ -24,7 +24,6 @@ export const fetchCart = async () => {
 };
 
 export const updateItemQuantity = async (productId, quantity) => {
-  console.log(productId, quantity);
   try {
     const response = await axios.put(`/users/me/cart/${productId}`, {
       quantity,

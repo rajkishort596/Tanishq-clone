@@ -25,9 +25,7 @@ const Login = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      console.log("Login data:", data);
       const res = await loginAdmin(data);
-      console.log(res);
       dispatch(setCredentials({ admin: res.user }));
       dispatch(setAuthStatus("succeeded"));
       toast.success(`Welcome back ${res.user.fullName || "Admin"}`);

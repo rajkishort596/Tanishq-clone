@@ -14,11 +14,8 @@ const Collection = () => {
   const { collections } = useCollections({ limit: 100 });
   const { collection } = useParams();
 
-  console.log(collection);
   const Collection = collections.find((col) => col.slug === collection);
   const collectionId = Collection?._id;
-
-  console.log(Collection);
 
   const [searchParams] = useSearchParams();
   const occasion = searchParams.get("occasion");

@@ -151,7 +151,6 @@ const ProductForm = () => {
       toast.error(`Please complete Step ${currentStep}`);
     }
   };
-  console.log("Current Step: " + currentStep);
 
   const onSubmit = async (data) => {
     const formData = new FormData();

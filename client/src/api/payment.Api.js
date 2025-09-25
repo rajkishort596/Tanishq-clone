@@ -13,7 +13,6 @@ export const createRazorpayOrder = async (payload) => {
 export const verifyRazorpayPayment = async (payload) => {
   try {
     const response = await axios.post("/users/payment/verify", payload);
-    console.log(response);
     return response.data;
   } catch (error) {
     console.error("Failed to verify Razorpay payment:", error);

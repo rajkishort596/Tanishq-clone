@@ -21,8 +21,6 @@ const ProductDetails = () => {
   const { productId, category, subCategory, collection } = useParams();
   const [activeTab, setActiveTab] = useState("details");
 
-  console.log(collection, productId, category, subCategory);
-
   const formatSubCategory = (slug) => {
     if (!slug) return "";
     return slug

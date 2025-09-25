@@ -24,7 +24,6 @@ const OrderHistory = () => {
       </div>
     );
   }
-  console.log(orders);
 
   if (!orders || orders.length === 0) {
     return (
@@ -94,40 +93,33 @@ const OrderHistory = () => {
 
             {/* Items */}
             <div className="divide-y divide-gray-200">
-              {order.items.map(
-                (item, idx) => (
-                  console.log(item),
-                  (
-                    <div
-                      key={idx}
-                      className="flex flex-col sm:flex-row sm:items-center p-4 gap-4"
-                    >
-                      <img
-                        onClick={() =>
-                          navigate(
-                            `/shop/all-jewellery/product/${item.product}`
-                          )
-                        }
-                        src={item.image}
-                        alt={item.name}
-                        className="w-20 h-20 object-contain border rounded cursor-pointer"
-                      />
-                      <div className="flex-1">
-                        <h4 className="text-sm sm:text-base font-semibold text-gray-800">
-                          {item.name}
-                        </h4>
-                        <p className="text-sm text-gray-600">
-                          Qty: {item.quantity} | Size: {item.size || "NA"} |{" "}
-                          {item.metalColor}
-                        </p>
-                      </div>
-                      <p className="text-sm sm:text-base font-bold text-primary">
-                        ₹ {item.totalItemPrice.toLocaleString()}
-                      </p>
-                    </div>
-                  )
-                )
-              )}
+              {order.items.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="flex flex-col sm:flex-row sm:items-center p-4 gap-4"
+                >
+                  <img
+                    onClick={() =>
+                      navigate(`/shop/all-jewellery/product/${item.product}`)
+                    }
+                    src={item.image}
+                    alt={item.name}
+                    className="w-20 h-20 object-contain border rounded cursor-pointer"
+                  />
+                  <div className="flex-1">
+                    <h4 className="text-sm sm:text-base font-semibold text-gray-800">
+                      {item.name}
+                    </h4>
+                    <p className="text-sm text-gray-600">
+                      Qty: {item.quantity} | Size: {item.size || "NA"} |{" "}
+                      {item.metalColor}
+                    </p>
+                  </div>
+                  <p className="text-sm sm:text-base font-bold text-primary">
+                    ₹ {item.totalItemPrice.toLocaleString()}
+                  </p>
+                </div>
+              ))}
             </div>
 
             {/* Footer */}

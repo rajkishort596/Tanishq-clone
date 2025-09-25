@@ -50,8 +50,6 @@ const Order = () => {
     status: orderStatus,
   });
 
-  console.log(orders);
-
   useEffect(() => {
     if (error) {
       toast.error(error?.message || "Failed to load orders.");
@@ -76,7 +74,6 @@ const Order = () => {
   };
 
   const updateOrderStatus = async (orderId, status, paymentStatus) => {
-    console.log(status, paymentStatus);
     await updateStatus({ orderId, status, paymentStatus });
   };
 

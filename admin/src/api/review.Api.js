@@ -30,7 +30,6 @@ export const deleteReview = async (reviewId) => {
 };
 
 export const updateReviewStatus = async (reviewId, isApproved) => {
-  console.log(isApproved);
   try {
     const response = await axios.put(`/admin/reviews/${reviewId}/status`, {
       isApproved,
