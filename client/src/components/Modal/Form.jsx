@@ -17,7 +17,6 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
   const [otpAttemptsLeft, setOtpAttemptsLeft] = useState(5);
 
   const navigate = useNavigate();
-  const loading = useSelector((state) => state.loading.isLoading);
 
   const {
     register,
@@ -203,8 +202,8 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
                 </div>
                 <button
                   type="submit"
-                  className="btn-primary w-1/2 mx-auto rounded-full mt-4"
-                  disabled={loading}
+                  className="btn-primary w-1/2 mx-auto rounded-full mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isLogging}
                 >
                   {isLogging ? "Logging..." : "Login"}
                 </button>
@@ -230,8 +229,8 @@ const Form = ({ isLogin, onClose, setIsLogin }) => {
                 />
                 <button
                   type="submit"
-                  className="btn-primary w-1/2 mx-auto rounded-full mt-4"
-                  disabled={loading}
+                  className="btn-primary w-1/2 mx-auto rounded-full mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isSendingOtp}
                 >
                   {isSendingOtp ? "Sending..." : "Send OTP"}
                 </button>

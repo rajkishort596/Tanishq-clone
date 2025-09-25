@@ -67,7 +67,7 @@ const UserIcon = () => {
               <CircleUserRound strokeWidth={1} className="text-primary" />
               <span>
                 {user?.firstName.charAt(0).toUpperCase() +
-                  user?.firstName.split(1)}
+                  user?.firstName.slice(1)}
               </span>
             </button>
             <button

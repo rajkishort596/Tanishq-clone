@@ -84,7 +84,11 @@ const RegisterForm = ({
           />
         </div>
 
-        <button type="submit" className="btn-primary w-full rounded-full mt-4">
+        <button
+          type="submit"
+          className="btn-primary w-full rounded-full mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={registering}
+        >
           {registering ? "Registering..." : "Continue"}
         </button>
       </form>

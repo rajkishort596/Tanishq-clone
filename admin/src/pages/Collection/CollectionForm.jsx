@@ -321,7 +321,7 @@ const CollectionForm = () => {
             <button
               type="submit"
               className="btn-primary px-6 py-2 text-lg"
-              // disabled{isCreating ||isUpdating}
+              disabled={isCreating || isUpdating}
             >
               {isLoadingForm
                 ? isEditMode

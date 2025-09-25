@@ -116,7 +116,11 @@ const ResetPassword = () => {
             />
           </div>
 
-          <button type="submit" className="w-full btn-primary">
+          <button
+            type="submit"
+            disabled={PasswordResetMutation.isPending}
+            className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             {PasswordResetMutation.isPending
               ? "Reseting...."
               : "Reset Password"}
