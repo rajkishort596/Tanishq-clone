@@ -10,6 +10,7 @@ import {
   Settings,
   LogOut,
   ImageIcon,
+  X,
 } from "lucide-react";
 
 import images from "../constants/images";
@@ -18,50 +19,17 @@ import { useDispatch } from "react-redux";
 import { logoutAdmin } from "../api/auth.Api";
 
 const navLinks = [
-  {
-    to: "/",
-    label: "Dashboard",
-    icon: Home,
-    end: true,
-  },
-  {
-    to: "/categories",
-    label: "Categories",
-    icon: LayoutGrid,
-  },
-  {
-    to: "/collections",
-    label: "Collections",
-    icon: Layers,
-  },
-  {
-    to: "/products",
-    label: "Products",
-    icon: Package,
-  },
-  {
-    to: "/reviews",
-    label: "Reviews",
-    icon: Star,
-  },
-  {
-    to: "/orders",
-    label: "Orders",
-    icon: ShoppingCart,
-  },
-  {
-    to: "/banners",
-    label: "Banners",
-    icon: ImageIcon,
-  },
-  {
-    to: "/settings",
-    label: "Settings",
-    icon: Settings,
-  },
+  { to: "/", label: "Dashboard", icon: Home, end: true },
+  { to: "/categories", label: "Categories", icon: LayoutGrid },
+  { to: "/collections", label: "Collections", icon: Layers },
+  { to: "/products", label: "Products", icon: Package },
+  { to: "/reviews", label: "Reviews", icon: Star },
+  { to: "/orders", label: "Orders", icon: ShoppingCart },
+  { to: "/banners", label: "Banners", icon: ImageIcon },
+  { to: "/settings", label: "Settings", icon: Settings },
 ];
 
-const Sidebar = ({ className = "" }) => {
+const Sidebar = ({ className = "", onClose }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -70,12 +38,21 @@ const Sidebar = ({ className = "" }) => {
     console.log("Logout successful");
     dispatch(logout());
     navigate("/login");
+    if (onClose) onClose();
   };
 
   return (
     <aside
-      className={`w-64 flex flex-col justify-between py-6 px-4 border-r border-grey8 ${className}`}
+      className={`w-64 flex flex-col justify-between py-6 px-4 border-r border-grey8 relative ${className}`}
     >
+      {/* Close button (only mobile) */}
+      <button
+        className="absolute top-4 right-4 lg:hidden p-1 rounded-sm border border-grey1 hover:border-gold text-grey1 hover:text-gold"
+        onClick={onClose}
+      >
+        <X size={20} />
+      </button>
+
       <div>
         {/* Logo/Brand */}
         <div className="flex items-center justify-center mb-10">
@@ -89,11 +66,12 @@ const Sidebar = ({ className = "" }) => {
         {/* Navigation Links */}
         <nav>
           <ul>
-            {navLinks.map(({ to, label, icon: Icon, end }, idx) => (
+            {navLinks.map(({ to, label, icon: Icon, end }) => (
               <li className="mb-2" key={to}>
                 <NavLink
                   to={to}
                   end={end}
+                  onClick={onClose} // close sidebar on navigation
                   className={({ isActive }) =>
                     `flex items-center p-3 rounded-lg transition-all duration-200 ${
                       isActive
@@ -122,9 +100,7 @@ const Sidebar = ({ className = "" }) => {
       {/* Logout Button */}
       <div className="mt-auto">
         <button
-          onClick={() => {
-            handleLogout();
-          }}
+          onClick={handleLogout}
           className="flex items-center cursor-pointer w-full p-3 rounded-lg text-grey3 hover:bg-primary hover:text-gold transition-colors duration-200"
         >
           <LogOut className="h-5 w-5 mr-3" />

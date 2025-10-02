@@ -40,14 +40,16 @@ const Dashboard = () => {
 
       {dashboardData && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <StatCard
-            title="Total Sales"
-            value={formatCurrency(dashboardData?.totalSales)}
-            icon={DollarSign}
-            iconBgColor="bg-rose-100"
-            iconTextColor="text-rose-600"
-            glowClass="glow-rose"
-          />
+          <div className="col-span-2 xl:col-span-1">
+            <StatCard
+              title="Total Sales"
+              value={formatCurrency(dashboardData?.totalSales)}
+              icon={DollarSign}
+              iconBgColor="bg-rose-100"
+              iconTextColor="text-rose-600"
+              glowClass="glow-rose"
+            />
+          </div>
 
           <StatCard
             title="Total Orders"
@@ -91,7 +93,7 @@ const Dashboard = () => {
         <h2 className="text-xl font-semibold text-primary font-fraunces mb-4">
           Recent Orders
         </h2>
-        <div className="h-auto max-h-[400px] overflow-auto">
+        <div className="h-auto overflow-auto">
           <OrdersTable orders={dashboardData?.recentOrders || []} />
         </div>
       </div>

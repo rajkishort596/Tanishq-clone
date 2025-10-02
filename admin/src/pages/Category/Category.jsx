@@ -167,7 +167,7 @@ const Category = () => {
       </div>
 
       {/* Category List Table */}
-      <div className="h-auto max-h-[400px] overflow-auto">
+      <div className="h-auto overflow-auto">
         <CategoriesTable
           categories={categories}
           showActions={true}

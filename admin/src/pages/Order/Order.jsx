@@ -13,7 +13,7 @@ const Order = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [orderStatus, setOrderStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(5);
   const [toDeleteId, setToDeleteId] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -153,7 +153,7 @@ const Order = () => {
       </div>
 
       {/* Orders Table */}
-      <div className="h-auto max-h-[400px] overflow-auto">
+      <div className="h-auto overflow-auto">
         <OrdersTable
           orders={orders || []}
           showActions={true}
